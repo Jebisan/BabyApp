@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Button, View, StyleSheet, Image, Text } from 'react-native';
 import { DrawerNavigator } from 'react-navigation';
-import Icon from '@expo/vector-icons/Ionicons';
+import {Ionicons, MaterialIcons} from '@expo/vector-icons';
 import {useSelector} from 'react-redux';
 import ImagePicker from '../components/ImagePicker';
 
@@ -27,8 +27,8 @@ const Profile = props => {
 Profile.navigationOptions = navigationData => {
   return {
     headerTitle: 'Profile',
-    headerRight: 
-    <Icon name="md-menu" onPress={() => navigationData.navigation.openDrawer()} />
+    headerLeft:  <Ionicons name="md-menu" size={22}  onPress={() => navigationData.navigation.openDrawer()} />,
+    headerRight: <MaterialIcons name="markunread" size={22} onPress={() => navigationData.navigation.navigate('DirectMessages')} />,
   };
 };
 

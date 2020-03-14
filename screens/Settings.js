@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Button, StyleSheet, FlatList, View, Text, TouchableOpacity } from 'react-native';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 
 const Settings = props => {
 
@@ -14,6 +15,12 @@ const Settings = props => {
 
 export default Settings;
 
+Settings.navigationOptions = navigationData => {
+  return {
+    headerTitle: 'Settings',
+    headerLeft:  <Ionicons name="md-menu" size={22}  onPress={() => navigationData.navigation.openDrawer()} />,
+  };
+};
 
 
 const styles = StyleSheet.create({

@@ -7,10 +7,11 @@ import FindUsers from '../screens/FindUsers';
 import AddGroup from '../screens/AddGroup';
 import UserDetail from '../screens/UserDetail'
 import GroupDetail from '../screens/GroupDetail'
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, FontAwesome } from '@expo/vector-icons';
 import Chatscreen from '../screens/ChatScreen';
 import Login from '../screens/Auth/Login';
 import SignUp from '../screens/Auth/SignUp';
+import DirectMessages from '../screens/DirectMessages';
 import Settings from '../screens/Settings';
 import StartUpScreen from '../screens/StartUpScreen';
 import {useDispatch} from 'react-redux'
@@ -26,6 +27,8 @@ const AuthStack = createSwitchNavigator({
 
 const ProfileStack = createStackNavigator({
     Profile: Profile, 
+    DirectMessages: {screen: DirectMessages}
+
 }
 );
 
@@ -54,12 +57,11 @@ const FindStack = createStackNavigator({
 const AppDrawerNavigator = createDrawerNavigator(
     {
     Profile: {screen: ProfileStack},
-    Settings: {screen: SettingsStack}   
-
+    Settings: {screen: SettingsStack},
 }, 
 {
     contentOptions: {
-        drawerPosition:'right'
+        drawerPosition:'left'
     },
     contentComponent: props => {
         const dispatch = useDispatch();
@@ -96,11 +98,11 @@ const AppTabNavigator = createBottomTabNavigator({
         }
     }
 },
-    'Beskeder': {screen: GroupsStack, navigationOptions: {
+    'Grupper': {screen: GroupsStack, navigationOptions: {
         tabBarIcon: tabInfo => {
             return (
-                <Ionicons 
-                name='md-chatbubbles' 
+                <FontAwesome 
+                name='group' 
                 size={25} 
                 color='black' 
                 />
