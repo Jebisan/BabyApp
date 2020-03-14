@@ -44,8 +44,7 @@ const SignUp = props => {
   }, [error])
 */
       return (
-          <KeyboardAvoidingView  behavior='position' >
-          <View style={styles.container}>
+          <KeyboardAvoidingView style={styles.container} behavior='position' >
               <StatusBar barStyle="light-content"></StatusBar>
               <Image
                   source={require("../../assets/authHeader.png")}
@@ -109,29 +108,26 @@ const SignUp = props => {
               <TouchableOpacity style={styles.button} onPress={nextPage}>
                   <Text style={{ color: "#FFF", fontWeight: "500" }}>Registrer!</Text>
               </TouchableOpacity>
-
-
-
-
-
               <TouchableOpacity
-                  style={{ alignSelf: "center", marginTop: 32 }}
-                  onPress={() => props.navigation.navigate("Login")}
-              >
-                  <Text style={{ color: "#414959", fontSize: 13 }}>
-                      Er du allerede medlem? <Text style={{ fontWeight: "500", color: "#E9446A" }}>Log in</Text>
-                  </Text>
-              </TouchableOpacity>
+              style={{ alignSelf: "center", marginTop: 32 }}
+              onPress={() => props.navigation.navigate("Login")}
+          >
+              <Text style={{ color: "#414959", fontSize: 13 }}>
+                  Er du allerede medlem? <Text style={{ fontWeight: "500", color: "#E9446A" }}>Log in</Text>
+              </Text>
+          </TouchableOpacity>
+
               </View>
-              </View>
-          </KeyboardAvoidingView>
+       
+              </KeyboardAvoidingView>
       );
   }
 
 
   const styles = StyleSheet.create({
     container: {
-        top: 70
+        top: 0,
+        flex: 1
     },
     greeting: {
         marginTop: 32,

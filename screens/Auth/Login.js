@@ -159,7 +159,7 @@ const Login = props => {
 const styles = StyleSheet.create({
   parent: {
     top: 10,
-    marginHorizontal: 30
+    marginHorizontal: 30,
   },
   container: {
       flex: 1,
