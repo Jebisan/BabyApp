@@ -16,7 +16,7 @@ export default function App() {
 
   const rootReducer = combineReducers({
     auth: authReducer,
-    group: groupReducer
+    groups: groupReducer
   });
 
   const store = createStore(rootReducer, applyMiddleware(ReduxThunk)); 

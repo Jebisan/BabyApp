@@ -1,24 +1,15 @@
-import {SET_TEMP_GROUP_DATA} from '../actions/groups'
+import {SET_GROUPS} from '../actions/auth'
 
-const INITIAL_STATE = {
-  name: null,
-  description: null,
-  city: null,
-  postalCode: null,
-  type: null,
-};
+const INITIAL_STATE = [];
 
 export default groupReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case SET_TEMP_GROUP_DATA:
-      return {
-        name: action.name,
-        description: action.description,
-        city: action.city,
-        postalCode: action.postalCode,
-        type: action.type
-      };
-   
+      case SET_GROUPS:
+        console.log('FROM NEW REDUCER!')
+        return [
+          ...state, action.group
+        ]
+      
     default:
       return state
   }

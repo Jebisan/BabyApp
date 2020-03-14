@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, Text, TextInput, Button } from 'react-native';
 import cityData from '../cities';
 import {ButtonGroup} from 'react-native-elements';
-import {setTempGroupData} from '../store/actions/groups'
 import {useDispatch} from 'react-redux';
 
 

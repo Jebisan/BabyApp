@@ -1,4 +1,4 @@
-import { AUTHENTICATE, LOGOUT, SET_FIREBASE_DATA, SET_PHOTO_URL} from '../actions/auth'
+import { AUTHENTICATE, LOGOUT, SET_FIREBASE_DATA, SET_PHOTO_URL, SET_GROUPS} from '../actions/auth'
 
 const INITIAL_STATE = {
   token: null,
@@ -13,7 +13,8 @@ const INITIAL_STATE = {
   birthday: null,
   postalCode: null,
   city: null,
-  photoUrl: null
+  photoUrl: null,
+  groups: null
 };
 
 export default authReducer = (state = INITIAL_STATE, action) => {
@@ -28,6 +29,7 @@ export default authReducer = (state = INITIAL_STATE, action) => {
       return INITIAL_STATE;
 
     case SET_FIREBASE_DATA:
+
       return {
         ...state,
         firstname: action.firstname,
@@ -44,8 +46,7 @@ export default authReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         photoUrl: action.photoUrl
-      }
-      
+      }      
     default:
       return state
   }

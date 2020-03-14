@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {Button, StyleSheet, FlatList, View, Text, TouchableOpacity } from 'react-native';
+import {useSelector} from 'react-redux';
+import Group from '../components/Group';
 
 const Groups = props => {
-
-  const [wishes, setWishes] = useState([])
+  const groups = useSelector(state => state.groups)
 
   const data = 
     [
@@ -12,27 +13,30 @@ const Groups = props => {
       {id: '2', title: 'Gruppe 3', description: 'Beskrivelse', price: 0},
     ]
   
-    togglePredictHandler = () => {
-      props.navigation.navigate('AddGroup');
-    }
+
 
   useEffect(() => {
-    props.navigation.setParams({togglePred: togglePredictHandler});
-    
+  console.log(groups)    
   }, []);
 
   return (
     <View style={styles.parent}>
           <FlatList
-          data={data}
+          data={groups}
           keyExtractor={item => item.id}
           renderItem={({item}) =>
-            <TouchableOpacity onPress={() => 
-              props.navigation.navigate('Chatscreen', {
-              /*title: item.title,
-              description: item.description,
-              price: item.price */
-            })} >
+            <TouchableOpacity onPress={() => props.navigation.navigate('Chatscreen', {
+              id: item.id
+            })}
+            >
+          <Group
+          name = {item.name}
+          description = {item.description}
+          city = {item.city}
+          postalCode = {item.postalCode}
+          photoUrl = {item.photoUrl}
+
+          />
             </TouchableOpacity>
 
         }

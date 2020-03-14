@@ -6,11 +6,12 @@ import {connect} from 'react-redux';
 
 
 class Chatscreen extends React.Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
     this.state = {
       messages: []
     }
+
   }
   
 
@@ -24,6 +25,8 @@ class Chatscreen extends React.Component {
 
 
 send = messages => {
+  const id = this.props.navigation.getParam('id');
+
   messages.forEach(item => {
       const message = {   
           text: item.text,
@@ -34,10 +37,9 @@ send = messages => {
               avatar: this.user.avatar
           }
       }
-
           
 fetch(
-`https://babyapp-ed94d.firebaseio.com/messages.json?auth=${this.props.token}`,
+`https://babyapp-ed94d.firebaseio.com/groups/${id}/messages.json?auth=${this.props.token}`,
 {
   method: 'POST',
   headers: {
@@ -50,23 +52,55 @@ fetch(
 )})
   }
 
+  parse = message => {
+    const {user, text, timestamp} = message.val()
+    const {key: _id} = message
+    const createdAt = new Date(timestamp)
+
+    return {
+        _id,
+        createdAt,
+        text,
+         user
+    };
+};
+
+  get messages() {
+    const id = this.props.navigation.getParam('id');
+    return Fire.firebase.database().ref("groups/"+id+"/messages");
+}
+
+  get = callback  => {
+    this.messages.on('child_added', snapshot => callback(this.parse(snapshot)));
+}
+
   componentDidMount() { 
-      Fire.get(message => 
+    console.log(this.props.navigation.getParam('id'))
+      this.get(message => 
       this.setState(previous => ({
       messages: GiftedChat.append(previous.messages, message)
     }))
     );
   }
 
+  get users() {
+    return Fire.firebase.database().ref("users");
+}
+
+  off() {
+    this.messages.off();
+    this.users.off();
+}
+
+
   componentWillUnmount(){
-    Fire.off();
+    this.off();
   }
 
 
     render() {
       return <SafeAreaView style={{flex:1}}> 
                 <GiftedChat 
-                
                 messages={this.state.messages} 
                 onSend={this.send} 
                 user = {this.user} 
