@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {View, StyleSheet, Text, TextInput, Button } from 'react-native';
 import cityData from '../cities';
 import {ButtonGroup} from 'react-native-elements';
@@ -6,6 +6,7 @@ import {useDispatch} from 'react-redux';
 
 
 const AddGroup = props => {
+  const { navigation } = props;
 
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [name, setName] = useState('');
@@ -14,14 +15,25 @@ const AddGroup = props => {
   const [city, setCity] = useState('')
   const dispatch = useDispatch();
 
-  togglePredictHandler = () => {
-   //  dispatch(setTempGroupData(name, description, postalCode, city, selectedIndex))
-    props.navigation.navigate('FindUsers');
-  }
+  const saveGroupData = useCallback(() => {
+    const groupData = {
+      name: name,
+      description: description,
+      postalCode: postalCode,
+      city: city,
+      type: selectedIndex
+    };
+
+    props.navigation.navigate('FindUsers', {
+      groupData: groupData
+    })
+
+}, [name, description, postalCode, city, selectedIndex])
 
   useEffect(() => {
-    props.navigation.setParams({togglePred: togglePredictHandler,});
-  }, []);
+    navigation.setParams({save: saveGroupData});
+  }, [saveGroupData]);
+
 
   useEffect(() => {
     if(postalCode.length===4){
@@ -102,11 +114,15 @@ containerStyle={{height: 30}}
 };
 
 AddGroup.navigationOptions = navigationData => {
-  const togglePredict = navigationData.navigation.getParam('togglePred');
 
   return {
     headerTitle: 'Ny gruppe',
-    headerRight: <Button title='Næste' onPress={togglePredict} />
+    headerRight: 
+    <Button title='Næste' 
+    onPress={
+      navigationData.navigation.getParam('save')
+    } 
+    />
   };
 };
 

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {View, StyleSheet, Text, TextInput, Button, FlatList, TouchableOpacity } from 'react-native';
 import Fire from '../Fire';
 import User from '../components/User';
@@ -6,6 +6,8 @@ import {Ionicons} from '@expo/vector-icons';
 
 
 const FindUsers = props => {
+
+  const groupData = props.navigation.getParam('groupData')
   
   const [users, setUsers] = useState([])
   const [filteredUsers, setFilteredUsers] = useState([])
@@ -13,11 +15,28 @@ const FindUsers = props => {
   const [searchText, setSearchText] = useState('');
 
   
+  const createGroup = useCallback(() => {
+    const members = []
+    selectedUsers.forEach(user => {
+      members.push(user.id)
+    });
+
+    const newData = {
+      groupData: groupData,
+      selectedUsers: members
+    }
+
+    console.log(newData);
+
+}, [selectedUsers])
 
 
+useEffect(() => {
+  props.navigation.setParams({save: createGroup});
+}, [createGroup]);
 
-  useEffect(() => {
-    props.navigation.setParams({togglePred: togglePredictHandler});
+
+  useEffect(() => {    
     getUsers();
   }, []);
 
@@ -110,11 +129,11 @@ keyExtractor={item => item.id}
 };
 
 FindUsers.navigationOptions = navigationData => {
-  const togglePredict = navigationData.navigation.getParam('togglePred');
+  const save = navigationData.navigation.getParam('save');
 
   return {
     headerTitle: 'Find brugere',
-    headerRight: <Button title='Opret' onPress={togglePredict} />
+    headerRight: <Button title='Opret' onPress={save} />
   };
 };
 
