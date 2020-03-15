@@ -6,11 +6,14 @@ import Group from '../components/Group';
 import Fire from '../Fire';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import {ButtonGroup} from 'react-native-elements';
+import { useSelector } from 'react-redux';
 
 
 
  const Find = (props) => {
    
+  const userId = useSelector(state => state.auth.userId);
+
   const [searchText, setSearchText] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [city, setCity] = useState('')
@@ -31,7 +34,8 @@ import {ButtonGroup} from 'react-native-elements';
      var result = Object.keys(obj).map((value) => {
        return {key: value,  ...obj[value]};
      });
-     setUsers(result)
+     filteredResult = result.filter(user => user.key!==userId)
+     setUsers(filteredResult)
    });
 };
 
