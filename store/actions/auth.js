@@ -5,6 +5,7 @@ export const LOGOUT = 'LOGOUT'
 export const SET_FIREBASE_DATA = 'SET_FIREBASE_DATA'
 export const SET_PHOTO_URL = 'SET_PHOTO_URL'
 export const SET_GROUPS = 'SET_GROUPS'
+export const SET_DMS = 'SET_DMS'
 import * as Facebook from 'expo-facebook';
 import firebase from 'firebase';
 
@@ -165,6 +166,42 @@ export const fetchUserGroups = (groups) => {
   };
 };
 
+export const fetchUserDms = (userId) => {
+  return async (dispatch, getState) => {
+
+
+      Fire.firebase.database().ref("directMessages/"+userId).once('value').then((snapshot => {
+
+        const directMessagesObject = snapshot.val();
+
+        var directMessagesArray = Object.keys(directMessagesObject).map(key => {
+          return {dmPerson: key, ...directMessagesObject[key]};
+        });
+
+        //console.log(snapshot.val());
+        dispatch({type: SET_DMS, directMessage: directMessagesArray})
+
+        /*
+        const groupData = {
+          id: snapshot.key,
+          name: snapshot.val().name,
+          admin: snapshot.val().admin,
+          description: snapshot.val().description,
+          city: snapshot.val().city,
+          photoUrl: snapshot.val().photoUrl,
+          postalCode: snapshot.val().postalCode,
+          type: snapshot.val().type,
+          members: snapshot.val().members,
+        }
+
+        dispatch({type: SET_GROUPS, group: groupData})
+*/
+      }))
+
+
+  };
+};
+
 
 export const fetchUserData = (userId) => {
   return async (dispatch, getState) => {
@@ -192,7 +229,9 @@ export const fetchUserData = (userId) => {
           photoUrl: data.photoUrl
         });
       
-       dispatch(fetchUserGroups(data.groups))
+      dispatch(fetchUserGroups(data.groups))
+      dispatch(fetchUserDms(userId))
+
     
   }
   }

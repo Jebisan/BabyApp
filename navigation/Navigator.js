@@ -27,7 +27,8 @@ const AuthStack = createSwitchNavigator({
 
 const ProfileStack = createStackNavigator({
     Profile: Profile, 
-    DirectMessages: {screen: DirectMessages}
+    DirectMessages: {screen: DirectMessages},
+    Chatscreen: {screen: Chatscreen}
 
 }
 );

@@ -26,7 +26,6 @@ class Chatscreen extends React.Component {
 
 send = messages => {
   const id = this.props.navigation.getParam('id');
-
   messages.forEach(item => {
       const message = {   
           text: item.text,
@@ -37,20 +36,36 @@ send = messages => {
               avatar: this.user.avatar
           }
       }
-          
-fetch(
-`https://babyapp-ed94d.firebaseio.com/groups/${id}/messages.json?auth=${this.props.token}`,
-{
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(
-     message
-  )
+
+
+const id = this.props.navigation.getParam('id');
+const dm = this.props.navigation.getParam('dm')
+
+  if(dm==true){
+    fetch(
+      `https://babyapp-ed94d.firebaseio.com/directMessages/${this.props.userId}/${id}/messages.json?auth=${this.props.token}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(
+           message
+        )})      
+      
+      } else {
+        fetch(
+          `https://babyapp-ed94d.firebaseio.com/groups/${id}/messages.json?auth=${this.props.token}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(
+               message
+            )}) }
+})
 }
-)})
-  }
 
   parse = message => {
     const {user, text, timestamp} = message.val()
@@ -67,7 +82,14 @@ fetch(
 
   get messages() {
     const id = this.props.navigation.getParam('id');
-    return Fire.firebase.database().ref("groups/"+id+"/messages");
+    if(this.props.navigation.getParam('dm')==true){
+
+      return Fire.firebase.database().ref("directMessages/"+this.props.userId+"/"+ id +"/messages" );
+      
+    } else {
+      return Fire.firebase.database().ref("groups/"+id+"/messages");
+    }
+
 }
 
   get = callback  => {
@@ -75,7 +97,6 @@ fetch(
 }
 
   componentDidMount() { 
-    console.log(this.props.navigation.getParam('id'))
       this.get(message => 
       this.setState(previous => ({
       messages: GiftedChat.append(previous.messages, message)
@@ -101,6 +122,7 @@ fetch(
     render() {
       return <SafeAreaView style={{flex:1}}> 
                 <GiftedChat 
+                showUserAvatar
                 messages={this.state.messages} 
                 onSend={this.send} 
                 user = {this.user} 

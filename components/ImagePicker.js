@@ -49,7 +49,7 @@ const chooseImageHandler = async () => {
             
         });
         
-        if(image){
+        if(image.uri!==undefined){
           const compressedImage = await ImageManipulator.manipulateAsync(
             image.uri,[{ resize: {'height': 200, 'height': 200} }],
             { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
@@ -76,8 +76,6 @@ const uploadImage = async(uri) => {
 
     return (
         <View style={styles.imagePicker}> 
-            <View style={styles.imagePreview}>    
-                  
                     {!pickedImage ? (
                         <TouchableOpacity style={styles.imageContainer} onPress={chooseImageHandler}>
                         <Image
@@ -86,22 +84,39 @@ const uploadImage = async(uri) => {
                       </TouchableOpacity>
 
                      ) : (  
-                                <TouchableOpacity onPress={chooseImageHandler}>
-                        <Image
-                        style={styles.imagePreview}
-                        source={{ uri: pickedImage }}
-                      />
-                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.imageContainer} onPress={chooseImageHandler}>
+         
+                      <View style={styles.profilePictureContainer}>
+                      <View style={styles.profileImage}>
+                          <Image source={{ uri: pickedImage }} style={styles.image} resizeMode="cover"></Image>
+                      </View>
+                  </View>
+                  </TouchableOpacity>
+
                         )}
-            </View>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
     imagePicker: {
-      alignItems: 'center'
+      alignItems: 'center',
     },
+    profilePictureContainer: {
+      alignSelf: "center" ,
+  
+  },
+    image: {
+        flex: 1,
+        height: undefined,
+        width: undefined
+    },  
+    profileImage: {
+      width: 150,
+      height: 150,
+      borderRadius: 100,
+      overflow: "hidden"
+  },
     imagePreview: {
       width: 100,
       height: 100,
@@ -110,10 +125,7 @@ const styles = StyleSheet.create({
       alignItems: 'center', 
       borderRadius: 400/ 2
     },
-    imageContainer: {
-      borderWidth: 1,
-      borderColor: 'lightgrey'
-    }
+
   });
 
 export default ImgPicker;

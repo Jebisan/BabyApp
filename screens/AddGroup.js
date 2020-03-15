@@ -15,7 +15,7 @@ const AddGroup = props => {
   const dispatch = useDispatch();
 
   togglePredictHandler = () => {
-     dispatch(setTempGroupData(name, description, postalCode, city, selectedIndex))
+   //  dispatch(setTempGroupData(name, description, postalCode, city, selectedIndex))
     props.navigation.navigate('FindUsers');
   }
 

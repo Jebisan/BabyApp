@@ -1,35 +1,52 @@
 import React, {useEffect, useState} from 'react';
 import {Button, StyleSheet, FlatList, View, Text, TouchableOpacity } from 'react-native';
-
+import {useSelector} from 'react-redux';
+import User from '../components/User';
+import Fire from '../Fire';
 
 const DirectMessages = props => {
 
+  const directMessages = useSelector(state => state.directMessages)
+
+  const [people, setPeople] = useState([]);
+
+  useEffect(() => {
+      getPeople();
+  }, []);
+
+
+  const getPeople = () => {
+
+    directMessages.forEach(dm => {
+
+      Fire.firebase.database().ref("users/"+dm.dmPerson).once('value').then((snapshot => {
+        setPeople(prevPeople => prevPeople.concat( {id: snapshot.key ,...snapshot.val()} ))
+      })
+      )
+    })
+  }
+
   return (
-    <View style={styles.parent}>
-      <Text>Hello from DMs!</Text>
-         
-      {/*
+    <View style={styles.parent}>         
+      {
         <FlatList
-        data={groups}
-        keyExtractor={item => item.id}
+        data={directMessages}
+        keyExtractor={item => item.dmPerson}
         renderItem={({item}) =>
         <TouchableOpacity onPress={() => props.navigation.navigate('Chatscreen', {
-          id: item.id
+          id: item.dmPerson,
+          dm: true,
         })}
         >
-        <Group
-        name = {item.name}
-        description = {item.description}
-        city = {item.city}
-        postalCode = {item.postalCode}
-        photoUrl = {item.photoUrl}
-        
+        <User  
+        name={item.name}
+        photoUrl={item.photoUrl}
         />
         </TouchableOpacity>
         
       }
       />
-      */ 
+      
     }
     </View>
 

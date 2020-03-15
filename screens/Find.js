@@ -5,7 +5,7 @@ import User from '../components/User';
 import Group from '../components/Group';
 import Fire from '../Fire';
 import SearchableDropdown from 'react-native-searchable-dropdown';
-import {ButtonGroup} from 'react-native-elements'
+import {ButtonGroup} from 'react-native-elements';
 
 
 
@@ -128,6 +128,7 @@ const buttons = ['Personer', 'Grupper']
             selectedIndex={selectedIndex}
             buttons={buttons}
             containerStyle={{height: 30}} 
+            
             />
 
             <View style={styles.foundUsersContainer}>

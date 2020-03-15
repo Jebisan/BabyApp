@@ -1,12 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, Text, TextInput, Button, FlatList, TouchableOpacity } from 'react-native';
-import SearchableDropdown from 'react-native-searchable-dropdown';
 import Fire from '../Fire';
 import User from '../components/User';
 import {Ionicons} from '@expo/vector-icons';
-
-import {useSelector} from 'react-redux'
-
 
 
 const FindUsers = props => {
@@ -16,7 +12,7 @@ const FindUsers = props => {
   const [selectedUsers, setSelectedUsers] = useState([])
   const [searchText, setSearchText] = useState('');
 
-  const name = useSelector(state => state.group.name);
+  
 
 
 

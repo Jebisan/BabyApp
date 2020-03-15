@@ -1,23 +1,11 @@
-import React, {useEffect, useState} from 'react';
-import {Button, StyleSheet, FlatList, View, Text, TouchableOpacity } from 'react-native';
+import React from 'react';
+import {Button, StyleSheet, FlatList, View, TouchableOpacity } from 'react-native';
 import {useSelector} from 'react-redux';
 import Group from '../components/Group';
 
 const Groups = props => {
   const groups = useSelector(state => state.groups)
 
-  const data = 
-    [
-      {id: '0', title: 'Gruppe 1', description: 'Beskrivelse', price: 0},
-      {id: '1', title: 'Gruppe 2', description: 'Beskrivelse', price: 0},
-      {id: '2', title: 'Gruppe 3', description: 'Beskrivelse', price: 0},
-    ]
-  
-
-
-  useEffect(() => {
-  console.log(groups)    
-  }, []);
 
   return (
     <View style={styles.parent}>
@@ -54,7 +42,7 @@ Groups.navigationOptions = navigationData => {
 
   return {
     headerTitle: 'Groups',
-    headerRight: <Button title='+' onPress={togglePredict} />
+    headerRight: <Button title='+' onPress={() => navigationData.navigation.navigate('AddGroup')} />
   };
 };
 
