@@ -21,6 +21,7 @@ const AddGroup = props => {
       description: description,
       postalCode: postalCode,
       city: city,
+      photoUrl: 'https://firebasestorage.googleapis.com/v0/b/babyapp-ed94d.appspot.com/o/group.png?alt=media&token=5e41547b-be06-4bc0-a93b-47fdc659e00d',
       type: selectedIndex
     };
 

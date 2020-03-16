@@ -12,7 +12,7 @@ import * as ImageManipulator from 'expo-image-manipulator';
 const ImgPicker = props => {
 
 
-const [pickedImage, setPickedImage] = useState();
+const [pickedImage, setPickedImage] = useState("http://criticare.isccm.org/assets/images/male_placeholder.png");
 const userId = useSelector(state => state.auth.userId);
 const photoUrl = useSelector(state => state.auth.photoUrl);
 const dispatch = useDispatch();
@@ -75,56 +75,33 @@ const uploadImage = async(uri) => {
 }
 
     return (
-        <View style={styles.imagePicker}> 
-                    {!pickedImage ? (
-                        <TouchableOpacity style={styles.imageContainer} onPress={chooseImageHandler}>
-                        <Image
-                        source={{uri: 'http://www.madisonnjlibrary.org/wp-content/uploads/2016/06/placeholder-5.png'}}
-                      />
-                      </TouchableOpacity>
-
-                     ) : (  
-                      <TouchableOpacity style={styles.imageContainer} onPress={chooseImageHandler}>
-         
-                      <View style={styles.profilePictureContainer}>
-                      <View style={styles.profileImage}>
+        <View style={styles.imageContainer}> 
+                      <TouchableOpacity style={styles.imagePicker} onPress={chooseImageHandler}>
                           <Image source={{ uri: pickedImage }} style={styles.image} resizeMode="cover"></Image>
-                      </View>
-                  </View>
-                  </TouchableOpacity>
-
-                        )}
+                      </TouchableOpacity>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
-    imagePicker: {
+  imageContainer: {
       alignItems: 'center',
+      
     },
-    profilePictureContainer: {
-      alignSelf: "center" ,
-  
-  },
     image: {
-        flex: 1,
-        height: undefined,
-        width: undefined
-    },  
-    profileImage: {
-      width: 150,
-      height: 150,
-      borderRadius: 100,
-      overflow: "hidden"
-  },
-    imagePreview: {
-      width: 100,
-      height: 100,
-      marginBottom: 10,
+      width: 140,
+      height: 140,
       justifyContent: 'center',
-      alignItems: 'center', 
-      borderRadius: 400/ 2
-    },
+      alignItems: 'center',
+      
+    },  
+    imagePicker: {
+      width: 140,
+      height: 140,
+      borderRadius: 100,
+      overflow: "hidden",
+  },
+
 
   });
 

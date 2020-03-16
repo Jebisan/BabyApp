@@ -14,9 +14,11 @@ const CreateAdditionalInformation = props => {
   const [firstname, setFirstname] = useState('')
   const [lastname, setLastname] = useState('')
   const [birthday, setBirthday] = useState('')
+  const [dueDate, setDueDate] = useState('')
   const [gender, setGender] = useState('')
   const [postalCode, setPostalCode] = useState('')
   const [city, setCity] = useState('')
+  
 
 
   const [date, setDate] = useState(new Date(1598051730000));
@@ -65,7 +67,7 @@ const CreateAdditionalInformation = props => {
     setIsLoading(true);
 
       try {
-        await dispatch(createAdditionalData(firstname, lastname,firstname + " " + lastname, birthday, gender, postalCode, city))
+        await dispatch(createAdditionalData(firstname, lastname,firstname + " " + lastname, birthday, gender, postalCode, city, dueDate))
         props.navigation.navigate('MainScreen')
       } catch (err) {
         setError(err.message);
@@ -108,11 +110,25 @@ mode="date" //The enum of date, datetime and time
 placeholder="Fødselsdag"
 format="DD-MM-YYYY"
 minDate="01-01-1900"
-maxDate="01-01-2019"
+maxDate="01-01-2021"
 confirmBtnText="Confirm"
 cancelBtnText="Cancel"
 showIcon={false}
 onDateChange={date => setBirthday(date)}
+/>
+
+<DatePicker
+style={{ width: 200}}
+date={dueDate} //initial date from state
+mode="date" //The enum of date, datetime and time
+placeholder="Terminsdato"
+format="DD-MM-YYYY"
+minDate="01-01-1900"
+maxDate="01-01-2021"
+confirmBtnText="Confirm"
+cancelBtnText="Cancel"
+showIcon={false}
+onDateChange={date => setDueDate(date)}
 />
 
 <TextInput

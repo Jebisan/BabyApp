@@ -6,6 +6,9 @@ import {useSelector} from 'react-redux';
 import ImagePicker from '../components/ImagePicker';
 import ProgressCircle from 'react-native-progress-circle';
 import moment from 'moment';
+import HeaderButton from '../components/HeaderButton';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+
 
 const Profile = props => {
 
@@ -142,8 +145,24 @@ useEffect(() => {
 Profile.navigationOptions = navigationData => {
   return {
     headerTitle: 'Profile',
-    headerLeft:  <Ionicons name="md-menu" size={22}  onPress={() => navigationData.navigation.openDrawer()} />,
-    headerRight: <MaterialIcons name="markunread" size={22} onPress={() => navigationData.navigation.navigate('DirectMessages')} />,
+    headerLeft:  
+
+    <HeaderButtons HeaderButtonComponent={HeaderButton}>
+    <Item
+      title="drawer"
+      iconName= 'md-menu'
+      onPress={() => navigationData.navigation.openDrawer()}
+    />
+  </HeaderButtons>,
+    headerRight: 
+
+    <HeaderButtons HeaderButtonComponent={HeaderButton}>
+    <Item
+      title="DM"
+      iconName= 'md-mail'
+      onPress={() => navigationData.navigation.navigate('DirectMessages')}
+    />
+  </HeaderButtons>
   };
 };
 

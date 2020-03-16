@@ -69,7 +69,7 @@ useEffect(() => {
 
         <View style={styles.profilePictureContainer}>
             <View style={styles.profileImage}>
-                <Image source={{ uri: photoUrl }} style={styles.image} resizeMode="cover"></Image>
+                <Image source={photoUrl?{ uri: photoUrl }:{uri: 'http://criticare.isccm.org/assets/images/male_placeholder.png'}} style={styles.image} resizeMode="cover"></Image>
             </View>
 
             <TouchableOpacity onPress={() => props.navigation.navigate('Chatscreen')} style={styles.dm}>

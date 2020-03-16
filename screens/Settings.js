@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Button, StyleSheet, FlatList, View, Text, TouchableOpacity } from 'react-native';
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import HeaderButton from '../components/HeaderButton';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 const Settings = props => {
 
@@ -18,7 +19,15 @@ export default Settings;
 Settings.navigationOptions = navigationData => {
   return {
     headerTitle: 'Settings',
-    headerLeft:  <Ionicons name="md-menu" size={22}  onPress={() => navigationData.navigation.openDrawer()} />,
+    headerLeft:  
+
+    <HeaderButtons HeaderButtonComponent={HeaderButton}>
+    <Item
+      title="drawer"
+      iconName= 'md-menu'
+      onPress={() => navigationData.navigation.openDrawer()}
+    />
+  </HeaderButtons>,
   };
 };
 

@@ -3,6 +3,8 @@ import {View, StyleSheet, Text, TextInput, Button, FlatList, TouchableOpacity } 
 import Fire from '../Fire';
 import User from '../components/User';
 import {Ionicons} from '@expo/vector-icons';
+import {createGroup} from '../store/actions/auth';
+import {useDispatch} from 'react-redux';
 
 
 const FindUsers = props => {
@@ -13,27 +15,30 @@ const FindUsers = props => {
   const [filteredUsers, setFilteredUsers] = useState([])
   const [selectedUsers, setSelectedUsers] = useState([])
   const [searchText, setSearchText] = useState('');
+  const dispatch = useDispatch();
 
   
-  const createGroup = useCallback(() => {
-    const members = []
+  const _createGroup = useCallback(() => {
+    const selectedUserIds = []
     selectedUsers.forEach(user => {
-      members.push(user.id)
+      selectedUserIds.push(user.id)
     });
 
     const newData = {
       groupData: groupData,
-      selectedUsers: members
+      selectedUserIds: selectedUserIds
     }
 
-    console.log(newData);
+    dispatch(createGroup(groupData.name, groupData.description, groupData.postalCode,groupData.city,groupData.type,selectedUserIds, groupData.photoUrl))
+
+   props.navigation.navigate('Groups')
 
 }, [selectedUsers])
 
 
 useEffect(() => {
-  props.navigation.setParams({save: createGroup});
-}, [createGroup]);
+  props.navigation.setParams({save: _createGroup});
+}, [_createGroup]);
 
 
   useEffect(() => {    
@@ -63,6 +68,8 @@ useEffect(() => {
        return {id: value,  ...obj[value]};
      });
      setUsers(result)
+   }).catch(error => {
+     console.log(error)
    });
 };
 

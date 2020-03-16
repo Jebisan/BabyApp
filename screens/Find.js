@@ -36,16 +36,23 @@ import { useSelector } from 'react-redux';
      });
      filteredResult = result.filter(user => user.key!==userId)
      setUsers(filteredResult)
+   }).catch(error => {
+     console.log(error);
    });
 };
 
 const getGroups = () => {
   Fire.groups.once('value').then((snapshot) =>{
+  
     obj = snapshot.val()
+    console.log(obj)
     var result = Object.keys(obj).map((value) => {
       return {key: value,  ...obj[value]};
     });
     setGroups(result)
+
+  }).catch(error => {
+    console.log(error);
   });
 }
 

@@ -5,7 +5,9 @@ export const LOGOUT = 'LOGOUT'
 export const SET_FIREBASE_DATA = 'SET_FIREBASE_DATA'
 export const SET_PHOTO_URL = 'SET_PHOTO_URL'
 export const SET_GROUPS = 'SET_GROUPS'
+export const ADD_GROUP_TO_USERS = 'ADD_GROUP_TO_USERS'
 export const SET_DMS = 'SET_DMS'
+export const CREATE_GROUP = 'CREATE_GROUP'
 import * as Facebook from 'expo-facebook';
 import firebase from 'firebase';
 
@@ -133,17 +135,17 @@ export const login = (email, password) => {
 };
 
 export const fetchUserGroups = (groups) => {
-  return async (dispatch, getState) => {
-
+  return async (dispatch, getState) => {    
     
+    if(groups) {
     var groupArray = Object.keys(groups).map(key => {
-      return groups[key];
+      return groups[key].groupId;
     });
 
     groupArray.forEach(groupId => {
-
+      
       Fire.firebase.database().ref("groups/"+groupId).once('value').then((snapshot => {
-
+        
         
         const groupData = {
           id: snapshot.key,
@@ -156,13 +158,14 @@ export const fetchUserGroups = (groups) => {
           type: snapshot.val().type,
           members: snapshot.val().members,
         }
-
+        
         dispatch({type: SET_GROUPS, group: groupData})
         
       }))
     });
-
-
+    
+  }
+    
   };
 };
 
@@ -178,27 +181,10 @@ export const fetchUserDms = (userId) => {
           return {dmPerson: key, ...directMessagesObject[key]};
         });
 
-        //console.log(snapshot.val());
+        
         dispatch({type: SET_DMS, directMessage: directMessagesArray})
 
-        /*
-        const groupData = {
-          id: snapshot.key,
-          name: snapshot.val().name,
-          admin: snapshot.val().admin,
-          description: snapshot.val().description,
-          city: snapshot.val().city,
-          photoUrl: snapshot.val().photoUrl,
-          postalCode: snapshot.val().postalCode,
-          type: snapshot.val().type,
-          members: snapshot.val().members,
-        }
-
-        dispatch({type: SET_GROUPS, group: groupData})
-*/
       }))
-
-
   };
 };
 
@@ -230,7 +216,7 @@ export const fetchUserData = (userId) => {
         });
       
       dispatch(fetchUserGroups(data.groups))
-      dispatch(fetchUserDms(userId))
+    //  dispatch(fetchUserDms(userId))
 
     
   }
@@ -319,7 +305,7 @@ const saveDataToStorage = (email, token, userId, expirationDate) => {
 }
 
 
-export const createAdditionalData = (firstname, lastname, name, birthday, gender, postalCode, city) => {
+export const createAdditionalData = (firstname, lastname, name, birthday, gender, postalCode, city, dueDate) => {
   return async (dispatch, getState) => {
 
     const token = getState().auth.token;    
@@ -341,7 +327,8 @@ export const createAdditionalData = (firstname, lastname, name, birthday, gender
             birthday,
             gender,
             postalCode,
-            city
+            city,
+            dueDate,
           })
         }
       );
@@ -352,7 +339,82 @@ export const createAdditionalData = (firstname, lastname, name, birthday, gender
       }
         
       const resData = await response.json();
-      dispatch({type: SET_FIREBASE_DATA, firstname, lastname, name,birthday, gender, postalCode, city});
+      dispatch({type: SET_FIREBASE_DATA, firstname, lastname, name,birthday, gender, postalCode, city, dueDate});
     }
+  };
+};
+
+export const createGroup = (name, description, postalCode, city, groupType, selectedUserIds, photoUrl) => {
+  return async (dispatch, getState) => {
+
+    console.log('Selected users:');
+    console.log(selectedUserIds);
+
+    const token = getState().auth.token;    
+    const userId = getState().auth.userId;
+
+      const response = await fetch(
+        `https://babyapp-ed94d.firebaseio.com/groups.json?auth=${token}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            admin: userId,
+            name,
+            description,
+            postalCode,
+            city,
+            groupType,
+            photoUrl
+          })
+        }
+      );
+
+      if (!response.ok) {
+        let message = 'Adding group to Firebase failed!';
+        throw new Error(message);
+      }
+        
+      const resData = await response.json();
+      
+      dispatch({type: CREATE_GROUP, admin:userId, id: resData.name, name, description, postalCode, city, groupType, photoUrl});
+      
+      selectedUserIds.forEach(user => {
+      dispatch(addGroupToUser(user, resData.name))
+      });
+
+  };
+};
+
+
+export const addGroupToUser = (userId, groupId ) => {
+  return async (dispatch, getState) => {
+
+    console.log('Putting to user: ' + userId)
+    const token = getState().auth.token;    
+
+      const response = await fetch(
+        `https://babyapp-ed94d.firebaseio.com/users/${userId}/groups/.json?auth=${token}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            groupId
+          })
+        }
+      );
+  
+
+      if (!response.ok) {
+        let message = 'Adding group to user failed on Firebase!';
+        throw new Error(message);
+      }
+        
+      const resData = await response.json();
+    
   };
 };

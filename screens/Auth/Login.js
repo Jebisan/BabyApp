@@ -21,6 +21,7 @@ const Login = props => {
   useEffect(() => {
     
     if(userId!==null && authenticated==true){
+      console.log(userId, authenticated)
     async function fetchData() {
       try{
         await dispatch(fetchUserData(userId));

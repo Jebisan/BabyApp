@@ -15,7 +15,7 @@ const User = props => {
       <View style={styles.horizontalContainer}>
       <View style={styles.verticalContainer}>
         <View style={styles.imageContainer}>
-          <Image style={{width: 50, height: 50, borderRadius: 400/ 2}} source={{uri: props.photoUrl }} />
+          <Image style={{width: 50, height: 50, borderRadius: 400/ 2}} source={ props.photoUrl?{uri: props.photoUrl }: {uri: 'http://criticare.isccm.org/assets/images/male_placeholder.png' }} />
       </View>
 
       </View>

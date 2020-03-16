@@ -3,6 +3,9 @@ import {Button, StyleSheet, FlatList, View, TouchableOpacity } from 'react-nativ
 import {useSelector} from 'react-redux';
 import Group from '../components/Group';
 
+import HeaderButton from '../components/HeaderButton';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+
 const Groups = props => {
   const groups = useSelector(state => state.groups)
 
@@ -42,8 +45,15 @@ Groups.navigationOptions = navigationData => {
 
   return {
     headerTitle: 'Groups',
-    headerRight: <Button title='+' onPress={() => navigationData.navigation.navigate('AddGroup')} />
-  };
+    headerRight: 
+
+    <HeaderButtons HeaderButtonComponent={HeaderButton}>
+    <Item
+      title="add"
+      iconName= 'ios-add'
+      onPress={() => navigationData.navigation.navigate('AddGroup')}
+    />
+  </HeaderButtons>  };
 };
 
 

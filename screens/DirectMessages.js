@@ -11,12 +11,12 @@ const DirectMessages = props => {
   const [people, setPeople] = useState([]);
 
   useEffect(() => {
-      getPeople();
+      //getPeople();
   }, []);
 
 
   const getPeople = () => {
-
+    
     directMessages.forEach(dm => {
 
       Fire.firebase.database().ref("users/"+dm.dmPerson).once('value').then((snapshot => {
@@ -24,11 +24,11 @@ const DirectMessages = props => {
       })
       )
     })
+    
   }
 
   return (
-    <View style={styles.parent}>         
-      {
+    <View style={styles.parent}>   
         <FlatList
         data={directMessages}
         keyExtractor={item => item.dmPerson}
@@ -46,8 +46,6 @@ const DirectMessages = props => {
         
       }
       />
-      
-    }
     </View>
 
   );
