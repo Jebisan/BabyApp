@@ -7,45 +7,62 @@ import Fire from '../Fire';
 const DirectMessages = props => {
 
   const directMessages = useSelector(state => state.directMessages)
+  const userId = useSelector(state => state.auth.userId)
 
-  const [people, setPeople] = useState([]);
+  
+  const [dms, setDms] = useState([]);
 
   useEffect(() => {
-      //getPeople();
+      getPeople();
   }, []);
 
 
   const getPeople = () => {
-    
+    console.log(directMessages);
+/*
     directMessages.forEach(dm => {
+      Fire.firebase.database().ref("directMessages/"+dm).once('value').then((snapshot => {
+        const obj = snapshot.val().users
+        var result = Object.keys(obj).map((value) => {
+          return {key: value,  ...obj[value]};
+        });
 
-      Fire.firebase.database().ref("users/"+dm.dmPerson).once('value').then((snapshot => {
-        setPeople(prevPeople => prevPeople.concat( {id: snapshot.key ,...snapshot.val()} ))
+        const newObj = {
+          id: dm, 
+          messages: snapshot.val().messages,
+          user: result.find(member => member.key !==userId)
+        }
+        setDms([newObj])
+        console.log(newObj)
+        
       })
       )
-    })
-    
+    }) 
+*/
   }
 
   return (
     <View style={styles.parent}>   
+    {
         <FlatList
         data={directMessages}
-        keyExtractor={item => item.dmPerson}
+        keyExtractor={item => item.chatId}
         renderItem={({item}) =>
-        <TouchableOpacity onPress={() => props.navigation.navigate('Chatscreen', {
-          id: item.dmPerson,
-          dm: true,
+        <TouchableOpacity onPress={() => props.navigation.navigate('DirectMessage', {
+          conversationCreated: true,
+          personId: item.userId,
+          chatId: item.chatId
         })}
         >
         <User  
-        name={item.name}
-        photoUrl={item.photoUrl}
+        name={item.userId}
         />
         </TouchableOpacity>
         
       }
       />
+      
+    }
     </View>
 
   );

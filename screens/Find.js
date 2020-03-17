@@ -45,7 +45,6 @@ const getGroups = () => {
   Fire.groups.once('value').then((snapshot) =>{
   
     obj = snapshot.val()
-    console.log(obj)
     var result = Object.keys(obj).map((value) => {
       return {key: value,  ...obj[value]};
     });
@@ -150,6 +149,7 @@ const buttons = ['Personer', 'Grupper']
             data={filteredUsers}
             renderItem={({ item }) => 
             <TouchableOpacity onPress={() => props.navigation.navigate('UserDetail', {
+              id: item.key,
               name: item.name,
               gender: item.gender,
               dueDate: item.dueDate,
@@ -157,10 +157,8 @@ const buttons = ['Personer', 'Grupper']
               postalCode: item.postalCode,
               birthday: item.birthday,
               photoUrl: item.photoUrl,
-
             })}>
                 <User
-                key={item.key}
                 name={item.name}
                 dueDate={item.dueDate}
                 gender={item.gender}

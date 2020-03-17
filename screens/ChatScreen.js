@@ -9,9 +9,14 @@ class Chatscreen extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      messages: []
+      messages: [],
+      currentDmId: ''
     }
 
+  }
+
+  componentDidUpdate(){
+    console.log(this.state.currentDmId);
   }
   
 
@@ -24,8 +29,8 @@ class Chatscreen extends React.Component {
   }
 
 
-send = messages => {
-  const id = this.props.navigation.getParam('id');
+send = messages =>{
+
   messages.forEach(item => {
       const message = {   
           text: item.text,
@@ -41,31 +46,69 @@ send = messages => {
 const id = this.props.navigation.getParam('id');
 const dm = this.props.navigation.getParam('dm')
 
-  if(dm==true){
-    fetch(
-      `https://babyapp-ed94d.firebaseio.com/directMessages/${this.props.userId}/${id}/messages.json?auth=${this.props.token}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(
-           message
-        )})      
-      
-      } else {
-        fetch(
-          `https://babyapp-ed94d.firebaseio.com/groups/${id}/messages.json?auth=${this.props.token}`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(
-               message
-            )}) }
-})
+
+this.send2(id, dm, message);
+
+}) 
 }
+
+ send2 = async(id, dm, message) => {
+  
+      
+    if(dm==true && id!==''){
+      fetch(
+       `https://babyapp-ed94d.firebaseio.com/directMessages/${id}/messages.json?auth=${this.props.token}`,
+       {
+         method: 'POST',
+         headers: {
+           'Content-Type': 'application/json'
+         },
+         body: JSON.stringify(
+            message
+         )})      
+         }
+         else if (dm==true && id==''){
+
+          const users =
+            {
+              userId: this.props.userId,
+              name: this.props.name,
+              photoUrl: this.props.photoUrl
+            }
+           
+          const response = await fetch(
+        `https://babyapp-ed94d.firebaseio.com/directMessages.json?auth=${this.props.token}`,
+             {
+               method: 'POST',
+               headers: {
+                 'Content-Type': 'application/json'
+               },
+               body: JSON.stringify({
+                messages: message,
+                users
+              }
+               )
+               }).catch(error=> {
+                 console.log(error);
+               })
+
+               const resData = await response.json();
+
+               this.setState({currentDmId: resData.name})
+               
+               
+       } else {
+         fetch(
+           `https://babyapp-ed94d.firebaseio.com/groups/${id}/messages.json?auth=${this.props.token}`,
+           {
+             method: 'POST',
+             headers: {
+               'Content-Type': 'application/json'
+             },
+             body: JSON.stringify(
+                message
+             )}) }
+};
 
   parse = message => {
     const {user, text, timestamp} = message.val()
@@ -82,11 +125,18 @@ const dm = this.props.navigation.getParam('dm')
 
   get messages() {
     const id = this.props.navigation.getParam('id');
-    if(this.props.navigation.getParam('dm')==true){
+    const dm = this.props.navigation.getParam('dm');
 
-      return Fire.firebase.database().ref("directMessages/"+this.props.userId+"/"+ id +"/messages" );
+    if(dm==true && id!==''){
+
+      return Fire.firebase.database().ref("directMessages/"+id+"/messages" );
       
-    } else {
+    } else if (dm==true && id==''){
+      return Fire.firebase.database().ref("directMessages/"+this.state.currentDmId+"/messages" );
+
+    }
+    
+    else {
       return Fire.firebase.database().ref("groups/"+id+"/messages");
     }
 
@@ -136,6 +186,7 @@ const dm = this.props.navigation.getParam('dm')
         userId: state.auth.userId,
         token: state.auth.token,
         firstname: state.auth.firstname,
+        name: state.auth.name,
         photoUrl: state.auth.photoUrl,
         
       }

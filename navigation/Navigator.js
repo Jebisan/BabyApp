@@ -18,6 +18,7 @@ import {useDispatch} from 'react-redux'
 import { View, Button } from 'react-native';
 import {logOut} from '../store/actions/auth'
 import CreateAdditionalInformation from '../screens/Auth/CreateAdditionalInformation';
+import DirectMessage from '../screens/ChatStreens/DirectMessage';
 
 const AuthStack = createSwitchNavigator({
     Login: Login,
@@ -28,7 +29,8 @@ const AuthStack = createSwitchNavigator({
 const ProfileStack = createStackNavigator({
     Profile: Profile, 
     DirectMessages: {screen: DirectMessages},
-    Chatscreen: {screen: Chatscreen}
+    Chatscreen: {screen: Chatscreen},
+    DirectMessage: {screen: DirectMessage}
 
 }
 );
@@ -50,7 +52,7 @@ const FindStack = createStackNavigator({
     Find: Find,
     UserDetail: UserDetail,
     GroupDetail: GroupDetail,
-    Chatscreen: Chatscreen,
+    DirectMessage: DirectMessage
 
 }
 );

@@ -5,9 +5,17 @@ import { Alert } from 'react-native';
 import moment from 'moment';
 import 'moment/locale/da';
 import ProgressCircle from 'react-native-progress-circle'
+import {useSelector} from 'react-redux';
+import uuid from 'react-native-uuid';
+
 
 const UserDetail = props => {
 
+const directMessages = useSelector(state => state.directMessages)
+const userId = useSelector(state => state.auth.userId)
+
+
+const id = props.navigation.getParam('id');
 const name = props.navigation.getParam('name');
 const gender = props.navigation.getParam('gender');
 const city = props.navigation.getParam('city');
@@ -15,7 +23,9 @@ const postalCode = props.navigation.getParam('postalCode');
 const birthday = props.navigation.getParam('birthday');
 const photoUrl = props.navigation.getParam('photoUrl');
 const dueDate = props.navigation.getParam('dueDate');
+const [chatId, setChatId] = useState(false);
 
+const [conversationCreated, setConversationCreated] = useState(undefined);
 const [newBirthday, setNewBirthday] = useState([]);
 const [newDueDate, setNewDueDate] = useState([]);
 const [newToday, setNewToday] = useState([]);
@@ -63,6 +73,23 @@ useEffect(() => {
   
 }, [newDueDate, newToday])
 
+
+useEffect(() => {
+  directMessages.forEach(dm => {    
+    if(dm.userId === id) {
+      console.log('Already in DM!')
+      setConversationCreated(true)
+      setChatId(dm.chatId)
+    } else {
+      const newChatId = uuid.v1();
+      console.log('Not in DM!')
+      setConversationCreated(false)
+      setChatId(newChatId)
+    }
+    
+  });
+}, [])
+
   return (
     <SafeAreaView style={styles.container}>
     <ScrollView showsVerticalScrollIndicator={false}>
@@ -72,7 +99,16 @@ useEffect(() => {
                 <Image source={photoUrl?{ uri: photoUrl }:{uri: 'http://criticare.isccm.org/assets/images/male_placeholder.png'}} style={styles.image} resizeMode="cover"></Image>
             </View>
 
-            <TouchableOpacity onPress={() => props.navigation.navigate('Chatscreen')} style={styles.dm}>
+            <TouchableOpacity onPress={() => props.navigation.navigate('DirectMessage',{
+              conversationCreated: conversationCreated,
+              personId: props.navigation.getParam('id'),
+              chatId: chatId
+            }
+            
+
+              
+            
+            )} style={styles.dm}>
                 <MaterialIcons name="chat" size={15} color="#DFD8C8"></MaterialIcons>
             </TouchableOpacity>
             

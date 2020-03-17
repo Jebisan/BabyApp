@@ -169,20 +169,25 @@ export const fetchUserGroups = (groups) => {
   };
 };
 
-export const fetchUserDms = (userId) => {
+export const fetchUserDms = (directMessageId) => {
   return async (dispatch, getState) => {
 
+    const userId = getState().auth.userId;    
 
-      Fire.firebase.database().ref("directMessages/"+userId).once('value').then((snapshot => {
 
-        const directMessagesObject = snapshot.val();
+      Fire.firebase.database().ref("directMessages/"+directMessageId).once('value').then((snapshot => {
 
-        var directMessagesArray = Object.keys(directMessagesObject).map(key => {
-          return {dmPerson: key, ...directMessagesObject[key]};
+        const usersOfDmObject = snapshot.val().users
+
+        const usersOfDmArray =  Object.keys(usersOfDmObject).map(key => {
+          return {chatId: directMessageId,...usersOfDmObject[key]}
         });
 
+        const newDm = usersOfDmArray.filter(user=>user.userId!==userId)[0]
+
+       // console.log(newDm)
         
-        dispatch({type: SET_DMS, directMessage: directMessagesArray})
+        dispatch({type: SET_DMS, directMessage: newDm})
 
       }))
   };
@@ -214,9 +219,25 @@ export const fetchUserData = (userId) => {
           city: data.city,
           photoUrl: data.photoUrl
         });
+
+        
       
       dispatch(fetchUserGroups(data.groups))
-    //  dispatch(fetchUserDms(userId))
+
+
+      //FETCHING USER DMS
+      const directMessagesObject = data.messages;
+
+      
+      var directMessagesArray = Object.keys(directMessagesObject).map(key => {
+        return directMessagesObject[key].chatId
+      });
+      
+     //console.log(directMessagesArray);
+
+      directMessagesArray.forEach(directMessageId => {
+        dispatch(fetchUserDms(directMessageId))
+      });
 
     
   }
@@ -415,6 +436,41 @@ export const addGroupToUser = (userId, groupId ) => {
       }
         
       const resData = await response.json();
+    
+  };
+};
+
+
+export const addChatToUser = (chatId, personId) => {
+  return async (dispatch, getState) => {
+    const userId = getState().auth.userId;    
+    const token = getState().auth.token;    
+
+
+      const response = await fetch(
+        `https://babyapp-ed94d.firebaseio.com/users/${userId}/messages.json?auth=${token}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            chatId: chatId
+          })
+        }
+      );
+
+      if (!response.ok) {
+        let message = 'Adding chat to user in Firebase failed!';
+        throw new Error(message);
+      }
+        
+      const newDm = {
+        chatId,
+        userId: personId
+      }
+
+      dispatch({type: SET_DMS, directMessage: newDm})
     
   };
 };
