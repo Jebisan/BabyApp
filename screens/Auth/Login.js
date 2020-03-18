@@ -5,10 +5,6 @@ import {login, logInWithFacebook, fetchUserData} from '../../store/actions/auth'
 import { useSelector } from 'react-redux';
 import InputTextField from '../../components/InputTextField';
 
-
-
-
-
 const Login = props => {
 
   const dispatch = useDispatch();
@@ -27,7 +23,7 @@ const Login = props => {
   useEffect(() => {
     
     if(userId!==null && authenticated==true){
-      //console.log(userId, authenticated)
+      console.log(userId, authenticated)
     async function fetchData() {
       try{
         await dispatch(fetchUserData(userId));

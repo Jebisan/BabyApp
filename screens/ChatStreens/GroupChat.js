@@ -10,8 +10,8 @@ class GroupChat extends React.Component {
     super(props)
     this.state = {
       messages: [],
+      members: []
     }
-
   }
 
   get user() {
@@ -22,9 +22,28 @@ class GroupChat extends React.Component {
     }
   }
 
+  getMembers = () => {
+    const members = this.props.navigation.getParam('members')
+    members.forEach(member => {
+
+      Fire.firebase.database().ref("users/"+member).once('value').then((snapshot => {
+        const obj = snapshot.val()    
+        
+        const member = {
+          id: member,
+          name: obj.name, 
+          photoUrl: obj.photoUrl,
+          pushToken: obj.pushToken,
+        }
+        this.setState(prevState => ({members: [...prevState.members, member]}))
+        
+      })
+      );
+    });
+  }
+
 
 send = messages =>{
-
 const groupId = this.props.navigation.getParam('id')
 
   messages.forEach(item => {
@@ -73,6 +92,7 @@ const groupId = this.props.navigation.getParam('id')
 }
 
   componentDidMount() { 
+    this.getMembers();
       this.get(message => 
       this.setState(previous => ({
       messages: GiftedChat.append(previous.messages, message)

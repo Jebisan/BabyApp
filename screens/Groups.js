@@ -10,7 +10,7 @@ const Groups = props => {
   const groups = useSelector(state => state.groups)
 
   useEffect(() => {
-    console.log(groups)
+    //console.log(groups)
   }, [])
 
 
@@ -21,7 +21,8 @@ const Groups = props => {
           keyExtractor={item => item.id}
           renderItem={({item}) =>
             <TouchableOpacity onPress={() => props.navigation.navigate('GroupChat', {
-              id: item.id
+              id: item.id,
+              members: item.members
             })}
             >
           <Group

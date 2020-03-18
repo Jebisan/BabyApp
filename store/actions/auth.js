@@ -121,8 +121,6 @@ export const login = (email, password) => {
 
           const resData = await response.json();
 
-      
-    
     dispatch(
       authenticate(
         email,
@@ -137,6 +135,8 @@ export const login = (email, password) => {
 
 export const fetchUserGroups = (groups) => {
   return async (dispatch, getState) => {    
+    const userId = getState().auth.userId;
+
     
     if(groups) {
     var groupArray = Object.keys(groups).map(key => {
@@ -147,7 +147,14 @@ export const fetchUserGroups = (groups) => {
       
       Fire.firebase.database().ref("groups/"+groupId).once('value').then((snapshot => {
         
+        const usersOfGroupObject = snapshot.val().members
+
+        const usersOfGroupArray =  Object.keys(usersOfGroupObject).map(key => {
+          return {...usersOfGroupObject[key]}.userId
+        });
         
+        const newGroupArray = usersOfGroupArray.filter(user=>user!==userId)
+
         const groupData = {
           id: snapshot.key,
           name: snapshot.val().name,
@@ -157,7 +164,7 @@ export const fetchUserGroups = (groups) => {
           photoUrl: snapshot.val().photoUrl,
           postalCode: snapshot.val().postalCode,
           groupType: snapshot.val().groupType,
-          members: snapshot.val().members,
+          members: newGroupArray
         }
         
         dispatch({type: SET_GROUPS, group: groupData})
@@ -222,26 +229,28 @@ export const fetchUserData = (userId) => {
           pushToken: data.pushToken
         });
 
+        if(data.groups!==undefined){
+          dispatch(fetchUserGroups(data.groups))
+        }
         
-      
-      dispatch(fetchUserGroups(data.groups))
 
 
-      //FETCHING USER DMS
-      const directMessagesObject = data.messages;
+        
+        //FETCHING USER DMS
 
-      
-      var directMessagesArray = Object.keys(directMessagesObject).map(key => {
-        return directMessagesObject[key].chatId
-      });
-      
-     //console.log(directMessagesArray);
+        if(data.messages!==undefined){
 
-      directMessagesArray.forEach(directMessageId => {
-        dispatch(fetchUserDms(directMessageId))
-      });
-
-    
+          const directMessagesObject = data.messages;          
+          
+          var directMessagesArray = Object.keys(directMessagesObject).map(key => {
+            return directMessagesObject[key].chatId
+          });
+          
+          directMessagesArray.forEach(directMessageId => {
+            dispatch(fetchUserDms(directMessageId))
+          });
+          
+        }
   }
   }
 
