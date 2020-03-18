@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Button, StyleSheet, FlatList, View, Text, TouchableOpacity } from 'react-native';
-import HeaderButton from '../components/HeaderButton';
+import HeaderButton from '../../components/HeaderButton';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 const Settings = props => {

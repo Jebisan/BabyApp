@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View,Image, TouchableOpacity, ScrollView ,StyleSheet, Text, Button, TextInput, Alert, StatusBar, KeyboardAvoidingView, Keyboard} from 'react-native';
+import {View,Image, TouchableOpacity, ScrollView ,StyleSheet, Text, Button, TextInput, Alert, StatusBar, KeyboardAvoidingView, Keyboard, ActivityIndicator} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {signUp} from '../../store/actions/auth';
 import { Ionicons } from "@expo/vector-icons";
@@ -35,14 +35,14 @@ const SignUp = props => {
             setIsLoading(false);
     }
   }
-/*
+
   useEffect(() => {
     if(error){
       Alert.alert('An error occured!', error, [{text: 'Okay!'}])
     }
     
   }, [error])
-*/
+
       return (
           <KeyboardAvoidingView style={styles.container} behavior='position' >
               <StatusBar barStyle="light-content"></StatusBar>
@@ -58,20 +58,19 @@ const SignUp = props => {
                   <Ionicons name="ios-arrow-round-back" size={32} color="#FFF"></Ionicons>
               </TouchableOpacity>
 
+              {/*
               <View style={styles.errorMessage}>
                   {error && <Text style={styles.error}>{error}</Text>}
               </View>
-            
+              */}
               <View style={styles.formContainer}>
               
-
-
-
             
               <View style={styles.form} >
               <View style={{ marginTop: 32 }}>
               <Text style={styles.inputTitle}>Email</Text>
               <TextInput
+                keyboardType={'email-address'}
                   style={styles.input}
                   autoCapitalize="none"
                   onChangeText={email => setEmail(email)}
@@ -105,9 +104,16 @@ const SignUp = props => {
                   </View>
               </View>
 
+              {isLoading?<ActivityIndicator size='large' /> : 
+
               <TouchableOpacity style={styles.button} onPress={nextPage}>
-                  <Text style={{ color: "#FFF", fontWeight: "500" }}>Registrer!</Text>
-              </TouchableOpacity>
+              <Text style={{ color: "#FFF", fontWeight: "500" }}>Registrer!</Text>
+          </TouchableOpacity>
+            } 
+
+         
+
+
               <TouchableOpacity
               style={{ alignSelf: "center", marginTop: 32 }}
               onPress={() => props.navigation.navigate("Login")}
@@ -141,7 +147,7 @@ const SignUp = props => {
         marginHorizontal: 30
     },
     formContainer: {
-      bottom: 90
+      bottom: 20
     },
     inputTitle: {
         color: "#8A8F9E",

@@ -17,6 +17,10 @@ class DirectMessage extends React.Component {
 
 
   componentDidMount() { 
+    console.log('Conversation created: '+this.props.navigation.getParam('conversationCreated'))
+    console.log('chatId: ' + this.props.navigation.getParam('chatId'))
+
+
     if(this.props.navigation.getParam('conversationCreated')){
       this.setState({conversationCreated:true})
     } else {

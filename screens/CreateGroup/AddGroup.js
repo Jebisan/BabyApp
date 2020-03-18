@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import {View, StyleSheet, Text, TextInput, Button } from 'react-native';
-import cityData from '../cities';
+import cityData from '../../cities';
 import {ButtonGroup} from 'react-native-elements';
 import {useDispatch} from 'react-redux';
 

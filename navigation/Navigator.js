@@ -1,22 +1,21 @@
 import React from 'react';
+import { View, Button } from 'react-native';
 import {createStackNavigator, createBottomTabNavigator, createAppContainer, createSwitchNavigator, createDrawerNavigator, DrawerNavigator, SafeAreaView, DrawerItems } from 'react-navigation';
-import Groups from '../screens/Groups';
-import Profile from '../screens/Profile';
-import Find from '../screens/Find';
-import FindUsers from '../screens/FindUsers';
-import AddGroup from '../screens/AddGroup';
-import UserDetail from '../screens/UserDetail'
-import GroupDetail from '../screens/GroupDetail'
+import {useDispatch} from 'react-redux'
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
-import Chatscreen from '../screens/ChatScreen';
+import {logOut} from '../store/actions/auth'
+import Groups from '../screens/Groups';
+import Profile from '../screens/Profile/Profile';
+import Find from '../screens/Find/Find';
+import FindUsers from '../screens/CreateGroup/FindUsers';
+import AddGroup from '../screens/CreateGroup/AddGroup';
+import UserDetail from '../screens/Find/UserDetail'
+import GroupDetail from '../screens/Find/GroupDetail'
 import Login from '../screens/Auth/Login';
 import SignUp from '../screens/Auth/SignUp';
-import DirectMessages from '../screens/DirectMessages';
-import Settings from '../screens/Settings';
+import DirectMessages from '../screens/Profile/DirectMessages';
+import Settings from '../screens/Profile/Settings';
 import StartUpScreen from '../screens/StartUpScreen';
-import {useDispatch} from 'react-redux'
-import { View, Button } from 'react-native';
-import {logOut} from '../store/actions/auth'
 import CreateAdditionalInformation from '../screens/Auth/CreateAdditionalInformation';
 import DirectMessage from '../screens/ChatStreens/DirectMessage';
 
@@ -29,7 +28,6 @@ const AuthStack = createSwitchNavigator({
 const ProfileStack = createStackNavigator({
     Profile: Profile, 
     DirectMessages: {screen: DirectMessages},
-    Chatscreen: {screen: Chatscreen},
     DirectMessage: {screen: DirectMessage}
 
 }
@@ -42,7 +40,6 @@ const SettingsStack = createStackNavigator({
 
 const GroupsStack = createStackNavigator({
     Groups: Groups,
-    Chatscreen: Chatscreen,
     AddGroup: AddGroup,
     FindUsers: FindUsers
 }

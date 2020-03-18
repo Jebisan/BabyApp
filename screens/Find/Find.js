@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Switch, Text, View, SafeAreaView, FlatList, TouchableOpacity} from "react-native";
-import cityData from '../cities';
-import User from '../components/User';
-import Group from '../components/Group';
-import Fire from '../Fire';
+import cityData from '../../cities';
+import User from '../../components/User';
+import Group from '../../components/Group';
+import Fire from '../../Fire';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import {ButtonGroup} from 'react-native-elements';
 import { useSelector } from 'react-redux';
@@ -176,9 +176,11 @@ const buttons = ['Personer', 'Grupper']
             <FlatList
             data={filteredGroups}
             renderItem={({ item }) => 
-            <TouchableOpacity onPress={() => props.navigation.navigate('GroupDetail')}>
+            <TouchableOpacity onPress={() => props.navigation.navigate('GroupDetail', {
+              groupId: item.key
+            })}>
                 <Group
-                key={item.key}
+                id={item.key}
                 name={item.name}
                 description={item.description}
                 gender={item.gender}

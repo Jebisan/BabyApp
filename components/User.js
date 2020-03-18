@@ -1,8 +1,5 @@
 import React from 'react';
 import {View, StyleSheet, Text, Image } from 'react-native';
-import {Ionicons} from '@expo/vector-icons';
-
-
 
 const User = props => {
 

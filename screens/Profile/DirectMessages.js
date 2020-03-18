@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {Button, StyleSheet, FlatList, View, Text, TouchableOpacity } from 'react-native';
 import {useSelector} from 'react-redux';
-import User from '../components/User';
-import Fire from '../Fire';
+import User from '../../components/User';
+import Fire from '../../Fire';
 
 const DirectMessages = props => {
 
@@ -10,43 +10,40 @@ const DirectMessages = props => {
   const userId = useSelector(state => state.auth.userId)
 
   
-  const [dms, setDms] = useState([]);
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
       getPeople();
   }, []);
 
 
-  const getPeople = () => {
-    console.log(directMessages);
-/*
-    directMessages.forEach(dm => {
-      Fire.firebase.database().ref("directMessages/"+dm).once('value').then((snapshot => {
-        const obj = snapshot.val().users
-        var result = Object.keys(obj).map((value) => {
-          return {key: value,  ...obj[value]};
-        });
 
-        const newObj = {
-          id: dm, 
-          messages: snapshot.val().messages,
-          user: result.find(member => member.key !==userId)
-        }
-        setDms([newObj])
-        console.log(newObj)
+
+  const getPeople = () => {
+
+    directMessages.forEach(dm => {
+      Fire.firebase.database().ref("users/"+dm.userId).once('value').then((snapshot => {
+        const obj = snapshot.val()        
         
+        const user = {
+          id: snapshot.key,
+          name: obj.name, 
+          photoUrl: obj.photoUrl,
+          chatId: dm.chatId
+        }
+
+        setUsers(previous => [...previous, user])
       })
       )
     }) 
-*/
   }
 
   return (
     <View style={styles.parent}>   
     {
         <FlatList
-        data={directMessages}
-        keyExtractor={item => item.chatId}
+        data={users}
+        keyExtractor={item => item.id}
         renderItem={({item}) =>
         <TouchableOpacity onPress={() => props.navigation.navigate('DirectMessage', {
           conversationCreated: true,
@@ -55,7 +52,8 @@ const DirectMessages = props => {
         })}
         >
         <User  
-        name={item.userId}
+        name={item.name}
+        photoUrl={item.photoUrl}
         />
         </TouchableOpacity>
         

@@ -9,6 +9,8 @@ import {useSelector} from 'react-redux';
 import uuid from 'react-native-uuid';
 
 
+
+
 const UserDetail = props => {
 
 const directMessages = useSelector(state => state.directMessages)
@@ -75,6 +77,10 @@ useEffect(() => {
 
 
 useEffect(() => {
+  /*
+  console.log(directMessages);
+  console.log(id);
+  */
   directMessages.forEach(dm => {    
     if(dm.userId === id) {
       console.log('Already in DM!')
@@ -88,6 +94,7 @@ useEffect(() => {
     }
     
   });
+
 }, [])
 
   return (

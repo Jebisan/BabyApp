@@ -21,7 +21,7 @@ const Login = props => {
   useEffect(() => {
     
     if(userId!==null && authenticated==true){
-      console.log(userId, authenticated)
+      //console.log(userId, authenticated)
     async function fetchData() {
       try{
         await dispatch(fetchUserData(userId));
@@ -87,7 +87,7 @@ const Login = props => {
     </View>
     <View style={{ marginTop: 48, flexDirection: "row", justifyContent: "center" }}>
        
-    <TouchableOpacity onPress={_loginWithFacebook}>
+    <TouchableOpacity onPress={() => Alert.alert('Not supported yet')}>
             <View style={styles.socialButton}>
                 <Image source={require("../../assets/facebook.png")} style={styles.socialLogo} />
                 <Text style={styles.text}>Facebook</Text>
@@ -119,7 +119,7 @@ const Login = props => {
     </TouchableOpacity>
 
     
-    {isLoading?<ActivityIndicator size='small' /> : 
+    {isLoading?<ActivityIndicator size='large' /> : 
     <TouchableOpacity onPress={_login} style={styles.submitContainer}>
     <Text
         style={[

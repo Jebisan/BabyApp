@@ -3,10 +3,10 @@ import { Button, View, StyleSheet, Image, Text, SafeAreaView, ScrollView, Toucha
 import { DrawerNavigator } from 'react-navigation';
 import {Ionicons, MaterialIcons} from '@expo/vector-icons';
 import {useSelector} from 'react-redux';
-import ImagePicker from '../components/ImagePicker';
+import ImagePicker from '../../components/ImagePicker';
 import ProgressCircle from 'react-native-progress-circle';
 import moment from 'moment';
-import HeaderButton from '../components/HeaderButton';
+import HeaderButton from '../../components/HeaderButton';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 
