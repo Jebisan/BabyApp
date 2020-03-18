@@ -1,7 +1,7 @@
 import React from 'react';
 import { Platform, KeyboardAvoidingView, SafeAreaView, StyleSheet, View, Text, ActivityIndicator } from 'react-native';
 import {GiftedChat} from 'react-native-gifted-chat';
-import Fire from '../Fire';
+import Fire from '../../Fire';
 import {connect} from 'react-redux';
 
 
@@ -25,7 +25,7 @@ class GroupChat extends React.Component {
 
 send = messages =>{
 
-const groupId = this.props.navigation.getParam('groupId')
+const groupId = this.props.navigation.getParam('id')
 
   messages.forEach(item => {
       const message = {   
@@ -63,7 +63,7 @@ const groupId = this.props.navigation.getParam('groupId')
 };
 
   get messages() {
-    const groupId = this.props.navigation.getParam('groupId');
+    const groupId = this.props.navigation.getParam('id');
 
       return Fire.firebase.database().ref("groups/"+groupId+"/messages");
     }

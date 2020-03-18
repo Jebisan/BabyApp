@@ -156,7 +156,7 @@ export const fetchUserGroups = (groups) => {
           city: snapshot.val().city,
           photoUrl: snapshot.val().photoUrl,
           postalCode: snapshot.val().postalCode,
-          type: snapshot.val().type,
+          groupType: snapshot.val().groupType,
           members: snapshot.val().members,
         }
         

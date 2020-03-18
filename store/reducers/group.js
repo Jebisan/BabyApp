@@ -19,7 +19,7 @@ export default groupReducer = (state = INITIAL_STATE, action) => {
             description: action.description,
             postalCode: action.postalCode,
             city: action.city,
-            type: action.groupType,
+            groupType: action.groupType,
             photoUrl: action.photoUrl
           }
         ];

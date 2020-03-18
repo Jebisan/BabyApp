@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Button, StyleSheet, FlatList, View, TouchableOpacity } from 'react-native';
 import {useSelector} from 'react-redux';
 import Group from '../components/Group';
@@ -9,6 +9,10 @@ import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 const Groups = props => {
   const groups = useSelector(state => state.groups)
 
+  useEffect(() => {
+    console.log(groups)
+  }, [])
+
 
   return (
     <View style={styles.parent}>
@@ -16,7 +20,7 @@ const Groups = props => {
           data={groups}
           keyExtractor={item => item.id}
           renderItem={({item}) =>
-            <TouchableOpacity onPress={() => props.navigation.navigate('Chatscreen', {
+            <TouchableOpacity onPress={() => props.navigation.navigate('GroupChat', {
               id: item.id
             })}
             >
