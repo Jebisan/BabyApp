@@ -1,4 +1,4 @@
-import { AUTHENTICATE, LOGOUT, SET_FIREBASE_DATA, SET_PHOTO_URL, SET_GROUPS} from '../actions/auth'
+import { AUTHENTICATE, LOGOUT, SET_FIREBASE_DATA, SET_PHOTO_URL, SET_PUSH_TOKEN} from '../actions/auth'
 
 const INITIAL_STATE = {
   token: null,
@@ -14,7 +14,8 @@ const INITIAL_STATE = {
   postalCode: null,
   city: null,
   photoUrl: null,
-  groups: null
+  groups: null,
+  pushToken: null
 };
 
 export default authReducer = (state = INITIAL_STATE, action) => {
@@ -40,13 +41,20 @@ export default authReducer = (state = INITIAL_STATE, action) => {
         birthday: action.birthday,
         postalCode: action.postalCode,
         city: action.city,
-        photoUrl: action.photoUrl
+        photoUrl: action.photoUrl,
+        pushToken: action.pushToken
       }
     case SET_PHOTO_URL:
       return {
         ...state,
         photoUrl: action.photoUrl
-      }      
+      }  
+      
+      case SET_PUSH_TOKEN:
+        return {
+          ...state,
+          pushToken: action.pushToken
+        }  
     default:
       return state
   }

@@ -5,6 +5,7 @@ export const LOGOUT = 'LOGOUT'
 export const SET_FIREBASE_DATA = 'SET_FIREBASE_DATA'
 export const SET_PHOTO_URL = 'SET_PHOTO_URL'
 export const SET_GROUPS = 'SET_GROUPS'
+export const SET_PUSH_TOKEN = 'SET_PUSH_TOKEN'
 export const ADD_GROUP_TO_USERS = 'ADD_GROUP_TO_USERS'
 export const SET_DMS = 'SET_DMS'
 export const CREATE_GROUP = 'CREATE_GROUP'
@@ -217,7 +218,8 @@ export const fetchUserData = (userId) => {
           gender: data.gender, 
           postalCode: data.postalCode, 
           city: data.city,
-          photoUrl: data.photoUrl
+          photoUrl: data.photoUrl,
+          pushToken: data.pushToken
         });
 
         
@@ -471,6 +473,35 @@ export const addChatToUser = (chatId, personId) => {
       }
 
       dispatch({type: SET_DMS, directMessage: newDm})
+    
+  };
+};
+
+export const addPushTokenToUser = (pushToken) => {
+  return async (dispatch, getState) => {
+    const userId = getState().auth.userId;    
+    const token = getState().auth.token;    
+
+
+      const response = await fetch(
+        `https://babyapp-ed94d.firebaseio.com/users/${userId}.json?auth=${token}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            pushToken: pushToken
+          })
+        }
+      );
+
+      if (!response.ok) {
+        let message = 'Adding pushToken to user in Firebase failed!';
+        throw new Error(message);
+      }
+
+      dispatch({type: SET_PUSH_TOKEN, pushToken: pushToken});
     
   };
 };

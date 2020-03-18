@@ -6,6 +6,9 @@ import { useSelector } from 'react-redux';
 import InputTextField from '../../components/InputTextField';
 
 
+
+
+
 const Login = props => {
 
   const dispatch = useDispatch();
@@ -17,6 +20,9 @@ const Login = props => {
   const userId = useSelector(state => state.auth.userId);
   const _email = useSelector(state => state.auth.email);
 
+
+  useEffect(() => {
+  }, [])
 
   useEffect(() => {
     
@@ -75,6 +81,9 @@ const Login = props => {
     }
     
   }, [error])
+
+
+
   
 
   return (

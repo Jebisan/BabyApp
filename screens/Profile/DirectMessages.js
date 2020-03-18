@@ -8,11 +8,13 @@ const DirectMessages = props => {
 
   const directMessages = useSelector(state => state.directMessages)
   const userId = useSelector(state => state.auth.userId)
+  const myToken = useSelector(state => state.auth.pushToken)
 
   
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
+    console.log(myToken);
       getPeople();
   }, []);
 
@@ -23,12 +25,14 @@ const DirectMessages = props => {
 
     directMessages.forEach(dm => {
       Fire.firebase.database().ref("users/"+dm.userId).once('value').then((snapshot => {
-        const obj = snapshot.val()        
+        const obj = snapshot.val()  
+        console.log(obj);      
         
         const user = {
           id: snapshot.key,
           name: obj.name, 
           photoUrl: obj.photoUrl,
+          pushToken: obj.pushToken,
           chatId: dm.chatId
         }
 
@@ -48,7 +52,8 @@ const DirectMessages = props => {
         <TouchableOpacity onPress={() => props.navigation.navigate('DirectMessage', {
           conversationCreated: true,
           personId: item.userId,
-          chatId: item.chatId
+          chatId: item.chatId,
+          pushToken: item.pushToken
         })}
         >
         <User  

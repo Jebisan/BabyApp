@@ -7,11 +7,16 @@ import Fire from '../../Fire';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import {ButtonGroup} from 'react-native-elements';
 import { useSelector } from 'react-redux';
+import {addPushTokenToUser} from '../../store/actions/auth'
+import { Notifications } from 'expo';
+import * as Permissions from 'expo-permissions';
+import Constants from 'expo-constants';
+import {useDispatch} from 'react-redux'
 
 
 
  const Find = (props) => {
-   
+  const dispatch = useDispatch();
   const userId = useSelector(state => state.auth.userId);
 
   const [searchText, setSearchText] = useState('');
@@ -24,6 +29,7 @@ import { useSelector } from 'react-redux';
   const [textFieldInFocus, setTextFieldInFocus] = useState(false)
  
   useEffect(() => {
+    registerForPushNotificationsAsync();
    getUsers();
    getGroups();
   }, [])
@@ -80,6 +86,31 @@ const getGroups = () => {
   const updateIndex =(selectedIndex) => {
     setSelectedIndex(selectedIndex)
   }
+
+  const registerForPushNotificationsAsync = async () => {
+    if (Constants.isDevice) {
+      const { status: existingStatus } = await Permissions.getAsync(
+        Permissions.NOTIFICATIONS
+      );
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Permissions.askAsync(
+          Permissions.NOTIFICATIONS
+        );
+        finalStatus = status;
+      }
+      if (finalStatus !== 'granted') {
+        alert('Failed to get push token for push notification!');
+        return;
+      }
+      let token = await Notifications.getExpoPushTokenAsync();
+      dispatch(addPushTokenToUser(token));
+      console.log(token);
+
+    } else {
+      alert('Must use physical device for Push Notifications');
+    }
+  };
 
 
 const buttons = ['Personer', 'Grupper']
@@ -157,6 +188,7 @@ const buttons = ['Personer', 'Grupper']
               postalCode: item.postalCode,
               birthday: item.birthday,
               photoUrl: item.photoUrl,
+              pushToken: item.pushToken
             })}>
                 <User
                 name={item.name}

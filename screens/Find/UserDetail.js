@@ -25,6 +25,7 @@ const postalCode = props.navigation.getParam('postalCode');
 const birthday = props.navigation.getParam('birthday');
 const photoUrl = props.navigation.getParam('photoUrl');
 const dueDate = props.navigation.getParam('dueDate');
+const pushToken = props.navigation.getParam('pushToken');
 const [chatId, setChatId] = useState(false);
 
 const [conversationCreated, setConversationCreated] = useState(undefined);
@@ -109,7 +110,8 @@ useEffect(() => {
             <TouchableOpacity onPress={() => props.navigation.navigate('DirectMessage',{
               conversationCreated: conversationCreated,
               personId: props.navigation.getParam('id'),
-              chatId: chatId
+              chatId: chatId,
+              pushToken: pushToken
             }
             
 

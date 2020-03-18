@@ -6,12 +6,13 @@ import {connect} from 'react-redux';
 import {addChatToUser} from '../../store/actions/auth'
 
 
+
 class DirectMessage extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
         messages: [],
-        conversationCreated: false
+        conversationCreated: false,
     }
   }
 
@@ -19,7 +20,7 @@ class DirectMessage extends React.Component {
   componentDidMount() { 
     console.log('Conversation created: '+this.props.navigation.getParam('conversationCreated'))
     console.log('chatId: ' + this.props.navigation.getParam('chatId'))
-
+    console.log('PushToken: ' + this.props.navigation.getParam('pushToken'))
 
     if(this.props.navigation.getParam('conversationCreated')){
       this.setState({conversationCreated:true})
@@ -27,14 +28,17 @@ class DirectMessage extends React.Component {
       this.setState({conversationCreated:false})
 
     }
-    this.get(message =>  this.setState(previous => ({messages: GiftedChat.append(previous.messages, message)})));
-}
-
+    this.get(message =>  
+      this.setState(previous => ({messages: GiftedChat.append(previous.messages, message)}))
+      );
+    }
+    
 
 
 
 get = callback  => {
-    this.messages.on('child_added', snapshot => callback(this.parse(snapshot))) 
+    this.messages.on('child_added', snapshot => 
+    callback(this.parse(snapshot))) 
 }
 
 
@@ -50,9 +54,9 @@ send = async messages =>{
           }
       }
 
-      const chatRef = this.props.navigation.getParam('chatRef')
       const chatId = this.props.navigation.getParam('chatId')
       const personId = this.props.navigation.getParam('personId')
+      const pushToken = this.props.navigation.getParam('pushToken')
       
       if(this.state.conversationCreated){
         fetch(`https://babyapp-ed94d.firebaseio.com/directMessages/${chatId}/messages.json?auth=${this.props.token}`,
@@ -103,13 +107,31 @@ send = async messages =>{
           });
 
           this.props._addChatToUser(chatId, personId)
-
       }
-
-
-       
+        this.sendPushNotification('Ny beshed fra ' + message.user.name, message.text, pushToken)
 }
   )};
+
+  sendPushNotification = async(title, body, pushToken) => {
+    const message = {
+      to: pushToken,
+      sound: 'default',
+      title: title,
+      body: body, 
+      data: { data: 'goes here' },
+    };
+    const response = await fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Accept-encoding': 'gzip, deflate',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(message),
+    });
+    const data = response._bodyInit;
+    console.log(`Status & Response ID-> ${JSON.stringify(data)}`);
+  }
 
   parse = message => {
     const {user, text, timestamp} = message.val()
@@ -138,7 +160,7 @@ get user() {
 }
 
   componentWillUnmount(){    
-    this.messages.off();
+  this.messages.off();
   }
 
     render() {
@@ -153,7 +175,7 @@ get user() {
     }
 
     const mapDispatchToProps = (dispatch) => ({
-      _addChatToUser: (chatId, personId) => dispatch(addChatToUser(chatId, personId))
+      _addChatToUser: (chatId, personId) => dispatch(addChatToUser(chatId, personId)),
     });
 
    mapStateToProps=(state) => {
