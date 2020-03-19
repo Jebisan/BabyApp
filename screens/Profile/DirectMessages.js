@@ -14,7 +14,7 @@ const DirectMessages = props => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    console.log(myToken);
+    console.log(directMessages);
       getPeople();
   }, []);
 

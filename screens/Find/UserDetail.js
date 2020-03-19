@@ -79,22 +79,24 @@ useEffect(() => {
 
 useEffect(() => {
   if(directMessages.length!==0){
+  
+    
+    const existingDm = directMessages.find(dm => dm.userId==id)
 
-    directMessages.forEach(dm => {    
-      if(dm.userId === id) {
+      if(existingDm) {
         console.log('Already in DM!')
         setConversationCreated(true)
-        setChatId(dm.chatId)
+        setChatId(existingDm.chatId)
       } else {
         const newChatId = uuid.v1();
-        console.log('Not in DM!')
+        console.log('Not in DM! ')
         setConversationCreated(false)
         setChatId(newChatId)
       }
-    });
+    
   } else {
     const newChatId = uuid.v1();
-    console.log('Not in DM!')
+    console.log('Empty DM.. NOT IN DM!!')
     setConversationCreated(false)
     setChatId(newChatId)
   }
