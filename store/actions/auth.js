@@ -472,7 +472,7 @@ export const addChatToUser = (chatId, personId) => {
       );
 
       if (!response.ok) {
-        let message = 'Adding chat to user in Firebase failed!';
+        let message = 'Adding chat to this user in Firebase failed!';
         throw new Error(message);
       }
         
@@ -482,6 +482,33 @@ export const addChatToUser = (chatId, personId) => {
       }
 
       dispatch({type: SET_DMS, directMessage: newDm})
+    
+  };
+};
+
+export const addChatToPerson = (chatId, personId) => {
+  return async (dispatch, getState) => {  
+    const token = getState().auth.token;    
+
+
+      const response = await fetch(
+        `https://babyapp-ed94d.firebaseio.com/users/${personId}/messages.json?auth=${token}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            chatId: chatId
+          })
+        }
+      );
+
+      if (!response.ok) {
+        let message = 'Adding chat to person in Firebase failed!';
+        throw new Error(message);
+      }
+      
     
   };
 };

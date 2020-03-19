@@ -78,24 +78,27 @@ useEffect(() => {
 
 
 useEffect(() => {
-  /*
-  console.log(directMessages);
-  console.log(id);
-  */
-  directMessages.forEach(dm => {    
-    if(dm.userId === id) {
-      console.log('Already in DM!')
-      setConversationCreated(true)
-      setChatId(dm.chatId)
-    } else {
-      const newChatId = uuid.v1();
-      console.log('Not in DM!')
-      setConversationCreated(false)
-      setChatId(newChatId)
-    }
-    
-  });
+  if(directMessages.length!==0){
 
+    directMessages.forEach(dm => {    
+      if(dm.userId === id) {
+        console.log('Already in DM!')
+        setConversationCreated(true)
+        setChatId(dm.chatId)
+      } else {
+        const newChatId = uuid.v1();
+        console.log('Not in DM!')
+        setConversationCreated(false)
+        setChatId(newChatId)
+      }
+    });
+  } else {
+    const newChatId = uuid.v1();
+    console.log('Not in DM!')
+    setConversationCreated(false)
+    setChatId(newChatId)
+  }
+    
 }, [])
 
   return (

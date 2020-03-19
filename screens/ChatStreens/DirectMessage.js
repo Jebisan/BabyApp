@@ -3,7 +3,7 @@ import { SafeAreaView } from 'react-native';
 import {GiftedChat} from 'react-native-gifted-chat';
 import Fire from '../../Fire';
 import {connect} from 'react-redux';
-import {addChatToUser} from '../../store/actions/auth'
+import {addChatToUser, addChatToPerson} from '../../store/actions/auth'
 
 
 
@@ -106,7 +106,8 @@ send = async messages =>{
            )})
           });
 
-          this.props._addChatToUser(chatId, personId)
+          this.props._addChatToUser(chatId, this.props.userId)
+          this.props._addChatToPerson(chatId, personId)
       }
         this.sendPushNotification('Ny beshed fra ' + message.user.name, message.text, pushToken)
 }
@@ -175,7 +176,8 @@ get user() {
     }
 
     const mapDispatchToProps = (dispatch) => ({
-      _addChatToUser: (chatId, personId) => dispatch(addChatToUser(chatId, personId)),
+      _addChatToUser: (chatId, userId) => dispatch(addChatToUser(chatId, userId)),
+      _addChatToPerson: (chatId, personId) => dispatch(addChatToPerson(chatId, personId)),
     });
 
    mapStateToProps=(state) => {
