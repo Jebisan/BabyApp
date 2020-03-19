@@ -106,7 +106,7 @@ send = async messages =>{
            )})
           });
 
-          this.props._addChatToUser(chatId, this.props.userId)
+          this.props._addChatToUser(chatId, personId)
           this.props._addChatToPerson(chatId, personId)
       }
         this.sendPushNotification('Ny beshed fra ' + message.user.name, message.text, pushToken)
