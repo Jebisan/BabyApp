@@ -153,7 +153,7 @@ export const fetchUserGroups = (groups) => {
           return {...usersOfGroupObject[key]}.userId
         });
         
-        const newGroupArray = usersOfGroupArray.filter(user=>user!==userId)
+        //const newGroupArray = usersOfGroupArray.filter(user=>user!==userId)
 
         const groupData = {
           id: snapshot.key,
@@ -164,7 +164,7 @@ export const fetchUserGroups = (groups) => {
           photoUrl: snapshot.val().photoUrl,
           postalCode: snapshot.val().postalCode,
           groupType: snapshot.val().groupType,
-          members: newGroupArray
+          members: usersOfGroupArray
         }
         
         dispatch({type: SET_GROUPS, group: groupData})

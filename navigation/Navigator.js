@@ -18,6 +18,7 @@ import Settings from '../screens/Profile/Settings';
 import StartUpScreen from '../screens/StartUpScreen';
 import CreateAdditionalInformation from '../screens/Auth/CreateAdditionalInformation';
 import DirectMessage from '../screens/ChatStreens/DirectMessage';
+import GroupScreen from '../screens/GroupScreen';
 import GroupChat from '../screens/ChatStreens/GroupChat';
 
 const AuthStack = createSwitchNavigator({
@@ -43,7 +44,8 @@ const GroupsStack = createStackNavigator({
     Groups: Groups,
     AddGroup: AddGroup,
     FindUsers: FindUsers,
-    GroupChat: GroupChat
+    GroupChat: GroupChat,
+    GroupScreen: GroupScreen
 }
 );
 

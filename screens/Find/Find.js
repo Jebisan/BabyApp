@@ -108,7 +108,7 @@ const getGroups = () => {
       console.log(token);
 
     } else {
-      alert('Must use physical device for Push Notifications');
+      console.log('Must use physical device for Push Notifications');
     }
   };
 
