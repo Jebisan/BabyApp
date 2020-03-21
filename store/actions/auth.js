@@ -6,7 +6,7 @@ export const SET_FIREBASE_DATA = 'SET_FIREBASE_DATA'
 export const SET_PHOTO_URL = 'SET_PHOTO_URL'
 export const SET_GROUPS = 'SET_GROUPS'
 export const SET_PUSH_TOKEN = 'SET_PUSH_TOKEN'
-export const ADD_GROUP_TO_USERS = 'ADD_GROUP_TO_USERS'
+export const ADD_GROUP_TO_USER = 'ADD_GROUP_TO_USER'
 export const SET_DMS = 'SET_DMS'
 export const CREATE_GROUP = 'CREATE_GROUP'
 import * as Facebook from 'expo-facebook';
@@ -403,7 +403,8 @@ export const createGroup = (name, description, postalCode, city, groupType, sele
             postalCode,
             city,
             groupType,
-            photoUrl
+            photoUrl,
+            members: selectedUserIds
           })
         }
       );
@@ -415,7 +416,7 @@ export const createGroup = (name, description, postalCode, city, groupType, sele
         
       const resData = await response.json();
       
-      dispatch({type: CREATE_GROUP, admin:userId, id: resData.name, name, description, postalCode, city, groupType, photoUrl});
+      dispatch({type: CREATE_GROUP, admin:userId, id: resData.name, name, description, postalCode, city, groupType, photoUrl, members: selectedUserIds});
       
       selectedUserIds.forEach(user => {
       dispatch(addGroupToUser(user, resData.name))
@@ -438,9 +439,9 @@ export const addGroupToUser = (userId, groupId ) => {
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
+          body: JSON.stringify(
             groupId
-          })
+          )
         }
       );
   
@@ -451,6 +452,9 @@ export const addGroupToUser = (userId, groupId ) => {
       }
         
       const resData = await response.json();
+
+      dispatch({type:ADD_GROUP_TO_USER, userId, groupId})
+
     
   };
 };

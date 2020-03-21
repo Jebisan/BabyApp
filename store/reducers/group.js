@@ -1,4 +1,4 @@
-import {SET_GROUPS, CREATE_GROUP} from '../actions/auth'
+import {SET_GROUPS, CREATE_GROUP, ADD_GROUP_TO_USER} from '../actions/auth'
 
 const INITIAL_STATE = [];
 
@@ -11,6 +11,7 @@ export default groupReducer = (state = INITIAL_STATE, action) => {
         ];
 
       case CREATE_GROUP: 
+      console.log(action)
         return [
           ...state, {
             id: action.id,
@@ -20,10 +21,11 @@ export default groupReducer = (state = INITIAL_STATE, action) => {
             postalCode: action.postalCode,
             city: action.city,
             groupType: action.groupType,
-            photoUrl: action.photoUrl
+            photoUrl: action.photoUrl,
+            members: action.members
           }
         ];
-      
+     
     default:
       return state;
   }

@@ -4,7 +4,7 @@ import Fire from '../../Fire';
 import User from '../../components/User';
 import {Ionicons} from '@expo/vector-icons';
 import {createGroup} from '../../store/actions/auth';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 
 const FindUsers = props => {
@@ -15,14 +15,17 @@ const FindUsers = props => {
   const [filteredUsers, setFilteredUsers] = useState([])
   const [selectedUsers, setSelectedUsers] = useState([])
   const [searchText, setSearchText] = useState('');
+  const userId = useSelector(state => state.auth.userId)
   const dispatch = useDispatch();
 
   
   const _createGroup = useCallback(() => {
     const selectedUserIds = []
+    selectedUserIds.push(userId)
     selectedUsers.forEach(user => {
       selectedUserIds.push(user.id)
     });
+
 
     const newData = {
       groupData: groupData,
