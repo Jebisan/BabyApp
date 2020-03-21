@@ -140,20 +140,24 @@ export const fetchUserGroups = (groups) => {
     
     if(groups) {
     var groupArray = Object.keys(groups).map(key => {
-      return groups[key].groupId;
+      return groups[key];
     });
-
     groupArray.forEach(groupId => {
       
       Fire.firebase.database().ref("groups/"+groupId).once('value').then((snapshot => {
         
+        
         const usersOfGroupObject = snapshot.val().members
+        
+       
 
         const usersOfGroupArray =  Object.keys(usersOfGroupObject).map(key => {
-          return {...usersOfGroupObject[key]}.userId
+          return usersOfGroupObject[key]
         });
+       
+
         
-        //const newGroupArray = usersOfGroupArray.filter(user=>user!==userId)
+       // const newGroupArray = usersOfGroupArray.filter(user=>user!==userId)
 
         const groupData = {
           id: snapshot.key,
