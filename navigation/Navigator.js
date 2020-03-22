@@ -30,7 +30,8 @@ import Groups from '../screens/Group/Groups';
 import FindUsers from '../screens/Group/FindUsers';
 import CreateGroup from '../screens/Group/CreateGroup';
 import GroupScreen from '../screens/Group/GroupScreen';
-import AddUsersToGroup from '../screens/Group/AddUsersToGroup'
+import AddUsersToGroup from '../screens/Group/AddUsersToGroup';
+import Request from '../screens/Group/Request';
 
 const AuthStack = createSwitchNavigator({
     Login: Login,
@@ -57,7 +58,8 @@ const GroupsStack = createStackNavigator({
     FindUsers: FindUsers,
     GroupChat: GroupChat,
     GroupScreen: GroupScreen,
-    AddUsersToGroup: AddUsersToGroup
+    AddUsersToGroup: AddUsersToGroup,
+    Request: Request
 }
 );
 

@@ -10,6 +10,7 @@ const GroupScreen = props => {
 
   const groupData = useSelector(state => state.groups).find(group => group.id==props.navigation.getParam('id'))
   const [members, setMembers] = useState([])
+  const [requests, setRequests] = useState([])
 
   
   useEffect(() => {
@@ -19,7 +20,9 @@ const GroupScreen = props => {
       members: groupData.members,
       groupName: groupData.name
     });
+
     getMembers();
+    getRequests();
   }, [groupData])
 
 
@@ -37,12 +40,38 @@ const GroupScreen = props => {
           pushToken: obj.pushToken,
           birthday: obj.birthday,
           dueDate: obj.dueDate
-        }
-
-        //console.log(user)
-        
+        }        
         setMembers(previous => [...previous, user])
        
+      })
+      )
+    }) 
+  }
+
+  const getRequests = () => {
+    setRequests([]);
+    groupData.requests.forEach(request => {
+      const requestData = request;
+
+      Fire.firebase.database().ref("users/"+request.id).once('value').then((snapshot => {
+        const obj = snapshot.val()  
+        
+        const request = {
+          id: snapshot.key,
+          name: obj.name, 
+          photoUrl: obj.photoUrl?obj.photoUrl:'http://criticare.isccm.org/assets/images/male_placeholder.png',
+          pushToken: obj.pushToken,
+          birthday: obj.birthday,
+          gender: obj.gender,
+          postalCode: obj.postalCode,
+          city: obj.city,
+          dueDate: obj.dueDate,
+          text: requestData.text,
+          time: requestData.timestamp
+          
+        }        
+        console.log(request)
+        setRequests(previous => [...previous, request])
       })
       )
     }) 
@@ -62,7 +91,7 @@ const GroupScreen = props => {
         </View>
 
         <View style={styles.membersContainer}>
-          <Text style={styles.membersTitle}>MEDLEMMER</Text>
+          <Text style={styles.membersTitle}>MEDLEMMER </Text>
         <View style={styles.picturesContainer} >
             {members.map((member) =>
                 <View key={member.id} > 
@@ -77,8 +106,27 @@ const GroupScreen = props => {
               </TouchableOpacity>
         </View>
         </View>
+
+
+        <View style={styles.membersContainer}>
+        <Text style={styles.membersTitle}>ANMODNINGER ({requests.length})</Text>
+      <View style={styles.picturesContainer} >
+          {requests.map((request) =>
+            <TouchableOpacity onPress={() => props.navigation.navigate('Request', {
+              requestData: request,
+              groupAdmin: groupData.admin
+            })}>
+              <View key={request.id} > 
+                  <Image source={{ uri: request.photoUrl }} style={styles.profilePicture}></Image>  
+              </View>
+              </TouchableOpacity>
+            )}
+      </View>
+      </View>
+
+
+
     </View>
-    
   );  
 };
 

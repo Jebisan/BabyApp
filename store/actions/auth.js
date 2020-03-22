@@ -148,17 +148,20 @@ export const fetchUserGroups = (groups) => {
       Fire.firebase.database().ref("groups/"+groupId).once('value').then((snapshot => {
         
         
+        //MEMBERS
         const usersOfGroupObject = snapshot.val().members
-        
-       
-
         const usersOfGroupArray =  Object.keys(usersOfGroupObject).map(key => {
           return usersOfGroupObject[key]
         });
-       
 
-        
-       // const newGroupArray = usersOfGroupArray.filter(user=>user!==userId)
+        //PENDING MEMBERS
+        let requestsArray = []
+        if(snapshot.val().requests){
+          const requestsObject = snapshot.val().requests
+          requestsArray =  Object.keys(requestsObject).map(key => {
+            return requestsObject[key]
+          });
+        }
 
         const groupData = {
           id: snapshot.key,
@@ -169,7 +172,8 @@ export const fetchUserGroups = (groups) => {
           photoUrl: snapshot.val().photoUrl,
           postalCode: snapshot.val().postalCode,
           groupType: snapshot.val().groupType,
-          members: usersOfGroupArray
+          members: usersOfGroupArray,
+          requests: requestsArray
         }
         
         dispatch({type: SET_GROUPS, group: groupData})
