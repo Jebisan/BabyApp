@@ -8,25 +8,24 @@ import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 const GroupScreen = props => {
 
-  const id = props.navigation.getParam('id')
-  const groupName = props.navigation.getParam('groupName')
-  const memberIds = props.navigation.getParam('members')
+  const groupData = useSelector(state => state.groups).find(group => group.id==props.navigation.getParam('id'))
   const [members, setMembers] = useState([])
-  const description = props.navigation.getParam('description')
+
   
   useEffect(() => {
-    console.log(memberIds);
+    console.log(groupData)
     props.navigation.setParams({
-      id: props.navigation.getParam('id'),
-      members: props.navigation.getParam('members'),
-      groupName: props.navigation.getParam('groupName'),
+      id: groupData.id,
+      members: groupData.members,
+      groupName: groupData.name
     });
     getMembers();
-  }, [])
+  }, [groupData])
 
 
   const getMembers = () => {
-    memberIds.forEach(dm => {
+    setMembers([]);
+    groupData.members.forEach(dm => {
       Fire.firebase.database().ref("users/"+dm).once('value').then((snapshot => {
         const obj = snapshot.val()  
         //console.log(obj);
@@ -34,7 +33,7 @@ const GroupScreen = props => {
         const user = {
           id: snapshot.key,
           name: obj.name, 
-          photoUrl: obj.photoUrl,
+          photoUrl: obj.photoUrl?obj.photoUrl:'http://criticare.isccm.org/assets/images/male_placeholder.png',
           pushToken: obj.pushToken,
           birthday: obj.birthday,
           dueDate: obj.dueDate
@@ -57,8 +56,8 @@ const GroupScreen = props => {
             <Image source={{ uri: 'http://criticare.isccm.org/assets/images/male_placeholder.png' }} style={styles.groupImage}></Image>  
           </View>
         <View style={styles.column}>
-          <Text style={styles.title}>{groupName}</Text>
-          <Text style={styles.subTitle}>{description}</Text>
+          <Text style={styles.title}>{groupData.name}</Text>
+          <Text style={styles.subTitle}>{groupData.description}</Text>
         </View>      
         </View>
 
@@ -71,7 +70,9 @@ const GroupScreen = props => {
                 </View>
                 
               )}
-              <TouchableOpacity onPress={() => alert('Not supported yet')} >
+              <TouchableOpacity onPress={() => props.navigation.navigate('AddUsersToGroup', {
+                groupData
+              })} >
                 <Ionicons style={styles.addIcon} name='ios-add-circle-outline' size={43} />
               </TouchableOpacity>
         </View>

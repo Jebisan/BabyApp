@@ -7,6 +7,7 @@ export const SET_PHOTO_URL = 'SET_PHOTO_URL'
 export const SET_GROUPS = 'SET_GROUPS'
 export const SET_PUSH_TOKEN = 'SET_PUSH_TOKEN'
 export const ADD_GROUP_TO_USER = 'ADD_GROUP_TO_USER'
+export const ADD_USER_TO_GROUP = 'ADD_USER_TO_GROUP'
 export const SET_DMS = 'SET_DMS'
 export const CREATE_GROUP = 'CREATE_GROUP'
 import * as Facebook from 'expo-facebook';
@@ -425,6 +426,37 @@ export const createGroup = (name, description, postalCode, city, groupType, sele
   };
 };
 
+export const addUserToGroup = (userId, groupId ) => {
+  return async (dispatch, getState) => {
+
+    const token = getState().auth.token;    
+
+      const response = await fetch(
+        `https://babyapp-ed94d.firebaseio.com/groups/${groupId}/members.json?auth=${token}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(
+            userId
+          )
+        }
+      );
+  
+
+      if (!response.ok) {
+        let message = 'Adding group to user failed on Firebase!';
+        throw new Error(message);
+      }
+        
+      const resData = await response.json();
+
+      dispatch({type:ADD_USER_TO_GROUP, userId, groupId})
+
+    
+  };
+};
 
 export const addGroupToUser = (userId, groupId ) => {
   return async (dispatch, getState) => {
@@ -452,9 +484,6 @@ export const addGroupToUser = (userId, groupId ) => {
       }
         
       const resData = await response.json();
-
-      dispatch({type:ADD_GROUP_TO_USER, userId, groupId})
-
     
   };
 };

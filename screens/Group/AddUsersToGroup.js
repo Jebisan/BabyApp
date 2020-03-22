@@ -3,7 +3,7 @@ import {View, StyleSheet, Text, TextInput, Button, FlatList, TouchableOpacity } 
 import Fire from '../../Fire';
 import User from '../../components/User';
 import {Ionicons} from '@expo/vector-icons';
-import {createGroup} from '../../store/actions/auth';
+import {addUserToGroup, addGroupToUser} from '../../store/actions/auth';
 import {useDispatch, useSelector} from 'react-redux';
 
 
@@ -20,21 +20,17 @@ const AddUsersToGroup = props => {
 
   
   const _createGroup = useCallback(() => {
-    const selectedUserIds = []
-    selectedUserIds.push(userId)
-    selectedUsers.forEach(user => {
+  const selectedUserIds = []
+  selectedUsers.forEach(user => {
       selectedUserIds.push(user.id)
     });
 
+    selectedUserIds.forEach(selectedUserId => {
+      dispatch(addUserToGroup(selectedUserId, groupData.id))
+      dispatch(addGroupToUser(selectedUserId, groupData.id))
+  });
 
-    const newData = {
-      groupData: groupData,
-      selectedUserIds: selectedUserIds
-    }
-
-    dispatch(createGroup(groupData.name, groupData.description, groupData.postalCode,groupData.city,groupData.type,selectedUserIds, groupData.photoUrl))
-
-   props.navigation.navigate('Groups')
+  props.navigation.goBack();
 
 }, [selectedUsers])
 
@@ -143,7 +139,7 @@ AddUsersToGroup.navigationOptions = navigationData => {
 
   return {
     headerTitle: 'Find brugere',
-    headerRight: <Button title='Opret' onPress={save} />
+    headerRight: <Button title='Tilføj' onPress={save} />
   };
 };
 
