@@ -49,12 +49,12 @@ import {useDispatch} from 'react-redux'
 
 const getGroups = () => {
   Fire.groups.once('value').then((snapshot) =>{
-  
     obj = snapshot.val()
     var result = Object.keys(obj).map((value) => {
       return {key: value,  ...obj[value]};
     });
     setGroups(result)
+    console.log(result.members);
 
   }).catch(error => {
     console.log(error);
@@ -209,13 +209,15 @@ const buttons = ['Personer', 'Grupper']
             data={filteredGroups}
             renderItem={({ item }) => 
             <TouchableOpacity onPress={() => props.navigation.navigate('GroupDetail', {
-              groupId: item.key
+              groupId: item.key,
+              name: item.name,
+              description: item.description,
+              members: item.members
             })}>
                 <Group
                 id={item.key}
                 name={item.name}
                 description={item.description}
-                gender={item.gender}
                 city={item.city}
                 postalCode={item.postalCode}
                 photoUrl={item.photoUrl}

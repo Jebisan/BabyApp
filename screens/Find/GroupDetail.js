@@ -1,214 +1,154 @@
 import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, Text, ScrollView ,SafeAreaView, Image, TouchableOpacity} from 'react-native';
+import Fire from '../../Fire';
 
 const GroupDetail = props => {
 
+  const name = props.navigation.getParam('name')
+  const description = props.navigation.getParam('description')
+  const [members, setMembers] = useState([]);
+
+  useEffect(() => {
+    getMembers()
+  }, [])
+
+
+  const getMembers = () => {
+    setMembers([]);
+    const membersObject = props.navigation.getParam('members')
+    const membersArray = Object.keys(membersObject).map(key => membersObject[key])
+
+    membersArray.forEach(dm => {
+        Fire.firebase.database().ref("users/"+dm).once('value').then((snapshot => {
+        const obj = snapshot.val()  
+        
+        const user = {
+          id: snapshot.key,
+          name: obj.name, 
+          gender: obj.gender,
+          dueDate: obj.dueDate,
+          city: obj.city,
+          postalCode: obj.postalCode,
+          birthday: obj.birthday,
+          photoUrl: obj.photoUrl?obj.photoUrl:'http://criticare.isccm.org/assets/images/male_placeholder.png',
+          pushToken: obj.pushToken
+        }      
+
+        setMembers(previous => [...previous, user])
+       
+      })
+      )
+    }) 
+  }
+
 
   return (
-    <SafeAreaView style={styles.container}>
-        <Text>GroupDetails</Text>
-  </SafeAreaView>
+    <View style={styles.parent}>
+        <View style={styles.topContainer}>
+          <View>
+            <Image source={{ uri: 'http://criticare.isccm.org/assets/images/male_placeholder.png' }} style={styles.groupImage}></Image>  
+          </View>
+        <View style={styles.column}>
+          <Text style={styles.title}>{name}</Text>
+          <Text style={styles.subTitle}>{description}</Text>
+        </View>      
+        </View>
+
+        <View style={styles.membersContainer}>
+          <Text style={styles.membersTitle}>MEDLEMMER </Text>
+        <View style={styles.picturesContainer}>
+
+            {
+              members.map((member) =>
+              
+                <TouchableOpacity key={member.id} onPress={ () => props.navigation.navigate('UserDetail', {
+
+                  id: member.id,
+                  name: member.name,
+                  gender: member.gender,
+                  city: member.city,
+                  postalCode: member.postalCode, 
+                  birthday: member.birthday,
+                  photoUrl: member.photoUrl,
+                  dueDate: member.dueDate,
+                  pushToken: member.pushToken
+
+                })} > 
+                    <Image source={{ uri: member.photoUrl }} style={styles.profilePicture}></Image>  
+                </TouchableOpacity>
+                
+              )
+            }
+        </View>
+        </View>
+
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-      flex: 1,
-      backgroundColor: "#FFF",
-      top: 10
-      
+  parent: {
+   flex: 1,
+   paddingTop: 22,
+   marginHorizontal: '5%',
   },
-  profilePictureContainer: {
-    alignSelf: "center" ,
-
-},
-  text: {
-      fontFamily: "HelveticaNeue",
-      fontWeight: '200',
-      color: "#52575D",
-      fontSize: 12,
-       
-      
-  },
-  image: {
-      flex: 1,
-      height: undefined,
-      width: undefined
-  },
-  titleBar: {
-      flexDirection: "row",
-      justifyContent: 'flex-end',
-      marginTop: 4,
-      marginHorizontal: 20,
-
-  },
-  subText: {
-      fontSize: 12,
-      color: "#AEB5BC",
-      textTransform: "uppercase",
-      fontWeight: "500"
-  },
-  profileImage: {
-      width: 150,
-      height: 150,
-      borderRadius: 100,
-      overflow: "hidden"
-  },
-  genderSymbol: {
-    left: 7,
-    bottom: 6,
-
-  },
-  dm: {
-      backgroundColor: "#41444B",
-      position: "absolute",
-      top: 20,
-      width: 30,
-      height: 30,
-      borderRadius: 20,
-      alignItems: "center",
-      justifyContent: "center"
-  },
-  active: {
-      backgroundColor: "#34FFB9",
-      position: "absolute",
-      bottom: 28,
-      left: 10,
-      padding: 4,
-      height: 20,
-      width: 20,
-      borderRadius: 10
-  },
-  add: {
-      backgroundColor: "#41444B",
-      position: "absolute",
-      bottom: 0,
-      right: 0,
-      width: 40,
-      height: 40,
-      borderRadius: 30,
-      alignItems: "center",
-      justifyContent: "center",
-      
-  },
-  infoContainer: {
-      alignSelf: "center",
-      alignItems: "center",
-      marginTop: 16,
-      bottom: 2
-  },
-  statsContainer: {
-      flexDirection: "row",
-      alignSelf: "center",
-      marginTop: 32,
-      bottom: 2
-  },
-  statsBox: {
-      alignItems: "center",
-      flex: 1
-  },
-  mediaImageContainer: {
-      width: 180,
-      height: 200,
-      borderRadius: 12,
-      overflow: "hidden",
-      marginHorizontal: 10
-  },
-  mediaCount: {
-      backgroundColor: "#41444B",
-      position: "absolute",
-      top: "50%",
-      marginTop: -50,
-      marginLeft: 30,
-      width: 100,
-      height: 100,
-      alignItems: "center",
-      justifyContent: "center",
-      borderRadius: 12,
-      shadowColor: "rgba(0, 0, 0, 0.38)",
-      shadowOffset: { width: 0, height: 10 },
-      shadowRadius: 20,
-      shadowOpacity: 1
-  },
-  recent: {
-      marginLeft: 78,
-      marginTop: 32,
-      marginBottom: 6,
-      fontSize: 10
-  },
-  recentItem: {
-      flexDirection: "row",
-      alignItems: "flex-start",
-      marginBottom: 16
-  },
-  activityIndicator: {
-      backgroundColor: "#CABFAB",
-      padding: 4,
-      height: 12,
-      width: 12,
-      borderRadius: 6,
-      marginTop: 3,
-      marginRight: 20
-  },
-  infoRow: {
+  topContainer: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
-    padding: 2,
-    alignItems: 'center',
-    width: 130,
-    left: 20,
-    //borderWidth: 1
-  }, 
-  infoSymbol: {
-    right: 5,
-    top: 1
+    fontSize: 18,
+  //  borderWidth: 1
   },
-  infoText: {
-    fontFamily: "HelveticaNeue",
-    color: "#52575D",
-    fontWeight: '200',
-    fontSize: 10,
-    left: 8
+  column: {
+    flexDirection: 'column'
   },
-  weekNumber: {
-    fontSize: 28,
-    bottom: 9,
+  groupImage: {
+    width: 50, 
+    height: 50,  
+    backgroundColor: 'lightgrey',
+    borderRadius: 8
+  },
+  title: {
+    fontSize: 26,
+    marginLeft: 10,
+  //  borderWidth: 1,
+    width: "100%",
+    height: 40
+  },
+  subTitle: {
+    marginLeft: 10,
+    color: 'grey',
+   // borderWidth: 1,
+  },
+  membersContainer: {
+   // borderWidth: 1,
+    top: 20
+  },
+  membersTitle: {
+    textAlign: 'left',
+    backgroundColor: '#c6ffd7',
+    padding: 10,
+    paddingLeft: 20,
+    width: 200,
+    right: 20,
+    
+    
+  },
+  profilePicture: {
+    width: 50, 
+    height: 50,  
+    borderRadius: 50,
+    marginLeft: 10,
+    borderWidth: 1,
+    borderColor: 'lightgrey'
+  },
+  picturesContainer: {
+    flexDirection: 'row',
+    padding: 10
+  },
+  addIcon: {
+    padding: 3,
+    marginLeft: 10
+  }
 
-    fontFamily: "HelveticaNeue",
-    fontWeight: '300',
-    color: "#52575D",
-  },
-  weekText: {
-    fontSize: 14,
-    bottom: 11,
-
-    fontFamily: "HelveticaNeue",
-    fontWeight: '200',
-    color: "#52575D",
-  },
-  weekSubtext: {
-    fontSize: 8,
-    bottom: 5,
-
-    fontFamily: "HelveticaNeue",
-    fontWeight: '200',
-    color: "#52575D",
-  },
-  interestsTitle: {
-    fontSize: 11,
-    fontFamily: "HelveticaNeue",
-    fontWeight: '300',
-    color: "#52575D",
-    right: 14
-  },
-  interestsContent: {
-    fontSize: 10,
-    top: 10,
-    fontFamily: "HelveticaNeue",
-    fontWeight: '200',
-    color: "#52575D",
-    marginHorizontal: 14
-  },
-});
+})
 
 export default GroupDetail;
