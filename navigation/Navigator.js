@@ -4,22 +4,34 @@ import {createStackNavigator, createBottomTabNavigator, createAppContainer, crea
 import {useDispatch} from 'react-redux'
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
 import {logOut} from '../store/actions/auth'
-import Groups from '../screens/Group/Groups';
-import Profile from '../screens/Profile/Profile';
-import Find from '../screens/Find/Find';
-import FindUsers from '../screens/Group/FindUsers';
-import AddGroup from '../screens/Group/AddGroup';
-import UserDetail from '../screens/Find/UserDetail'
-import GroupDetail from '../screens/Find/GroupDetail'
+
+
+
+//AUTH
+import StartUpScreen from '../screens/StartUpScreen';
 import Login from '../screens/Auth/Login';
 import SignUp from '../screens/Auth/SignUp';
-import DirectMessages from '../screens/Profile/DirectMessages';
-import Settings from '../screens/Profile/Settings';
-import StartUpScreen from '../screens/StartUpScreen';
 import CreateAdditionalInformation from '../screens/Auth/CreateAdditionalInformation';
-import DirectMessage from '../screens/ChatStreens/DirectMessage';
+
+//CHATSCREENS
+import GroupChat from '../screens/ChatScreens/GroupChat';
+import DirectMessage from '../screens/ChatScreens/DirectMessage';
+
+//PROFILE
+import Settings from '../screens/Profile/Settings';
+import Profile from '../screens/Profile/Profile';
+import DirectMessages from '../screens/Profile/DirectMessages';
+
+//FIND
+import GroupDetail from '../screens/Find/GroupDetail'
+import UserDetail from '../screens/Find/UserDetail'
+import Find from '../screens/Find/Find';
+
+//GROUPS
+import Groups from '../screens/Group/Groups';
+import FindUsers from '../screens/Group/FindUsers';
+import AddGroup from '../screens/Group/AddGroup';
 import GroupScreen from '../screens/Group/GroupScreen';
-import GroupChat from '../screens/ChatStreens/GroupChat';
 
 const AuthStack = createSwitchNavigator({
     Login: Login,
