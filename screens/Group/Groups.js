@@ -59,7 +59,7 @@ Groups.navigationOptions = navigationData => {
     <Item
       title="add"
       iconName= 'ios-add'
-      onPress={() => navigationData.navigation.navigate('AddGroup')}
+      onPress={() => navigationData.navigation.navigate('CreateGroup')}
     />
   </HeaderButtons>  };
 };

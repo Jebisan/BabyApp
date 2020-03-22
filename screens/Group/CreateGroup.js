@@ -5,7 +5,7 @@ import {ButtonGroup} from 'react-native-elements';
 import {useDispatch} from 'react-redux';
 
 
-const AddGroup = props => {
+const CreateGroup = props => {
   const { navigation } = props;
 
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -114,7 +114,7 @@ containerStyle={{height: 30}}
   );
 };
 
-AddGroup.navigationOptions = navigationData => {
+CreateGroup.navigationOptions = navigationData => {
 
   return {
     headerTitle: 'Ny gruppe',
@@ -154,4 +154,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default AddGroup;
+export default CreateGroup;

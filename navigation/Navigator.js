@@ -5,8 +5,6 @@ import {useDispatch} from 'react-redux'
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
 import {logOut} from '../store/actions/auth'
 
-
-
 //AUTH
 import StartUpScreen from '../screens/StartUpScreen';
 import Login from '../screens/Auth/Login';
@@ -30,8 +28,9 @@ import Find from '../screens/Find/Find';
 //GROUPS
 import Groups from '../screens/Group/Groups';
 import FindUsers from '../screens/Group/FindUsers';
-import AddGroup from '../screens/Group/AddGroup';
+import CreateGroup from '../screens/Group/CreateGroup';
 import GroupScreen from '../screens/Group/GroupScreen';
+import AddUsersToGroup from '../screens/Group/AddUsersToGroup'
 
 const AuthStack = createSwitchNavigator({
     Login: Login,
@@ -54,10 +53,11 @@ const SettingsStack = createStackNavigator({
 
 const GroupsStack = createStackNavigator({
     Groups: Groups,
-    AddGroup: AddGroup,
+    CreateGroup: CreateGroup,
     FindUsers: FindUsers,
     GroupChat: GroupChat,
-    GroupScreen: GroupScreen
+    GroupScreen: GroupScreen,
+    AddUsersToGroup: AddUsersToGroup
 }
 );
 
