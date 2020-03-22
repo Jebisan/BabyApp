@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {Button, StyleSheet, FlatList, Image, View, Text, TouchableOpacity } from 'react-native';
 import {useSelector} from 'react-redux';
-import Group from '../components/Group';
-import Fire from '../Fire';
+import Fire from '../../Fire';
 import { Ionicons} from '@expo/vector-icons';
-import HeaderButton from '../components/HeaderButton';
+import HeaderButton from '../../components/HeaderButton';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 const GroupScreen = props => {

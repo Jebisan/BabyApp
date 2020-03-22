@@ -4,11 +4,11 @@ import {createStackNavigator, createBottomTabNavigator, createAppContainer, crea
 import {useDispatch} from 'react-redux'
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
 import {logOut} from '../store/actions/auth'
-import Groups from '../screens/Groups';
+import Groups from '../screens/Group/Groups';
 import Profile from '../screens/Profile/Profile';
 import Find from '../screens/Find/Find';
-import FindUsers from '../screens/CreateGroup/FindUsers';
-import AddGroup from '../screens/CreateGroup/AddGroup';
+import FindUsers from '../screens/Group/FindUsers';
+import AddGroup from '../screens/Group/AddGroup';
 import UserDetail from '../screens/Find/UserDetail'
 import GroupDetail from '../screens/Find/GroupDetail'
 import Login from '../screens/Auth/Login';
@@ -18,7 +18,7 @@ import Settings from '../screens/Profile/Settings';
 import StartUpScreen from '../screens/StartUpScreen';
 import CreateAdditionalInformation from '../screens/Auth/CreateAdditionalInformation';
 import DirectMessage from '../screens/ChatStreens/DirectMessage';
-import GroupScreen from '../screens/GroupScreen';
+import GroupScreen from '../screens/Group/GroupScreen';
 import GroupChat from '../screens/ChatStreens/GroupChat';
 
 const AuthStack = createSwitchNavigator({

@@ -1,9 +1,9 @@
 import React, {useEffect} from 'react';
 import {Button, StyleSheet, FlatList, View, TouchableOpacity } from 'react-native';
 import {useSelector} from 'react-redux';
-import Group from '../components/Group';
+import Group from '../../components/Group';
 
-import HeaderButton from '../components/HeaderButton';
+import HeaderButton from '../../components/HeaderButton';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 const Groups = props => {
