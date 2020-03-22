@@ -49,15 +49,17 @@ const GroupScreen = props => {
   }
 
   const getRequests = () => {
+ //   console.log(groupData.requests)
+    
     setRequests([]);
     groupData.requests.forEach(request => {
-      const requestData = request;
+      const requestData = request
 
-      Fire.firebase.database().ref("users/"+request.id).once('value').then((snapshot => {
+      Fire.firebase.database().ref("users/"+request.userId).once('value').then((snapshot => {
         const obj = snapshot.val()  
         
         const request = {
-          id: snapshot.key,
+          personId: snapshot.key,
           name: obj.name, 
           photoUrl: obj.photoUrl?obj.photoUrl:'http://criticare.isccm.org/assets/images/male_placeholder.png',
           pushToken: obj.pushToken,
@@ -65,16 +67,15 @@ const GroupScreen = props => {
           gender: obj.gender,
           postalCode: obj.postalCode,
           city: obj.city,
-          dueDate: obj.dueDate,
-          text: requestData.text,
-          time: requestData.timestamp
-          
+          dueDate: obj.dueDate,     
+          requestKey: requestData.key
         }        
-        console.log(request)
+        //console.log(request);
         setRequests(previous => [...previous, request])
       })
       )
     }) 
+    
   }
 
 
@@ -112,9 +113,12 @@ const GroupScreen = props => {
         <Text style={styles.membersTitle}>ANMODNINGER ({requests.length})</Text>
       <View style={styles.picturesContainer} >
           {requests.map((request) =>
-            <TouchableOpacity onPress={() => props.navigation.navigate('Request', {
+            <TouchableOpacity key={request.requestKey} onPress={() => props.navigation.navigate('Request', {
               requestData: request,
-              groupAdmin: groupData.admin
+              groupAdmin: groupData.admin,
+              requestKey: request.requestKey,
+              groupId: groupData.id,
+              personId: request.personId
             })}>
               <View key={request.id} > 
                   <Image source={{ uri: request.photoUrl }} style={styles.profilePicture}></Image>  

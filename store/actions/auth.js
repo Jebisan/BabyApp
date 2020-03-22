@@ -154,14 +154,15 @@ export const fetchUserGroups = (groups) => {
           return usersOfGroupObject[key]
         });
 
-        //PENDING MEMBERS
+        //REQUESTS
         let requestsArray = []
         if(snapshot.val().requests){
           const requestsObject = snapshot.val().requests
           requestsArray =  Object.keys(requestsObject).map(key => {
-            return requestsObject[key]
+            return {key, userId: requestsObject[key]}
           });
         }
+        //console.log(requestsArray)
 
         const groupData = {
           id: snapshot.key,

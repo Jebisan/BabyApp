@@ -1,4 +1,5 @@
 import {SET_GROUPS, CREATE_GROUP, ADD_USER_TO_GROUP} from '../actions/auth'
+import {REMOVE_REQUEST_FROM_GROUP} from '../actions/group'
 
 const INITIAL_STATE = [];
 
@@ -31,6 +32,17 @@ export default groupReducer = (state = INITIAL_STATE, action) => {
               return {
                 ...group,
                 members: [...group.members, action.userId]
+              };
+            } else {
+              return group;
+            };
+          });
+        case REMOVE_REQUEST_FROM_GROUP:
+          return state.map(group => {
+            if (group.id === action.groupId) {
+              return {
+                ...group,
+                requests: [...group.requests.filter(request => request.key!==action.requestKey)]
               };
             } else {
               return group;

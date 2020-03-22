@@ -5,13 +5,19 @@ import { Alert } from 'react-native';
 import moment from 'moment';
 import 'moment/locale/da';
 import ProgressCircle from 'react-native-progress-circle'
-import {useSelector} from 'react-redux';
-import uuid from 'react-native-uuid';
+import {useSelector, useDispatch} from 'react-redux';
+import {removeRequestFromGroup} from '../../store/actions/group';
 
+import {addUserToGroup} from '../../store/actions/auth';
+import {addGroupToUser} from '../../store/actions/auth';
 
 const Request = props => {
-
+const dispatch = useDispatch();
 const userId = useSelector(state => state.auth.userId)
+
+const requestKey = props.navigation.getParam('requestKey');
+const groupId = props.navigation.getParam('groupId');
+const personId = props.navigation.getParam('personId');
 
 
 const name = props.navigation.getParam('requestData').name ;
@@ -21,7 +27,6 @@ const photoUrl = props.navigation.getParam('requestData').photoUrl;
 const dueDate = props.navigation.getParam('requestData').dueDate;
 const city = props.navigation.getParam('requestData').city;
 const postalCode = props.navigation.getParam('requestData').postalCode;
-const text = props.navigation.getParam('requestData').text;
 const groupAdmin = props.navigation.getParam('groupAdmin');
 
 //const pushToken = props.navigation.getParam('pushToken');
@@ -38,6 +43,8 @@ useEffect(() => {
   setAge();
   setDueDate();
   setToday();
+
+
 }, [])
 
 const setDueDate = () => {
@@ -75,6 +82,19 @@ useEffect(() => {
 }, [newDueDate, newToday])
 
 
+const denyRequest = () => {
+  dispatch(removeRequestFromGroup(groupId, requestKey ))
+  props.navigation.goBack();
+}
+
+const acceptRequest = () => {
+  
+  dispatch(removeRequestFromGroup(groupId, requestKey ))
+  dispatch(addUserToGroup(personId, groupId))
+  dispatch(addGroupToUser(personId, groupId))
+
+  props.navigation.goBack();
+}
 
 
   return (
@@ -89,7 +109,7 @@ useEffect(() => {
 
         <View style={styles.infoContainer}>
             <Text style={[styles.text, { fontWeight: "200", fontSize: 20, fontWeight: '400',}]}>{name}</Text>
-            <Text style={[styles.text, { color: "#AEB5BC", fontSize: 11, fontWeight: '700', top: 6 }]}>{text}</Text>
+            <Text style={[styles.text, { color: "#AEB5BC", fontSize: 11, fontWeight: '700', top: 6 }]}>Lorem ipsum dolor sit amet.</Text>
         </View>
 
         <View style={styles.statsContainer}>
@@ -149,12 +169,11 @@ useEffect(() => {
         { groupAdmin==userId?
 
           <View style={styles.requestContainer}>
-          
-          <TouchableOpacity onPress={() => Alert.alert('Not yet supported')}  style={styles.add}>
+          <TouchableOpacity onPress={denyRequest}  style={styles.add}>
           <Ionicons name="md-close-circle-outline" size={120} color='darkred'></Ionicons>
           </TouchableOpacity>
-          
-          <TouchableOpacity onPress={() => Alert.alert('Not yet supported')}  style={styles.add}>
+
+          <TouchableOpacity onPress={acceptRequest}  style={styles.add}>
           <Ionicons name="ios-checkmark-circle-outline" size={120} color="green"></Ionicons>
           </TouchableOpacity>
           
