@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Switch, Text, View, SafeAreaView, FlatList, TouchableOpacity} from "react-native";
+import { StyleSheet, Button, Text, View, SafeAreaView, FlatList, TouchableOpacity} from "react-native";
 import cityData from '../../cities';
 import User from '../../components/User';
 import Group from '../../components/Group';
@@ -31,6 +31,7 @@ import {useDispatch, useSelector} from 'react-redux';
   const [textFieldInFocus, setTextFieldInFocus] = useState(false)
  
   useEffect(() => {
+    console.log(myGroups);
     registerForPushNotificationsAsync();
    getUsers();
    getGroups();
@@ -113,15 +114,9 @@ const getGroups = () => {
   };
 
   const _handleNotification = notification => {
-    //console.log(this.props);
-    // do whatever you want to do with the notification
-    console.log( 'Notifikation modtaget: ');
-
-
+    
     switch(notification.data.type) {
       case 'DM':
-        console.log(notification.data);
-        
         props.navigation.navigate('DirectMessage', {
           conversationCreated: true,
           chatId: notification.data.chatId,
@@ -131,6 +126,21 @@ const getGroups = () => {
         break;
       case 'GM':
         console.log('Notification was a GM!')
+        console.log(notification.data)
+        console.log(myGroups)
+
+       // const existingGroup = myGroups.find(group => group.id==notification.data.groupId)
+        
+/*
+        props.navigation.navigate('GroupScreen', {
+          id: existingGroup.id,
+          members: existingGroup.members,
+          groupName: existingGroup.name,
+          admin: existingGroup.admin,
+          description: existingGroup.description
+        })
+*/
+
         break;
       default:
         // code block
@@ -145,6 +155,7 @@ const buttons = ['Personer', 'Grupper']
 
     return (
       <View style={styles.searchContainer}>
+      <Button onPress = {() => console.log(myGroups)} title='Log groups' />
 
           <SearchableDropdown
           setTextFieldInFocus={(value) => setTextFieldInFocus(value)}

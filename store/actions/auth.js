@@ -255,7 +255,7 @@ export const fetchUserData = (userId) => {
         //FETCHING USER GROUPS
 
         if(data.groups!==undefined){
-          dispatch(fetchUserGroups(data.groups))
+          await dispatch(fetchUserGroups(data.groups))
         }
         
         //FETCHING USER DMS
