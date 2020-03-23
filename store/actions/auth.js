@@ -9,7 +9,8 @@ export const SET_PUSH_TOKEN = 'SET_PUSH_TOKEN'
 export const ADD_GROUP_TO_USER = 'ADD_GROUP_TO_USER'
 export const ADD_USER_TO_GROUP = 'ADD_USER_TO_GROUP'
 export const SET_DMS = 'SET_DMS'
-export const CREATE_GROUP = 'CREATE_GROUP'
+export const CREATE_GROUP = 'CREATE_GROUP';
+export const ADD_REQUEST_TO_USER = 'ADD_REQUEST_TO_USER'
 import * as Facebook from 'expo-facebook';
 import firebase from 'firebase';
 
@@ -224,7 +225,18 @@ export const fetchUserData = (userId) => {
         console.log(' Response failed from firebase..')
         throw new Error ('NO_DATA 2')
       }
-      const data = await response.json();         
+
+      const data = await response.json();    
+      
+      //SETTING USER'S GROUP REQUESTS
+      
+      let requestsArray = []
+      if(data.requests){
+        const requestsObject = data.requests;
+        requestsArray = Object.keys(requestsObject).map(key => requestsObject[key])
+      }
+
+
          dispatch({
           type: SET_FIREBASE_DATA, 
           firstname: data.firstname, 
@@ -236,15 +248,15 @@ export const fetchUserData = (userId) => {
           postalCode: data.postalCode, 
           city: data.city,
           photoUrl: data.photoUrl,
-          pushToken: data.pushToken
+          pushToken: data.pushToken,
+          requests: requestsArray
         });
+
+        //FETCHING USER GROUPS
 
         if(data.groups!==undefined){
           dispatch(fetchUserGroups(data.groups))
         }
-        
-
-
         
         //FETCHING USER DMS
 
@@ -259,9 +271,10 @@ export const fetchUserData = (userId) => {
           directMessagesArray.forEach(directMessageId => {
             dispatch(fetchUserDms(directMessageId))
           });
-          
+        }        
         }
-  }
+
+
   }
 
   export const setPhotoUrl = (photoUrl) => {

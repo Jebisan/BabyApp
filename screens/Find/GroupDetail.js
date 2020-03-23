@@ -1,16 +1,36 @@
 import React, {useState, useEffect} from 'react';
-import {View, StyleSheet, Text, ScrollView ,SafeAreaView, Image, TouchableOpacity} from 'react-native';
+import {Button, View, StyleSheet, Text, ScrollView ,SafeAreaView, Image, TouchableOpacity} from 'react-native';
 import Fire from '../../Fire';
+import {useDispatch, useSelector} from 'react-redux'
+import {requestForMembership, addRequestToUser} from '../../store/actions/group'
 
 const GroupDetail = props => {
+  const dispatch = useDispatch();
+  const userId = useSelector(state => state.auth.userId)
+  const _requests = useSelector(state => state.auth.requests)
+  const requestsObject = props.navigation.getParam('requests')
 
+
+  const groupId = props.navigation.getParam('groupId')
   const name = props.navigation.getParam('name')
   const description = props.navigation.getParam('description')
+  
   const [members, setMembers] = useState([]);
+  const [requests, setRequests] = useState([]);
+  const [requesting, setRequesting] = useState(false);
 
   useEffect(() => {
     getMembers()
+    if(requestsObject) {
+      getRequests();
+    }
   }, [])
+
+  useEffect(() => {
+      if(_requests.find(request => request==groupId)){
+        setRequesting(true)
+}  
+  }, [_requests])
 
 
   const getMembers = () => {
@@ -33,13 +53,50 @@ const GroupDetail = props => {
           photoUrl: obj.photoUrl?obj.photoUrl:'http://criticare.isccm.org/assets/images/male_placeholder.png',
           pushToken: obj.pushToken
         }      
-
         setMembers(previous => [...previous, user])
-       
       })
       )
     }) 
   }
+
+  const getRequests = () => {
+    const requestsArray = Object.keys(requestsObject).map(key => requestsObject[key])
+       
+       setRequests([]);
+       requestsArray.forEach(request => {
+         const requestData = request
+   
+         Fire.firebase.database().ref("users/"+request).once('value').then((snapshot => {
+           const obj = snapshot.val()  
+           
+           const request = {
+             personId: snapshot.key,
+             name: obj.name, 
+             photoUrl: obj.photoUrl?obj.photoUrl:'http://criticare.isccm.org/assets/images/male_placeholder.png',
+             pushToken: obj.pushToken,
+             birthday: obj.birthday,
+             gender: obj.gender,
+             postalCode: obj.postalCode,
+             city: obj.city,
+             dueDate: obj.dueDate,     
+             requestKey: requestData.key
+           }        
+           //console.log(request);
+           setRequests(previous => [...previous, request])
+         })
+         )
+       })  
+     }
+
+const request = () => {
+  console.log('REQUESTING..');
+  dispatch(requestForMembership(userId, groupId))
+  dispatch(addRequestToUser(groupId))
+}
+
+useEffect(() => {
+  
+}, [_requests])
 
 
   return (
@@ -82,6 +139,46 @@ const GroupDetail = props => {
         </View>
         </View>
 
+        {
+/*
+          <View style={styles.membersContainer}>
+          <Text style={styles.membersTitle}>ANMODNINGER </Text>
+          <View style={styles.picturesContainer}>
+          
+          {
+            requests.map((member) =>
+            
+            <TouchableOpacity key={member.personId} onPress={ () => props.navigation.navigate('UserDetail', {
+              
+              id: member.id,
+              name: member.name,
+              gender: member.gender,
+              city: member.city,
+              postalCode: member.postalCode, 
+              birthday: member.birthday,
+              photoUrl: member.photoUrl,
+              dueDate: member.dueDate,
+              pushToken: member.pushToken
+              
+            })} > 
+            <Image source={{ uri: member.photoUrl }} style={styles.profilePicture}></Image>  
+            </TouchableOpacity> 
+            )
+          }
+          </View>
+          </View>
+          
+        */}
+      {
+        !requesting?   
+        <View style={styles.requestButtonContainer} >
+           <Button title='Anmod' onPress={request} />
+        </View> 
+        :
+        <View style={styles.requestButtonContainer} >
+        <Button disabled title='Anmodning sendt' onPress={request} />
+     </View> 
+      }
     </View>
   );
 };
@@ -147,6 +244,12 @@ const styles = StyleSheet.create({
   addIcon: {
     padding: 3,
     marginLeft: 10
+  }, 
+  requestButtonContainer: {
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+    borderWidth: 1,
+    top: 200
   }
 
 })

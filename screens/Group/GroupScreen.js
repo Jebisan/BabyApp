@@ -14,7 +14,7 @@ const GroupScreen = props => {
 
   
   useEffect(() => {
-    console.log(groupData)
+    //console.log(groupData)
     props.navigation.setParams({
       id: groupData.id,
       members: groupData.members,
@@ -68,7 +68,8 @@ const GroupScreen = props => {
           postalCode: obj.postalCode,
           city: obj.city,
           dueDate: obj.dueDate,     
-          requestKey: requestData.key
+          requestKey: requestData.key,
+          requests: obj.requests
         }        
         //console.log(request);
         setRequests(previous => [...previous, request])
@@ -118,7 +119,8 @@ const GroupScreen = props => {
               groupAdmin: groupData.admin,
               requestKey: request.requestKey,
               groupId: groupData.id,
-              personId: request.personId
+              personId: request.personId,
+              requests: request.requests
             })}>
               <View key={request.id} > 
                   <Image source={{ uri: request.photoUrl }} style={styles.profilePicture}></Image>  

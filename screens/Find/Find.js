@@ -6,16 +6,18 @@ import Group from '../../components/Group';
 import Fire from '../../Fire';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import {ButtonGroup} from 'react-native-elements';
-import { useSelector } from 'react-redux';
 import {addPushTokenToUser} from '../../store/actions/auth'
 import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
-import {useDispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux';
+import { findDOMNode } from "react-dom";
 
 
 
  const Find = (props) => {
+  const myGroups = useSelector(state => state.groups)
+
   const dispatch = useDispatch();
   const userId = useSelector(state => state.auth.userId);
 
@@ -38,7 +40,7 @@ import {useDispatch} from 'react-redux'
     Fire.users.once('value').then((snapshot) =>{
      obj = snapshot.val()
      var result = Object.keys(obj).map((value) => {
-       return {key: value,  ...obj[value]};
+        return {key: value,  ...obj[value]};
      });
      filteredResult = result.filter(user => user.key!==userId)
      setUsers(filteredResult)
@@ -50,12 +52,10 @@ import {useDispatch} from 'react-redux'
 const getGroups = () => {
   Fire.groups.once('value').then((snapshot) =>{
     obj = snapshot.val()
-    var result = Object.keys(obj).map((value) => {
+    let result = Object.keys(obj).map((value) => {
       return {key: value,  ...obj[value]};
     });
     setGroups(result)
-    console.log(result.members);
-
   }).catch(error => {
     console.log(error);
   });
@@ -83,9 +83,7 @@ const getGroups = () => {
     }
   }, [city, selectedIndex])
 
-  const updateIndex =(selectedIndex) => {
-    setSelectedIndex(selectedIndex)
-  }
+
 
   const registerForPushNotificationsAsync = async () => {
     if (Constants.isDevice) {
@@ -165,7 +163,7 @@ const buttons = ['Personer', 'Grupper']
           ) : (
             <View>
             <ButtonGroup
-            onPress={updateIndex}
+            onPress={index => setSelectedIndex(index)}
             selectedIndex={selectedIndex}
             buttons={buttons}
             containerStyle={{height: 30}} 
@@ -212,7 +210,8 @@ const buttons = ['Personer', 'Grupper']
               groupId: item.key,
               name: item.name,
               description: item.description,
-              members: item.members
+              members: item.members,
+              requests: item.requests
             })}>
                 <Group
                 id={item.key}

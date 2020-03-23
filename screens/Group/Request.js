@@ -6,7 +6,7 @@ import moment from 'moment';
 import 'moment/locale/da';
 import ProgressCircle from 'react-native-progress-circle'
 import {useSelector, useDispatch} from 'react-redux';
-import {removeRequestFromGroup} from '../../store/actions/group';
+import {removeRequestFromGroup, removeRequestFromUser} from '../../store/actions/group';
 
 import {addUserToGroup} from '../../store/actions/auth';
 import {addGroupToUser} from '../../store/actions/auth';
@@ -28,6 +28,8 @@ const dueDate = props.navigation.getParam('requestData').dueDate;
 const city = props.navigation.getParam('requestData').city;
 const postalCode = props.navigation.getParam('requestData').postalCode;
 const groupAdmin = props.navigation.getParam('groupAdmin');
+const requestsObject = props.navigation.getParam('requestData').requests;
+const [personRequestKey, setPersonRequestKey] = useState('');
 
 //const pushToken = props.navigation.getParam('pushToken');
 
@@ -44,6 +46,11 @@ useEffect(() => {
   setDueDate();
   setToday();
 
+let requestsArray = []  
+  requestsArray = Object.keys(requestsObject).map(key => {
+      return {key, id: requestsObject[key]}
+    });
+    setPersonRequestKey(requestsArray.find(request => request.id==groupId).key)
 
 }, [])
 
@@ -84,12 +91,15 @@ useEffect(() => {
 
 const denyRequest = () => {
   dispatch(removeRequestFromGroup(groupId, requestKey ))
+  dispatch(removeRequestFromUser(personId, personRequestKey))
   props.navigation.goBack();
 }
 
 const acceptRequest = () => {
-  
+ 
+
   dispatch(removeRequestFromGroup(groupId, requestKey ))
+  dispatch(removeRequestFromUser(personId, personRequestKey))
   dispatch(addUserToGroup(personId, groupId))
   dispatch(addGroupToUser(personId, groupId))
 

@@ -1,4 +1,5 @@
 import { AUTHENTICATE, LOGOUT, SET_FIREBASE_DATA, SET_PHOTO_URL, SET_PUSH_TOKEN} from '../actions/auth'
+import {ADD_REQUEST_TO_USER} from '../actions/group'
 
 const INITIAL_STATE = {
   token: null,
@@ -15,7 +16,8 @@ const INITIAL_STATE = {
   city: null,
   photoUrl: null,
   groups: null,
-  pushToken: null
+  pushToken: null,
+  requests: null
 };
 
 export default authReducer = (state = INITIAL_STATE, action) => {
@@ -30,7 +32,6 @@ export default authReducer = (state = INITIAL_STATE, action) => {
       return INITIAL_STATE;
 
     case SET_FIREBASE_DATA:
-
       return {
         ...state,
         firstname: action.firstname,
@@ -42,8 +43,10 @@ export default authReducer = (state = INITIAL_STATE, action) => {
         postalCode: action.postalCode,
         city: action.city,
         photoUrl: action.photoUrl,
-        pushToken: action.pushToken
+        pushToken: action.pushToken,
+        requests: action.requests
       }
+      
     case SET_PHOTO_URL:
       return {
         ...state,
@@ -55,6 +58,13 @@ export default authReducer = (state = INITIAL_STATE, action) => {
           ...state,
           pushToken: action.pushToken
         }  
+
+        case ADD_REQUEST_TO_USER: 
+            return {
+              ...state,
+              requests: [...state.requests, action.groupId]
+            };
+      
     default:
       return state
   }
