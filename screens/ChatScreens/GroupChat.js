@@ -64,7 +64,7 @@ const groupName = this.props.navigation.getParam('groupName')
           }
       }
       fetch(
-        `https://babyapp-ed94d.firebaseio.com/groups/${groupId}/messages.json?auth=${this.props.token}`,
+        `https://babyapp-ed94d.firebaseio.com/groupMessages/${groupId}/messages.json?auth=${this.props.token}`,
         {
           method: 'POST',
           headers: {
@@ -117,7 +117,7 @@ const groupName = this.props.navigation.getParam('groupName')
   get messages() {
     const groupId = this.props.navigation.getParam('id');
 
-      return Fire.firebase.database().ref("groups/"+groupId+"/messages");
+      return Fire.firebase.database().ref("groupMessages/"+groupId+"/messages");
     }
 
   get = callback  => {

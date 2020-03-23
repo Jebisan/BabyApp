@@ -3,7 +3,7 @@
   "expoServerPort": null,
   "packagerPort": null,
   "packagerPid": null,
-  "expoServerNgrokUrl": "https://ne-dp7.jebisan.babyapp.exp.direct",
-  "packagerNgrokUrl": "https://packager.ne-dp7.jebisan.babyapp.exp.direct",
-  "ngrokPid": 16597
+  "expoServerNgrokUrl": null,
+  "packagerNgrokUrl": null,
+  "ngrokPid": null
 }
