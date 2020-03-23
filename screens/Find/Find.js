@@ -127,19 +127,13 @@ const getGroups = () => {
       case 'GM':
         console.log('Notification was a GM!')
         console.log(notification.data)
-        console.log(myGroups)
-
-       // const existingGroup = myGroups.find(group => group.id==notification.data.groupId)
         
-/*
-        props.navigation.navigate('GroupScreen', {
-          id: existingGroup.id,
-          members: existingGroup.members,
-          groupName: existingGroup.name,
-          admin: existingGroup.admin,
-          description: existingGroup.description
+        props.navigation.navigate('GroupChat', {
+          id: notification.data.groupId,
+          members: notification.data.members,
+          groupName: notification.data.groupName
         })
-*/
+
 
         break;
       default:
@@ -149,14 +143,8 @@ const getGroups = () => {
   };
 
 
-
-
-const buttons = ['Personer', 'Grupper']
-
     return (
       <View style={styles.searchContainer}>
-      <Button onPress = {() => console.log(myGroups)} title='Log groups' />
-
           <SearchableDropdown
           setTextFieldInFocus={(value) => setTextFieldInFocus(value)}
           onItemSelect={(item) => {
@@ -206,7 +194,7 @@ const buttons = ['Personer', 'Grupper']
             <ButtonGroup
             onPress={index => setSelectedIndex(index)}
             selectedIndex={selectedIndex}
-            buttons={buttons}
+            buttons={['Personer', 'Grupper']}
             containerStyle={{height: 30}} 
             
             />

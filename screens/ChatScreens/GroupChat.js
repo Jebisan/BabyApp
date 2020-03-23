@@ -73,7 +73,7 @@ const groupName = this.props.navigation.getParam('groupName')
           )}) 
 
           this.state.members.forEach(member => {
-            NotificationCenter.sendNotification('Ny besked fra ' + message.user.name + " i "+ groupName, message.text, member.pushToken, {type: 'GM', groupId: groupId})
+            NotificationCenter.sendNotification('Ny besked fra ' + message.user.name + " i "+ groupName, message.text, member.pushToken, {type: 'GM', groupId: this.props.navigation.getParam('id'), members: this.props.navigation.getParam('members'), groupName: this.props.navigation.getParam('groupName')})
           });
         }    
   )};
