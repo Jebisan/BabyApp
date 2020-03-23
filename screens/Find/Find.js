@@ -6,7 +6,7 @@ import Group from '../../components/Group';
 import Fire from '../../Fire';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import {ButtonGroup} from 'react-native-elements';
-import {addPushTokenToUser} from '../../store/actions/auth'
+import {addPushTokenToUser, fetchUserDms} from '../../store/actions/auth'
 import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
@@ -114,31 +114,31 @@ const getGroups = () => {
   };
 
   const _handleNotification = notification => {
-    
-    switch(notification.data.type) {
-      case 'DM':
-        props.navigation.navigate('DirectMessage', {
-          conversationCreated: true,
-          chatId: notification.data.chatId,
-          pushToken: notification.data.pushToken
-        })
+    console.log(notification)
+    if(notification.origin=='selected') {
         
-        break;
-      case 'GM':
-        console.log('Notification was a GM!')
-        console.log(notification.data)
-        
-        props.navigation.navigate('GroupChat', {
-          id: notification.data.groupId,
-          members: notification.data.members,
-          groupName: notification.data.groupName
-        })
-
-
-        break;
-      default:
-        // code block
-    }
+      switch(notification.data.type) {
+        case 'DM':
+          dispatch(fetchUserDms(notification.data.chatId) )
+          props.navigation.navigate('DirectMessage', {
+            conversationCreated: true,
+            chatId: notification.data.chatId,
+            pushToken: notification.data.pushToken
+          });
+          
+          break;
+          case 'GM':
+            props.navigation.navigate('GroupChat', {
+              id: notification.data.groupId,
+              members: notification.data.members,
+              groupName: notification.data.groupName
+            });
+            
+            break;
+            default:
+              // code block
+            }
+          }
 
   };
 

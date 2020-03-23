@@ -111,7 +111,7 @@ send = async messages =>{
           this.props._addChatToUser(chatId, personId)
           this.props._addChatToPerson(chatId, personId)
       }
-      NotificationCenter.sendNotification('Ny beshed fra ' + message.user.name, message.text, pushToken, {type: 'DM', chatId: chatId, pushToken: myPushToken})}
+      NotificationCenter.sendNotification('Ny besked fra ' + message.user.name, message.text, pushToken, {type: 'DM', chatId: chatId, pushToken: myPushToken})}
   )};
 
   
