@@ -3,7 +3,6 @@ import {Button, View, StyleSheet, Text, ScrollView ,SafeAreaView, Image, Touchab
 import Fire from '../../Fire';
 import {useDispatch, useSelector} from 'react-redux'
 import {requestForMembership, addRequestToUser} from '../../store/actions/group'
-import uuid from 'react-native-uuid';
 
 
 const GroupDetail = props => {

@@ -6,8 +6,7 @@ import moment from 'moment';
 import 'moment/locale/da';
 import ProgressCircle from 'react-native-progress-circle'
 import {useSelector} from 'react-redux';
-import uuid from 'react-native-uuid';
-
+import {generateRandomId} from '../../Shared'
 
 
 
@@ -88,14 +87,14 @@ useEffect(() => {
         setConversationCreated(true)
         setChatId(existingDm.chatId)
       } else {
-        const newChatId = uuid.v1();
+        const newChatId = generateRandomId();
         console.log('Not in DM! ')
         setConversationCreated(false)
         setChatId(newChatId)
       }
     
   } else {
-    const newChatId = uuid.v1();
+    const newChatId = generateRandomId();
     console.log('Empty DM.. NOT IN DM!!')
     setConversationCreated(false)
     setChatId(newChatId)

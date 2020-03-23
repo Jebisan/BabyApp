@@ -7,9 +7,9 @@ import 'moment/locale/da';
 import ProgressCircle from 'react-native-progress-circle'
 import {useSelector, useDispatch} from 'react-redux';
 import {removeRequestFromGroup, removeRequestFromUser} from '../../store/actions/group';
-
 import {addUserToGroup} from '../../store/actions/auth';
 import {addGroupToUser} from '../../store/actions/auth';
+import NotificationCenter from '../../NotificationCenter'
 
 const Request = props => {
 const dispatch = useDispatch();
@@ -17,6 +17,7 @@ const userId = useSelector(state => state.auth.userId)
 
 const requestKey = props.navigation.getParam('requestKey');
 const groupId = props.navigation.getParam('groupId');
+const groupName = props.navigation.getParam('groupName');
 const personId = props.navigation.getParam('personId');
 
 
@@ -31,7 +32,7 @@ const groupAdmin = props.navigation.getParam('groupAdmin');
 const requestsObject = props.navigation.getParam('requestData').requests;
 const [personRequestKey, setPersonRequestKey] = useState('');
 
-//const pushToken = props.navigation.getParam('pushToken');
+const pushToken = props.navigation.getParam('pushToken');
 
 
 const [newBirthday, setNewBirthday] = useState([]);
@@ -96,12 +97,12 @@ const denyRequest = () => {
 }
 
 const acceptRequest = () => {
- 
-
   dispatch(removeRequestFromGroup(groupId, requestKey ))
   dispatch(removeRequestFromUser(personId, personRequestKey))
   dispatch(addUserToGroup(personId, groupId))
   dispatch(addGroupToUser(personId, groupId))
+
+  NotificationCenter.sendNotification('Anmodning bekræftet', 'Din anmodning til gruppen '+"'" + groupName + "'"+ ' er blevet godkendt', pushToken)
 
   props.navigation.goBack();
 }

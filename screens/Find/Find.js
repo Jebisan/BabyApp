@@ -14,6 +14,7 @@ import {useDispatch, useSelector} from 'react-redux';
 
 
 
+
  const Find = (props) => {
   const myGroups = useSelector(state => state.groups)
 
@@ -103,12 +104,41 @@ const getGroups = () => {
       }
       let token = await Notifications.getExpoPushTokenAsync();
       dispatch(addPushTokenToUser(token));
-      console.log(token);
+      Notifications.addListener(_handleNotification);
+
 
     } else {
       console.log('Must use physical device for Push Notifications');
     }
   };
+
+  const _handleNotification = notification => {
+    //console.log(this.props);
+    // do whatever you want to do with the notification
+    console.log( 'Notifikation modtaget: ');
+
+
+    switch(notification.data.type) {
+      case 'DM':
+        console.log(notification.data);
+        
+        props.navigation.navigate('DirectMessage', {
+          conversationCreated: true,
+          chatId: notification.data.chatId,
+          pushToken: notification.data.pushToken
+        })
+        
+        break;
+      case 'GM':
+        console.log('Notification was a GM!')
+        break;
+      default:
+        // code block
+    }
+
+  };
+
+
 
 
 const buttons = ['Personer', 'Grupper']

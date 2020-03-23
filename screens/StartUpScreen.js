@@ -3,13 +3,14 @@ import {View, ActivityIndicator, StyleSheet, AsyncStorage, Alert} from 'react-na
 import {authenticate, fetchUserData} from '../store/actions/auth'
 import {useDispatch} from 'react-redux';
 
-const StartUpScreen = props => {
 
+const StartUpScreen = props => {
     const dispatch = useDispatch();
 
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {   
+
         const tryLogin = async () => {
             setLoading(true);
             const userData = await AsyncStorage.getItem('userData');
@@ -43,6 +44,7 @@ const StartUpScreen = props => {
 
         tryLogin();
     }, [dispatch])
+
 
     return <View style={styles.screen}>
     <ActivityIndicator size='large'  />

@@ -4,6 +4,7 @@ import {GiftedChat} from 'react-native-gifted-chat';
 import Fire from '../../Fire';
 import {connect} from 'react-redux';
 import {addChatToUser, addChatToPerson} from '../../store/actions/auth'
+import NotificationCenter from '../../NotificationCenter';
 
 
 
@@ -57,6 +58,7 @@ send = async messages =>{
       const chatId = this.props.navigation.getParam('chatId')
       const personId = this.props.navigation.getParam('personId')
       const pushToken = this.props.navigation.getParam('pushToken')
+      const myPushToken = this.props.navigation.getParam('pushToken')
       
       if(this.state.conversationCreated){
         fetch(`https://babyapp-ed94d.firebaseio.com/directMessages/${chatId}/messages.json?auth=${this.props.token}`,
@@ -109,30 +111,10 @@ send = async messages =>{
           this.props._addChatToUser(chatId, personId)
           this.props._addChatToPerson(chatId, personId)
       }
-        this.sendPushNotification('Ny beshed fra ' + message.user.name, message.text, pushToken)
-}
+      NotificationCenter.sendNotification('Ny beshed fra ' + message.user.name, message.text, pushToken, {type: 'DM', chatId: chatId, pushToken: myPushToken})}
   )};
 
-  sendPushNotification = async(title, body, pushToken) => {
-    const message = {
-      to: pushToken,
-      sound: 'default',
-      title: title,
-      body: body, 
-      data: { data: 'goes here' },
-    };
-    const response = await fetch('https://exp.host/--/api/v2/push/send', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Accept-encoding': 'gzip, deflate',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(message),
-    });
-    const data = response._bodyInit;
-    console.log(`Status & Response ID-> ${JSON.stringify(data)}`);
-  }
+  
 
   parse = message => {
     const {user, text, timestamp} = message.val()
@@ -186,6 +168,7 @@ get user() {
         userId: state.auth.userId,
         name: state.auth.name,
         photoUrl: state.auth.photoUrl,
+        pushToken: state.auth.pushToken
       }
     }
 

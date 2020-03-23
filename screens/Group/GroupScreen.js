@@ -120,7 +120,9 @@ const GroupScreen = props => {
               requestKey: request.requestKey,
               groupId: groupData.id,
               personId: request.personId,
-              requests: request.requests
+              requests: request.requests,
+              groupName: groupData.name,
+              pushToken: request.pushToken
             })}>
               <View key={request.id} > 
                   <Image source={{ uri: request.photoUrl }} style={styles.profilePicture}></Image>  
