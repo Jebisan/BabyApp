@@ -3,11 +3,14 @@ import {Button, View, StyleSheet, Text, ScrollView ,SafeAreaView, Image, Touchab
 import Fire from '../../Fire';
 import {useDispatch, useSelector} from 'react-redux'
 import {requestForMembership, addRequestToUser} from '../../store/actions/group'
+import uuid from 'react-native-uuid';
+
 
 const GroupDetail = props => {
   const dispatch = useDispatch();
   const userId = useSelector(state => state.auth.userId)
   const _requests = useSelector(state => state.auth.requests)
+  const groups = useSelector(state => state.groups)
   const requestsObject = props.navigation.getParam('requests')
 
 
@@ -16,8 +19,8 @@ const GroupDetail = props => {
   const description = props.navigation.getParam('description')
   
   const [members, setMembers] = useState([]);
-  const [requests, setRequests] = useState([]);
   const [requesting, setRequesting] = useState(false);
+
 
   useEffect(() => {
     getMembers()
@@ -59,34 +62,30 @@ const GroupDetail = props => {
     }) 
   }
 
-  const getRequests = () => {
-    const requestsArray = Object.keys(requestsObject).map(key => requestsObject[key])
-       
-       setRequests([]);
-       requestsArray.forEach(request => {
-         const requestData = request
-   
-         Fire.firebase.database().ref("users/"+request).once('value').then((snapshot => {
-           const obj = snapshot.val()  
-           
-           const request = {
-             personId: snapshot.key,
-             name: obj.name, 
-             photoUrl: obj.photoUrl?obj.photoUrl:'http://criticare.isccm.org/assets/images/male_placeholder.png',
-             pushToken: obj.pushToken,
-             birthday: obj.birthday,
-             gender: obj.gender,
-             postalCode: obj.postalCode,
-             city: obj.city,
-             dueDate: obj.dueDate,     
-             requestKey: requestData.key
-           }        
-           //console.log(request);
-           setRequests(previous => [...previous, request])
-         })
-         )
-       })  
-     }
+     useEffect(() => {
+      if(groups.length!==0){
+        const existingGroup = groups.find(group => group.id==groupId)
+    
+          if(existingGroup) {
+            console.log('Already enrolled in group!')
+            props.navigation.goBack();
+
+            props.navigation.navigate('GroupScreen', {
+              id: existingGroup.id,
+              members: existingGroup.members,
+              groupName: existingGroup.name,
+              admin: existingGroup.admin,
+              description: existingGroup.description
+            })
+          } else {
+            console.log('Not enrolled in Group! ')
+          }
+        
+      } else {
+        console.log('Empty groups.. ')
+      }
+        
+    }, [])
 
 const request = () => {
   console.log('REQUESTING..');

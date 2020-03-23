@@ -11,7 +11,6 @@ import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 import {useDispatch, useSelector} from 'react-redux';
-import { findDOMNode } from "react-dom";
 
 
 
@@ -50,9 +49,10 @@ import { findDOMNode } from "react-dom";
 };
 
 const getGroups = () => {
+  
   Fire.groups.once('value').then((snapshot) =>{
     obj = snapshot.val()
-    let result = Object.keys(obj).map((value) => {
+    var result = Object.keys(obj).map((value) => {
       return {key: value,  ...obj[value]};
     });
     setGroups(result)
@@ -211,7 +211,8 @@ const buttons = ['Personer', 'Grupper']
               name: item.name,
               description: item.description,
               members: item.members,
-              requests: item.requests
+              admin: item.admin,
+              guestView: true
             })}>
                 <Group
                 id={item.key}
