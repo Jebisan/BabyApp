@@ -7,31 +7,32 @@ import HeaderButton from '../../components/HeaderButton';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 const GroupScreen = props => {
-
   const groupData = useSelector(state => state.groups).find(group => group.id==props.navigation.getParam('id'))
   const [members, setMembers] = useState([])
   const [requests, setRequests] = useState([])
 
   
   useEffect(() => {
-    //console.log(groupData)
+    console.log(groupData);
     props.navigation.setParams({
       id: groupData.id,
       members: groupData.members,
       groupName: groupData.name
     });
+     
 
-    getMembers();
+   getMembers();
     getRequests();
   }, [groupData])
 
 
   const getMembers = () => {
     setMembers([]);
-    groupData.members.forEach(dm => {
-      Fire.firebase.database().ref("users/"+dm).once('value').then((snapshot => {
+    //console.log(groupData)
+    
+    groupData.members.forEach(member => {
+      Fire.firebase.database().ref("users/"+member).once('value').then((snapshot => {
         const obj = snapshot.val()  
-        //console.log(obj);
         
         const user = {
           id: snapshot.key,
@@ -45,7 +46,8 @@ const GroupScreen = props => {
        
       })
       )
-    }) 
+    })
+    
   }
 
   const getRequests = () => {
@@ -55,8 +57,13 @@ const GroupScreen = props => {
     groupData.requests.forEach(request => {
       const requestData = request
 
-      Fire.firebase.database().ref("users/"+request.userId).once('value').then((snapshot => {
+      console.log('Finding info about: ' + request)
+
+      Fire.firebase.database().ref("users/" + request).once('value').then((snapshot => {
         const obj = snapshot.val()  
+        
+        console.log(obj);
+        
         
         const request = {
           personId: snapshot.key,
@@ -70,7 +77,9 @@ const GroupScreen = props => {
           dueDate: obj.dueDate,     
           requestKey: requestData.key,
           requests: obj.requests
-        }        
+        }    
+        
+        
         //console.log(request);
         setRequests(previous => [...previous, request])
       })
@@ -102,7 +111,7 @@ const GroupScreen = props => {
                 
               )}
               <TouchableOpacity onPress={() => props.navigation.navigate('AddUsersToGroup', {
-                groupData
+                //groupData
               })} >
                 <Ionicons style={styles.addIcon} name='ios-add-circle-outline' size={43} />
               </TouchableOpacity>
@@ -114,7 +123,7 @@ const GroupScreen = props => {
         <Text style={styles.membersTitle}>ANMODNINGER ({requests.length})</Text>
       <View style={styles.picturesContainer} >
           {requests.map((request) =>
-            <TouchableOpacity key={request.requestKey} onPress={() => props.navigation.navigate('Request', {
+            <TouchableOpacity key={request.personId} onPress={() => props.navigation.navigate('Request', {
               requestData: request,
               groupAdmin: groupData.admin,
               requestKey: request.requestKey,

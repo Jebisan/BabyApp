@@ -188,30 +188,6 @@ export const fetchUserGroups = (groups) => {
   };
 };
 
-export const fetchUserDms = (directMessageId) => {
-  return async (dispatch, getState) => {
-
-    const userId = getState().auth.userId;    
-
-
-      Fire.firebase.database().ref("directMessages/"+directMessageId).once('value').then((snapshot => {
-
-        const usersOfDmObject = snapshot.val().users
-
-        const usersOfDmArray =  Object.keys(usersOfDmObject).map(key => {
-          return {chatId: directMessageId,...usersOfDmObject[key]}
-        });
-
-        const newDm = usersOfDmArray.filter(user=>user.userId!==userId)[0]
-
-       // console.log(newDm)
-        
-        dispatch({type: SET_DMS, directMessage: newDm})
-
-      }))
-  };
-};
-
 
 export const fetchUserData = (userId) => {
   return async (dispatch, getState) => {
@@ -228,15 +204,6 @@ export const fetchUserData = (userId) => {
 
       const data = await response.json();    
       
-      //SETTING USER'S GROUP REQUESTS
-      
-      let requestsArray = []
-      if(data.requests){
-        const requestsObject = data.requests;
-        requestsArray = Object.keys(requestsObject).map(key => requestsObject[key])
-      }
-
-
          dispatch({
           type: SET_FIREBASE_DATA, 
           firstname: data.firstname, 
@@ -249,8 +216,12 @@ export const fetchUserData = (userId) => {
           city: data.city,
           photoUrl: data.photoUrl,
           pushToken: data.pushToken,
-          requests: requestsArray
         });
+
+
+
+/*
+
 
         //FETCHING USER GROUPS
 
@@ -272,9 +243,10 @@ export const fetchUserData = (userId) => {
             dispatch(fetchUserDms(directMessageId))
           });
         }        
-        }
 
 
+*/        
+  }
   }
 
   export const setPhotoUrl = (photoUrl) => {

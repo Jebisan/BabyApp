@@ -1,6 +1,59 @@
 
-export const REMOVE_REQUEST_FROM_GROUP = 'REMOVE_REQUEST_FROM_GROUP'
-export const ADD_REQUEST_TO_USER = 'ADD_REQUEST_TO_USER'
+import Fire from '../../Fire';
+
+export const ADD_GROUP = 'ADD_GROUP'
+
+export const fetchUserGroups = () => {
+    return async (dispatch, getState) => {
+      
+      const userId = getState().auth.userId;    
+  
+        Fire.firebase.database().ref("users/"+userId+"/groups").once('value').then((snapshot => {
+  
+          const groupObject = snapshot.val()
+         
+         let groupIdsArray = Object.keys(groupObject).map(key => {
+            return key
+          });
+
+          groupIdsArray.forEach(groupId => {
+            Fire.firebase.database().ref("groups/"+groupId).once('value').then((snapshot => {
+
+              let membersArray = Object.keys(snapshot.val().members).map(key => {
+                return key
+              });
+              
+              let requestArray = []
+
+              if(snapshot.val().requests){
+                 requestArray = Object.keys(snapshot.val().requests).map(key => {
+                  return key
+                });
+              }
+          
+
+
+    
+              const group = {id: snapshot.key,...snapshot.val(), members: membersArray, requests: requestArray}
+
+              
+
+              dispatch({type: ADD_GROUP, group})
+
+
+            }))
+          });
+          
+
+        }))
+        
+
+        
+        
+        
+        
+      };
+    };
 
 
 

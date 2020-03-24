@@ -16,30 +16,30 @@ const Groups = props => {
 
   return (
     <View style={styles.parent}>
-          <FlatList
-          data={groups}
-          keyExtractor={item => item.id}
-          renderItem={({item}) =>
-            <TouchableOpacity onPress={() => props.navigation.navigate('GroupScreen', {
-              id: item.id,
-              members: item.members,
-              groupName: item.name,
-              admin: item.admin,
-              description: item.description
-            })}
-            >
-          <Group
-          name = {item.name}
-          description = {item.description}
-          city = {item.city}
-          postalCode = {item.postalCode}
-          photoUrl = {item.photoUrl}
+    
 
-          />
-            </TouchableOpacity>
-
-        }
-    />
+      <FlatList
+      data={groups}
+      keyExtractor={item => item.id}
+      renderItem={({item}) =>
+      <TouchableOpacity onPress={() => props.navigation.navigate('GroupScreen', {
+        id: item.id,
+        members: item.members,
+        groupName: item.name,
+        admin: item.admin,
+        description: item.description
+      })}
+      >
+      <Group
+      name = {item.name}
+      description = {item.description}
+      city = {item.city}
+      postalCode = {item.postalCode}
+      photoUrl = {item.photoUrl}
+      />
+      </TouchableOpacity>
+    }
+/>
     </View>
 
   );

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import {View, ActivityIndicator, StyleSheet, AsyncStorage, Alert} from 'react-native';
-import {authenticate, fetchUserData} from '../store/actions/auth'
+import {authenticate, fetchUserData} from '../store/actions/auth';
+import {fetchUserDms} from '../store/actions/directMessage';
+import {fetchUserGroups} from '../store/actions/group';
 import {useDispatch} from 'react-redux';
 
 
@@ -34,7 +36,9 @@ const StartUpScreen = props => {
 
             dispatch(authenticate(email, userId, token, expirationTime));
             try{
-                await dispatch(fetchUserData(userId));
+                dispatch(fetchUserData(userId));
+                dispatch(fetchUserDms());
+                dispatch(fetchUserGroups());
                 props.navigation.navigate('MainScreen')
             } catch (error) {
                 props.navigation.navigate('Login');

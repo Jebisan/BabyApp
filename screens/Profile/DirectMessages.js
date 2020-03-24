@@ -1,64 +1,101 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useReducer} from 'react';
 import {Button, StyleSheet, FlatList, View, Text, TouchableOpacity } from 'react-native';
 import {useSelector} from 'react-redux';
-import User from '../../components/User';
+import Chat from '../../components/Chat';
 import Fire from '../../Fire';
 
+const initialChats = [];
+
+const chatReducer = (state, action) => {
+  switch (action.type) {
+    case 'ADD_CHAT_INFO':
+          return [...state, action.data]
+
+    case 'ADD_CHAT_INFO_2': 
+    return state.map(chat => {
+      if (chat.id === action.id) {
+        return {
+          ...chat,
+          ...action.newData
+        }
+        ;
+      } else {
+        return chat;
+      };
+    });
+
+    default:
+      return state;
+  }
+};
+
+
 const DirectMessages = props => {
+  const [chats, dispatch] = useReducer(
+    chatReducer,
+    initialChats
+  );
 
   const directMessages = useSelector(state => state.directMessages)
   const userId = useSelector(state => state.auth.userId)
-  const myToken = useSelector(state => state.auth.pushToken)
 
-  
-  const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    console.log(directMessages);
-      getPeople();
+      getChats();
   }, []);
 
 
 
 
-  const getPeople = () => {
-
+  const getChats = () => {
     directMessages.forEach(dm => {
-      Fire.firebase.database().ref("users/"+dm.userId).once('value').then((snapshot => {
-        const obj = snapshot.val()  
-        console.log(obj);      
-        
-        const user = {
-          id: snapshot.key,
-          name: obj.name, 
-          photoUrl: obj.photoUrl,
-          pushToken: obj.pushToken,
-          chatId: dm.chatId
-        }
+      Fire.firebase.database().ref("chats/"+dm).once('value').then((snapshot => {
+        dispatch({ type: 'ADD_CHAT_INFO', data: {
+        id: snapshot.key,
+        lastMessage: snapshot.val().lastMessage.text,
+        timestamp: snapshot.val().lastMessage.timestamp
+        } });
 
-        setUsers(previous => [...previous, user])
-      })
-      )
-    }) 
+        const membersArray = Object.keys(snapshot.val().members).map(key => {
+          return key
+        });
+        const user = membersArray.find(user => user!==userId);
+      
+        addUserInfoToChat(user, snapshot.key)
+
+      }))
+    })
+  }
+
+  const addUserInfoToChat = (user, groupId) => {
+    Fire.firebase.database().ref("users/"+user).once('value').then((snapshot => {
+      dispatch({ type: 'ADD_CHAT_INFO_2', id: groupId, newData: {
+        name: snapshot.val().name,
+        photoUrl: snapshot.val().photoUrl,
+        pushToken: snapshot.val().pushToken
+      } 
+      });
+     }))
   }
 
   return (
     <View style={styles.parent}>   
     {
+      
         <FlatList
-        data={users}
+        data={chats}
         keyExtractor={item => item.id}
         renderItem={({item}) =>
         <TouchableOpacity onPress={() => props.navigation.navigate('DirectMessage', {
           conversationCreated: true,
-          personId: item.userId,
-          chatId: item.chatId,
+          chatId: item.id,
           pushToken: item.pushToken
         })}
         >
-        <User  
+        <Chat  
         name={item.name}
         photoUrl={item.photoUrl}
+        lastMessage = {item.lastMessage}
         />
         </TouchableOpacity>
         

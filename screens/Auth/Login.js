@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react';
 import {View, ActivityIndicator, StyleSheet, Text, KeyboardAvoidingView, TextInput, Alert, ScrollView, Image, TouchableOpacity } from 'react-native';
 import {useDispatch} from 'react-redux';
 import {login, logInWithFacebook, fetchUserData} from '../../store/actions/auth';
+import {fetchUserDms} from '../../store/actions/directMessage';
+import {fetchUserGroups} from '../../store/actions/group';
 import { useSelector } from 'react-redux';
 import InputTextField from '../../components/InputTextField';
 
@@ -27,6 +29,8 @@ const Login = props => {
     async function fetchData() {
       try{
         await dispatch(fetchUserData(userId));
+        await dispatch(fetchUserGroups);
+        await dispatch(fetchUserDms);
         props.navigation.navigate('MainScreen')
       } catch (error) {
       console.log('Navigating..')

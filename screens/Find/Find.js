@@ -31,7 +31,6 @@ import {useDispatch, useSelector} from 'react-redux';
   const [textFieldInFocus, setTextFieldInFocus] = useState(false)
  
   useEffect(() => {
-    console.log(myGroups);
     registerForPushNotificationsAsync();
    getUsers();
    getGroups();
