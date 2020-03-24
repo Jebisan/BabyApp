@@ -75,24 +75,31 @@ send = async messages =>{
            )})
       } else {
 
-        fetch(`https://babyapp-ed94d.firebaseio.com/directMessages/${chatId}.json?auth=${this.props.token}`,
+        fetch(`https://babyapp-ed94d.firebaseio.com/directMessages/${chatId}/${this.props.userId}.json?auth=${this.props.token}`,
         {
            method: 'PUT',
            headers: {
              'Content-Type': 'application/json'
            },
            body: JSON.stringify(
-             
-            {
-              users: [
-                {userId: this.props.userId},
-                {userId: personId}
-              ] 
-            }
+             true
            )}).then((response) => {
              this.setState({conversationCreated: true})
             return response.json();
           })
+
+          fetch(`https://babyapp-ed94d.firebaseio.com/directMessages/${chatId}/${this.props.personId}.json?auth=${this.props.token}`,
+          {
+             method: 'PUT',
+             headers: {
+               'Content-Type': 'application/json'
+             },
+             body: JSON.stringify(
+               true
+             )}).then((response) => {
+               this.setState({conversationCreated: true})
+              return response.json();
+            })
           .then((data) => {
             fetch(`https://babyapp-ed94d.firebaseio.com/directMessages/${chatId}/messages.json?auth=${this.props.token}`,
         {
@@ -111,6 +118,22 @@ send = async messages =>{
           this.props._addChatToUser(chatId, personId)
           this.props._addChatToPerson(chatId, personId)
       }
+
+      fetch(`https://babyapp-ed94d.firebaseio.com/chats/${chatId}/lastMessage.json?auth=${this.props.token}`,
+      {
+         method: 'PUT',
+         headers: {
+           'Content-Type': 'application/json'
+         },
+         body: JSON.stringify(
+          {
+            ...message
+          }
+         )}).then((response) => {
+           this.setState({conversationCreated: true})
+          return response.json();
+        })
+
       NotificationCenter.sendNotification('Ny besked fra ' + message.user.name, message.text, pushToken, {type: 'DM', chatId: chatId, pushToken: myPushToken})}
   )};
 

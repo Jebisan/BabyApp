@@ -23,6 +23,21 @@ const chatReducer = (state, action) => {
         return chat;
       };
     });
+    case 'UPDATE_INFO': 
+    return state.map(chat => {
+      if (chat.id === action.id) {
+        return {
+          ...chat,
+          ...action.newData
+        }
+        ;
+      } else {
+        return chat;
+      };
+    });
+
+    case 'RESET':
+      return []
 
     default:
       return state;
@@ -41,29 +56,55 @@ const DirectMessages = props => {
 
 
   useEffect(() => {
-      getChats();
+  getChats();
+
+  return () => {
+    directMessages.forEach(dm => {      
+      Fire.firebase.database().ref("chats/" + dm).off();
+    });
+  }
   }, []);
 
 
+const listenForChatChange = (dm) => {
+  Fire.firebase.database().ref("chats/"+dm).on('child_changed', snapshot => {
+    
+    dispatch({ type: 'UPDATE_INFO', id: dm, newData: {
+      id: dm,
+      lastMessage: snapshot.val().text,
+      timestamp: snapshot.val().timestamp
+    } 
+  });
+
+  })
+}
 
 
   const getChats = () => {
     directMessages.forEach(dm => {
-      Fire.firebase.database().ref("chats/"+dm).once('value').then((snapshot => {
-        dispatch({ type: 'ADD_CHAT_INFO', data: {
-        id: snapshot.key,
-        lastMessage: snapshot.val().lastMessage.text,
-        timestamp: snapshot.val().lastMessage.timestamp
-        } });
+      listenForChatChange(dm);
 
-        const membersArray = Object.keys(snapshot.val().members).map(key => {
+
+      Fire.firebase.database().ref("chats/"+dm).once('value').then(snapshot => {
+        
+        dispatch({ type: 'ADD_CHAT_INFO', data: {
+          id: dm,
+          lastMessage: snapshot.val().lastMessage.text,
+          timestamp: snapshot.val().lastMessage.timestamp
+        } 
+      });
+
+
+
+      Fire.firebase.database().ref("chatMembers/"+dm).once('value').then(snapshot => {
+        const membersArray = Object.keys(snapshot.val()).map(key => {
           return key
         });
         const user = membersArray.find(user => user!==userId);
-      
+        console.log(user, snapshot.key);
         addUserInfoToChat(user, snapshot.key)
-
-      }))
+      })
+      })
     })
   }
 
@@ -76,6 +117,7 @@ const DirectMessages = props => {
       } 
       });
      }))
+
   }
 
   return (
