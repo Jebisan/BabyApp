@@ -6,7 +6,8 @@ import moment from 'moment';
 import 'moment/locale/da';
 import ProgressCircle from 'react-native-progress-circle'
 import {useSelector} from 'react-redux';
-import {generateRandomId} from '../../Shared'
+import {generateRandomId} from '../../Shared';
+import Fire from '../../Fire';
 
 
 
@@ -76,11 +77,11 @@ useEffect(() => {
 }, [newDueDate, newToday])
 
 
-useEffect(() => {
+useEffect(() => {    
+
   if(directMessages.length!==0){
-  
     
-    const existingDm = directMessages.find(dm => dm.userId==id)
+    const existingDm = directMessages.find(dm => dm.member==id)
 
       if(existingDm) {
         console.log('Already in DM!')
@@ -99,7 +100,7 @@ useEffect(() => {
     setConversationCreated(false)
     setChatId(newChatId)
   }
-    
+   
 }, [])
 
   return (

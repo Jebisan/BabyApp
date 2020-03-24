@@ -6,7 +6,8 @@ import Group from '../../components/Group';
 import Fire from '../../Fire';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import {ButtonGroup} from 'react-native-elements';
-import {addPushTokenToUser, fetchUserDms} from '../../store/actions/auth'
+import {addPushTokenToUser} from '../../store/actions/auth'
+import {fetchUserDms} from '../../store/actions/directMessage'
 import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
@@ -113,12 +114,25 @@ const getGroups = () => {
   };
 
   const _handleNotification = notification => {
-   // console.log(notification)
+   
+
+   if(notification.origin=='received') {
+    switch(notification.data.type) {
+      case 'DM':
+      console.log('new DM recieved in foregrounde')
+      //dispatch(fetchUserDms());
+
+        break;
+        case 'GM':
+
+          break;
+          default:
+          }
+        }
+
     if(notification.origin=='selected') {
-        
       switch(notification.data.type) {
         case 'DM':
-          dispatch(fetchUserDms(notification.data.chatId) )
           props.navigation.navigate('DirectMessage', {
             conversationCreated: true,
             chatId: notification.data.chatId,
@@ -132,10 +146,8 @@ const getGroups = () => {
               members: notification.data.members,
               groupName: notification.data.groupName
             });
-            
             break;
             default:
-              // code block
             }
           }
 

@@ -6,8 +6,6 @@ import {connect} from 'react-redux';
 import {addChatToUser, addChatToPerson} from '../../store/actions/auth'
 import NotificationCenter from '../../NotificationCenter';
 
-
-
 class DirectMessage extends React.Component {
   constructor(props) {
     super(props)

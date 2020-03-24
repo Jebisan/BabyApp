@@ -51,16 +51,18 @@ const DirectMessages = props => {
     initialChats
   );
 
+  const dmState = useSelector(state => state.directMessages)
   const directMessages = useSelector(state => state.directMessages)
   const userId = useSelector(state => state.auth.userId)
 
 
   useEffect(() => {
+    console.log(dmState);
   getChats();
 
   return () => {
     directMessages.forEach(dm => {      
-      Fire.firebase.database().ref("chats/" + dm).off();
+      Fire.firebase.database().ref("chats/" + dm.chatId).off();
     });
   }
   }, []);
@@ -69,7 +71,6 @@ const DirectMessages = props => {
 const listenForChatChange = (dm) => {
   Fire.firebase.database().ref("chats/" + dm ).on('child_changed', snapshot => {
 
-    console.log(snapshot.val().text)
     const obj = snapshot.val().readBy
 
     var result = Object.keys(obj).map(function(key) {
@@ -93,10 +94,10 @@ const listenForChatChange = (dm) => {
 
   const getChats = () => {
     directMessages.forEach(dm => {
-      listenForChatChange(dm);
+      listenForChatChange(dm.chatId);
 
 
-      Fire.firebase.database().ref("chats/"+dm).once('value').then(snapshot => {
+      Fire.firebase.database().ref("chats/"+dm.chatId).once('value').then(snapshot => {
 
         const obj = snapshot.val().lastMessage.readBy
 
@@ -107,7 +108,7 @@ const listenForChatChange = (dm) => {
         const read = result.find(user => user.id==userId).value
         
         dispatch({ type: 'ADD_CHAT_INFO', data: {
-          id: dm,
+          id: dm.chatId,
           lastMessage: snapshot.val().lastMessage.text,
           timestamp: snapshot.val().lastMessage.timestamp,
           read: read
@@ -116,12 +117,11 @@ const listenForChatChange = (dm) => {
 
 
 
-      Fire.firebase.database().ref("chatMembers/"+dm).once('value').then(snapshot => {
+      Fire.firebase.database().ref("chatMembers/"+dm.chatId).once('value').then(snapshot => {
         const membersArray = Object.keys(snapshot.val()).map(key => {
           return key
         });
         const user = membersArray.find(user => user!==userId);
-        console.log(user, snapshot.key);
         addUserInfoToChat(user, snapshot.key)
       })
       })

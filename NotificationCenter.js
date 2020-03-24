@@ -23,7 +23,7 @@ class NotificationCenter extends Component {
       body: JSON.stringify(message),
     });
     const data = response._bodyInit;
-    console.log(`Status & Response ID-> ${JSON.stringify(data)}`);
+    //console.log(`Status & Response ID-> ${JSON.stringify(data)}`);
   }
 } 
 
