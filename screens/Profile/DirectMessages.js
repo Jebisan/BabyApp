@@ -67,14 +67,25 @@ const DirectMessages = props => {
 
 
 const listenForChatChange = (dm) => {
-  Fire.firebase.database().ref("chats/"+dm).on('child_changed', snapshot => {
+  Fire.firebase.database().ref("chats/" + dm ).on('child_changed', snapshot => {
+
+    console.log(snapshot.val().text)
+    const obj = snapshot.val().readBy
+
+    var result = Object.keys(obj).map(function(key) {
+      return {id: key, value: obj[key]};
+    });
+
+    const read = result.find(user => user.id==userId).value
     
     dispatch({ type: 'UPDATE_INFO', id: dm, newData: {
       id: dm,
       lastMessage: snapshot.val().text,
-      timestamp: snapshot.val().timestamp
+      timestamp: snapshot.val().timestamp,
+      read: read
     } 
   });
+  
 
   })
 }
@@ -86,11 +97,20 @@ const listenForChatChange = (dm) => {
 
 
       Fire.firebase.database().ref("chats/"+dm).once('value').then(snapshot => {
+
+        const obj = snapshot.val().lastMessage.readBy
+
+        var result = Object.keys(obj).map(function(key) {
+          return {id: key, value: obj[key]};
+        });
+    
+        const read = result.find(user => user.id==userId).value
         
         dispatch({ type: 'ADD_CHAT_INFO', data: {
           id: dm,
           lastMessage: snapshot.val().lastMessage.text,
-          timestamp: snapshot.val().lastMessage.timestamp
+          timestamp: snapshot.val().lastMessage.timestamp,
+          read: read
         } 
       });
 
@@ -111,6 +131,7 @@ const listenForChatChange = (dm) => {
   const addUserInfoToChat = (user, groupId) => {
     Fire.firebase.database().ref("users/"+user).once('value').then((snapshot => {
       dispatch({ type: 'ADD_CHAT_INFO_2', id: groupId, newData: {
+        personId: snapshot.key,
         name: snapshot.val().name,
         photoUrl: snapshot.val().photoUrl,
         pushToken: snapshot.val().pushToken
@@ -131,13 +152,16 @@ const listenForChatChange = (dm) => {
         <TouchableOpacity onPress={() => props.navigation.navigate('DirectMessage', {
           conversationCreated: true,
           chatId: item.id,
-          pushToken: item.pushToken
+          pushToken: item.pushToken,
+          personId: item.personId
         })}
         >
         <Chat  
         name={item.name}
         photoUrl={item.photoUrl}
         lastMessage = {item.lastMessage}
+        timestamp = {item.timestamp}
+        read = {item.read}
         />
         </TouchableOpacity>
         

@@ -1,9 +1,22 @@
 import React from 'react';
 import {View, StyleSheet, Text, Image } from 'react-native';
+import moment from 'moment';
+import {Entypo} from '@expo/vector-icons'
+import { useEffect, useState } from 'react';
+
 
 const Chat = props => {
+  
+  const time = moment(props.timestamp).fromNow();  
+  const [message, setMessage] = useState(props.lastMessage)
 
-
+useEffect(() => {
+  if(props.lastMessage.length>10){
+    setMessage(props.lastMessage.slice(0,12) + ' (...)')
+ } else {
+   setMessage(props.lastMessage);
+ }
+}, [props.lastMessage])
   
   return (
     <View style = {styles.parent}>
@@ -18,9 +31,33 @@ const Chat = props => {
       </View>
 
       <View style={styles.verticalContainer}>
-      <Text style= {styles.titleText}>{props.name}</Text>
-      <Text style= {styles.descriptionText}>{props.lastMessage}</Text>
+      
+      {props.read?
+        <Text style= {styles.name}>{props.name}</Text>
+
+      :
+      <Text style= {styles.name2}>{props.name}</Text>
+    }
+      
+        <View style={styles.message}>
+
+
+
+        {props.read?
+          <Text  style={styles.oldMessage}>{message}</Text>
+
+        :
+        <Text  style={styles.newMessage}>{message}</Text>
+      }
+        <Text style= {styles.time}>· {time}</Text>
+        </View>
       </View>
+        {
+          props.read? null :<View style={styles.unreadSymbol}>
+          <Entypo name='dot-single' color={'darkred'} size={40} />
+       </View>
+        }
+   
       </View>
       </View>
     </View>
@@ -33,15 +70,28 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
   } ,
-  titleText: {
+  name: {
     fontSize: 20,
-    fontWeight: "bold"
+    fontWeight: '200'
   },
-  descriptionText: {
+  name2: {
+    fontSize: 20,
+    fontWeight: '400'
+ },
+  oldMessage: {
     fontSize: 14,
     color: 'grey',
-    paddingTop: 10,
+    paddingTop: 7,
     paddingLeft: 3,
+    fontWeight: '200'
+  },
+  newMessage: {
+    fontSize: 14,
+    color: 'black',
+    paddingTop: 7,
+    paddingLeft: 3,
+    fontWeight: '400'
+
   },
   wishContainer: {
     borderStyle: 'solid',
@@ -70,6 +120,23 @@ const styles = StyleSheet.create({
     borderRadius: 400/ 2,
     borderWidth: 1,
     borderColor: 'lightgrey'
+  },
+  message: {
+    flexDirection: 'row'
+  },
+  time: {
+    fontSize: 14,
+    color: 'grey',
+    paddingTop: 7,
+    paddingLeft: 3,
+    fontWeight: '200'
+  },
+  unreadSymbol: {
+    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 320,
+    marginTop: 13
   }
 });
 

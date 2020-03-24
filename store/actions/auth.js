@@ -479,22 +479,22 @@ export const addGroupToUser = (userId, groupId ) => {
 };
 
 
-export const addChatToUser = (chatId, personId) => {
+export const addChatToUser = (chatId) => {
   return async (dispatch, getState) => {
     const userId = getState().auth.userId;    
     const token = getState().auth.token;    
 
 
       const response = await fetch(
-        `https://babyapp-ed94d.firebaseio.com/users/${userId}/messages.json?auth=${token}`,
+        `https://babyapp-ed94d.firebaseio.com/users/${userId}/messages/${chatId}.json?auth=${token}`,
         {
-          method: 'POST',
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            chatId: chatId
-          })
+          body: JSON.stringify(
+            true
+          )
         }
       );
 
@@ -502,13 +502,8 @@ export const addChatToUser = (chatId, personId) => {
         let message = 'Adding chat to this user in Firebase failed!';
         throw new Error(message);
       }
-        
-      const newDm = {
-        chatId,
-        userId: personId
-      }
 
-      dispatch({type: SET_DMS, directMessage: newDm})
+      dispatch({type: 'ADD_DM', dm: chatId})
     
   };
 };
@@ -519,15 +514,15 @@ export const addChatToPerson = (chatId, personId) => {
 
 
       const response = await fetch(
-        `https://babyapp-ed94d.firebaseio.com/users/${personId}/messages.json?auth=${token}`,
+        `https://babyapp-ed94d.firebaseio.com/users/${personId}/messages/${chatId}.json?auth=${token}`,
         {
-          method: 'POST',
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            chatId: chatId
-          })
+          body: JSON.stringify(
+            true
+          )
         }
       );
 
@@ -535,8 +530,6 @@ export const addChatToPerson = (chatId, personId) => {
         let message = 'Adding chat to person in Firebase failed!';
         throw new Error(message);
       }
-      
-    
   };
 };
 

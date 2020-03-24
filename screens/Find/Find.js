@@ -113,7 +113,7 @@ const getGroups = () => {
   };
 
   const _handleNotification = notification => {
-    console.log(notification)
+   // console.log(notification)
     if(notification.origin=='selected') {
         
       switch(notification.data.type) {

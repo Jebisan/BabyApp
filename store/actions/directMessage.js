@@ -2,6 +2,8 @@
 import Fire from '../../Fire';
 
 export const SET_DMS = 'SET_DMS'
+export const ADD_DM = 'ADD_DM'
+
 
 export const fetchUserDms = () => {
     return async (dispatch, getState) => {

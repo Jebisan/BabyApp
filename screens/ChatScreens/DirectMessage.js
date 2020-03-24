@@ -14,20 +14,21 @@ class DirectMessage extends React.Component {
     this.state = {
         messages: [],
         conversationCreated: false,
+        active: false
     }
   }
 
 
   componentDidMount() { 
-    console.log('Conversation created: '+this.props.navigation.getParam('conversationCreated'))
-    console.log('chatId: ' + this.props.navigation.getParam('chatId'))
-    console.log('PushToken: ' + this.props.navigation.getParam('pushToken'))
+    console.log(this.props.navigation.getParam('conversationCreated'))
+    this.setState({active:true})
 
     if(this.props.navigation.getParam('conversationCreated')){
       this.setState({conversationCreated:true})
+      this.readMessage();
+
     } else {
       this.setState({conversationCreated:false})
-
     }
     this.get(message =>  
       this.setState(previous => ({messages: GiftedChat.append(previous.messages, message)}))
@@ -75,33 +76,7 @@ send = async messages =>{
            )})
       } else {
 
-        fetch(`https://babyapp-ed94d.firebaseio.com/directMessages/${chatId}/${this.props.userId}.json?auth=${this.props.token}`,
-        {
-           method: 'PUT',
-           headers: {
-             'Content-Type': 'application/json'
-           },
-           body: JSON.stringify(
-             true
-           )}).then((response) => {
-             this.setState({conversationCreated: true})
-            return response.json();
-          })
-
-          fetch(`https://babyapp-ed94d.firebaseio.com/directMessages/${chatId}/${this.props.personId}.json?auth=${this.props.token}`,
-          {
-             method: 'PUT',
-             headers: {
-               'Content-Type': 'application/json'
-             },
-             body: JSON.stringify(
-               true
-             )}).then((response) => {
-               this.setState({conversationCreated: true})
-              return response.json();
-            })
-          .then((data) => {
-            fetch(`https://babyapp-ed94d.firebaseio.com/directMessages/${chatId}/messages.json?auth=${this.props.token}`,
+        fetch(`https://babyapp-ed94d.firebaseio.com/directMessages/${chatId}/messages.json?auth=${this.props.token}`,
         {
            method: 'POST',
            headers: {
@@ -113,11 +88,11 @@ send = async messages =>{
               ...message
             }
            )})
-          });
 
-          this.props._addChatToUser(chatId, personId)
+          this.props._addChatToUser(chatId)
           this.props._addChatToPerson(chatId, personId)
       }
+
 
       fetch(`https://babyapp-ed94d.firebaseio.com/chats/${chatId}/lastMessage.json?auth=${this.props.token}`,
       {
@@ -127,12 +102,31 @@ send = async messages =>{
          },
          body: JSON.stringify(
           {
-            ...message
+            ...message,
+            readBy: {
+              [this.props.userId]: true,
+              [personId]: false
+            }
           }
          )}).then((response) => {
-           this.setState({conversationCreated: true})
           return response.json();
         })
+
+        fetch(`https://babyapp-ed94d.firebaseio.com/chatMembers/${chatId}.json?auth=${this.props.token}`,
+        {
+           method: 'PUT',
+           headers: {
+             'Content-Type': 'application/json'
+           },
+           body: JSON.stringify(
+            {
+                [this.props.userId]: true,
+                [personId]: true
+            }
+           )}).then((response) => {
+             this.setState({conversationCreated: true})
+            return response.json();
+          })
 
       NotificationCenter.sendNotification('Ny besked fra ' + message.user.name, message.text, pushToken, {type: 'DM', chatId: chatId, pushToken: myPushToken})}
   )};
@@ -165,7 +159,32 @@ get user() {
       }
 }
 
-  componentWillUnmount(){    
+readMessage = () => {
+  const chatId = this.props.navigation.getParam('chatId')
+
+
+  fetch(`https://babyapp-ed94d.firebaseio.com/chats/${chatId}/lastMessage/readBy/${this.props.userId}.json?auth=${this.props.token}`,
+  {
+     method: 'PUT',
+     headers: {
+       'Content-Type': 'application/json'
+     },
+     body: JSON.stringify(
+        true
+     )})
+
+}
+
+componentDidUpdate(){
+  if(this.state.active && this.state.conversationCreated){
+    this.readMessage();
+  }
+}
+
+  componentWillUnmount(){
+
+      this.setState({active: false})    
+   
   this.messages.off();
   }
 
@@ -181,7 +200,7 @@ get user() {
     }
 
     const mapDispatchToProps = (dispatch) => ({
-      _addChatToUser: (chatId, userId) => dispatch(addChatToUser(chatId, userId)),
+      _addChatToUser: (chatId) => dispatch(addChatToUser(chatId)),
       _addChatToPerson: (chatId, personId) => dispatch(addChatToPerson(chatId, personId)),
     });
 
