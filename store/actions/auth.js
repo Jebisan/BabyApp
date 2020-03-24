@@ -422,21 +422,21 @@ export const addUserToGroup = (userId, groupId ) => {
     const token = getState().auth.token;    
 
       const response = await fetch(
-        `https://babyapp-ed94d.firebaseio.com/groups/${groupId}/members.json?auth=${token}`,
+        `https://babyapp-ed94d.firebaseio.com/groups/${groupId}/members/${userId}.json?auth=${token}`,
         {
-          method: 'POST',
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(
-            userId
+            true
           )
         }
       );
   
 
       if (!response.ok) {
-        let message = 'Adding group to user failed on Firebase!';
+        let message = 'Adding user to group failed on Firebase!';
         throw new Error(message);
       }
         
@@ -455,14 +455,14 @@ export const addGroupToUser = (userId, groupId ) => {
     const token = getState().auth.token;    
 
       const response = await fetch(
-        `https://babyapp-ed94d.firebaseio.com/users/${userId}/groups/.json?auth=${token}`,
+        `https://babyapp-ed94d.firebaseio.com/users/${userId}/groups/${groupId}.json?auth=${token}`,
         {
-          method: 'POST',
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(
-            groupId
+            true
           )
         }
       );

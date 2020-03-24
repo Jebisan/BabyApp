@@ -2,6 +2,9 @@
 import Fire from '../../Fire';
 
 export const ADD_GROUP = 'ADD_GROUP'
+export const REMOVE_REQUEST_FROM_GROUP = 'REMOVE_REQUEST_FROM_GROUP'
+export const ADD_REQUEST_TO_USER = 'ADD_REQUEST_TO_USER'
+
 
 export const fetchUserGroups = () => {
     return async (dispatch, getState) => {
@@ -118,13 +121,13 @@ export const addGroupToUser = (userId, groupId ) => {
   };
 };
 
-export const removeRequestFromGroup = (groupId, requestKey ) => {
+export const removeRequestFromGroup = (groupId, personId ) => {
     return async (dispatch, getState) => {
 
       const token = getState().auth.token;    
   
         const response = await fetch(
-          `https://babyapp-ed94d.firebaseio.com/groups/${groupId}/requests/${requestKey}.json?auth=${token}`,
+          `https://babyapp-ed94d.firebaseio.com/groups/${groupId}/requests/${personId}.json?auth=${token}`,
           {
             method: 'DELETE'
           }
@@ -138,7 +141,7 @@ export const removeRequestFromGroup = (groupId, requestKey ) => {
           
         const resData = await response.json();
   
-        dispatch({type: REMOVE_REQUEST_FROM_GROUP, groupId, requestKey})
+        dispatch({type: REMOVE_REQUEST_FROM_GROUP, groupId, personId})
   
     };
   };
@@ -165,7 +168,7 @@ export const removeRequestFromGroup = (groupId, requestKey ) => {
           
         const resData = await response.json();
   
-        //dispatch({type: REMOVE_REQUEST_FROM_GROUP, groupId, requestKey})
+        dispatch({type: REMOVE_REQUEST_FROM_GROUP, userId, requestKey})
   
     };
   };

@@ -15,9 +15,8 @@ const Request = props => {
 const dispatch = useDispatch();
 const userId = useSelector(state => state.auth.userId)
 
-const requestKey = props.navigation.getParam('requestKey');
+
 const groupId = props.navigation.getParam('groupId');
-const groupName = props.navigation.getParam('groupName');
 const personId = props.navigation.getParam('personId');
 
 
@@ -29,16 +28,15 @@ const dueDate = props.navigation.getParam('requestData').dueDate;
 const city = props.navigation.getParam('requestData').city;
 const postalCode = props.navigation.getParam('requestData').postalCode;
 const groupAdmin = props.navigation.getParam('groupAdmin');
-const requestsObject = props.navigation.getParam('requestData').requests;
-const [personRequestKey, setPersonRequestKey] = useState('');
 
+
+const groupName = props.navigation.getParam('groupName');
 const pushToken = props.navigation.getParam('pushToken');
 
 
 const [newBirthday, setNewBirthday] = useState([]);
 const [newDueDate, setNewDueDate] = useState([]);
 const [newToday, setNewToday] = useState([]);
-
 const [weeksToBirth, setWeeksToBirth] = useState(0);
 const [daysToBirth, setDaysToBirth] = useState(0);
 
@@ -46,13 +44,6 @@ useEffect(() => {
   setAge();
   setDueDate();
   setToday();
-
-let requestsArray = []  
-  requestsArray = Object.keys(requestsObject).map(key => {
-      return {key, id: requestsObject[key]}
-    });
-    setPersonRequestKey(requestsArray.find(request => request.id==groupId).key)
-
 }, [])
 
 const setDueDate = () => {
@@ -91,14 +82,14 @@ useEffect(() => {
 
 
 const denyRequest = () => {
-  dispatch(removeRequestFromGroup(groupId, requestKey ))
-  dispatch(removeRequestFromUser(personId, personRequestKey))
+  dispatch(removeRequestFromGroup(groupId, personId ))
+  dispatch(removeRequestFromUser(personId, groupId))
   props.navigation.goBack();
 }
 
 const acceptRequest = () => {
-  dispatch(removeRequestFromGroup(groupId, requestKey ))
-  dispatch(removeRequestFromUser(personId, personRequestKey))
+  dispatch(removeRequestFromGroup(groupId, personId ))
+  dispatch(removeRequestFromUser(personId, groupId))
   dispatch(addUserToGroup(personId, groupId))
   dispatch(addGroupToUser(personId, groupId))
 

@@ -13,7 +13,6 @@ const GroupScreen = props => {
 
   
   useEffect(() => {
-    console.log(groupData);
     props.navigation.setParams({
       id: groupData.id,
       members: groupData.members,
@@ -28,7 +27,6 @@ const GroupScreen = props => {
 
   const getMembers = () => {
     setMembers([]);
-    //console.log(groupData)
     
     groupData.members.forEach(member => {
       Fire.firebase.database().ref("users/"+member).once('value').then((snapshot => {
@@ -51,19 +49,14 @@ const GroupScreen = props => {
   }
 
   const getRequests = () => {
- //   console.log(groupData.requests)
+ 
     
     setRequests([]);
     groupData.requests.forEach(request => {
       const requestData = request
 
-      console.log('Finding info about: ' + request)
-
       Fire.firebase.database().ref("users/" + request).once('value').then((snapshot => {
-        const obj = snapshot.val()  
-        
-        console.log(obj);
-        
+        const obj = snapshot.val()          
         
         const request = {
           personId: snapshot.key,
@@ -75,12 +68,10 @@ const GroupScreen = props => {
           postalCode: obj.postalCode,
           city: obj.city,
           dueDate: obj.dueDate,     
-          requestKey: requestData.key,
-          requests: obj.requests
-        }    
+          }    
         
         
-        //console.log(request);
+        console.log(request);
         setRequests(previous => [...previous, request])
       })
       )
