@@ -34,11 +34,9 @@ useEffect(() => {
   
 
   useEffect(() => {
+      dispatch(getMembers(groupData.id));
+      dispatch(getRequests(groupData.id));
     
-
-    dispatch(getMembers(groupData.id));
-    dispatch(getRequests(groupData.id));
-
   }, [])
 
 

@@ -1,4 +1,4 @@
-import {ADD_GROUP, CREATE_GROUP, ADD_USER_TO_GROUP, ADD_USER_TO_REQUESTS, REMOVE_REQUEST_FROM_GROUP } from '../actions/group'
+import {ADD_GROUP, CREATE_GROUP, ADD_USER_TO_GROUP, ADD_USER_TO_REQUESTS, REMOVE_REQUEST_FROM_GROUP, CLEAR_GROUP_MEMBERS, CLEAR_GROUP_REQUESTS  } from '../actions/group'
 
 const INITIAL_STATE = [];
 
@@ -58,6 +58,31 @@ export default groupReducer = (state = INITIAL_STATE, action) => {
                   return group;
                 };
               });
+              case CLEAR_GROUP_REQUESTS:
+                return state.map(group => {
+                  if (group.id === action.groupId) {
+                    return {
+                      ...group,
+                      requests: [],
+                    };
+                  } else {
+                    return group;
+                  };
+                });
+
+                case CLEAR_GROUP_MEMBERS:
+                  return state.map(group => {
+                    if (group.id === action.groupId) {
+                      return {
+                        ...group,
+                        members: []
+                      };
+                    } else {
+                      return group;
+                    };
+                  });
+
+
               /*
               
         case REQUEST_FOR_MEMBERSHIP: 

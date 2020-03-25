@@ -8,6 +8,8 @@ export const CREATE_GROUP = 'CREATE_GROUP';
 export const REMOVE_REQUEST_FROM_GROUP = 'REMOVE_REQUEST_FROM_GROUP';
 export const ADD_MEMBER_TO_GROUP = 'ADD_MEMBER_TO_GROUP';
 export const ADD_USER_TO_REQUESTS = 'ADD_USER_TO_REQUESTS';
+export const CLEAR_GROUP_MEMBERS = 'CLEAR_GROUP_MEMBERS';
+export const CLEAR_GROUP_REQUESTS = 'CLEAR_GROUP_REQUESTS';
 
 export const fetchUserGroups = () => {
     return async (dispatch, getState) => {
@@ -263,27 +265,32 @@ export const removeRequestFromGroup = (groupId, personId ) => {
     return async (dispatch, getState) => {
 
     Fire.firebase.database().ref("groupMembers/"+groupId).once('value').then(snapshot => {
-      const membersArray = Object.keys(snapshot.val()).map(key => {
-        return key
-      });
+      if(snapshot.val()){
 
-      membersArray.forEach(member => {
-        Fire.firebase.database().ref("users/"+member).once('value').then((snapshot => {
-          const obj = snapshot.val()  
+        dispatch({type: CLEAR_GROUP_MEMBERS, groupId})
 
-          const user = {
-            id: snapshot.key,
-            name: obj.name, 
-            photoUrl: obj.photoUrl?obj.photoUrl:'http://criticare.isccm.org/assets/images/male_placeholder.png',
-            pushToken: obj.pushToken,
-            birthday: obj.birthday,
-            dueDate: obj.dueDate
-          }       
-
-        dispatch({type: ADD_USER_TO_GROUP, groupId, user})
+        const membersArray = Object.keys(snapshot.val()).map(key => {
+          return key
+        });
+        
+        membersArray.forEach(member => {
+          Fire.firebase.database().ref("users/"+member).once('value').then((snapshot => {
+            const obj = snapshot.val()  
+            
+            const user = {
+              id: snapshot.key,
+              name: obj.name, 
+              photoUrl: obj.photoUrl?obj.photoUrl:'http://criticare.isccm.org/assets/images/male_placeholder.png',
+              pushToken: obj.pushToken,
+              birthday: obj.birthday,
+              dueDate: obj.dueDate
+            }       
+            
+            dispatch({type: ADD_USER_TO_GROUP, groupId, user})
+          })
+          )
         })
-        )
-      })
+      }
       })
     };
   }
@@ -296,6 +303,8 @@ export const removeRequestFromGroup = (groupId, personId ) => {
 
     Fire.firebase.database().ref("groupRequests/"+groupId).once('value').then(snapshot => {
       if(snapshot.val()){
+
+        dispatch({type: CLEAR_GROUP_REQUESTS, groupId})
 
         const requestsArray = Object.keys(snapshot.val()).map(key => {
           return key
@@ -316,7 +325,7 @@ export const removeRequestFromGroup = (groupId, personId ) => {
               gender: obj.gender,
               dueDate: obj.dueDate,
             }    
-
+            
             dispatch({type: ADD_USER_TO_REQUESTS, groupId, user})
     
           })
