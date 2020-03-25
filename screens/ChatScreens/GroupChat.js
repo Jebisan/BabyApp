@@ -42,9 +42,6 @@ class GroupChat extends React.Component {
     
   }
 
-
-
-
 send = messages =>{
 const groupId = this.props.navigation.getParam('groupData').id
 const groupName = this.props.navigation.getParam('groupData').groupName

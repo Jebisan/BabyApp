@@ -8,7 +8,6 @@ export const CREATE_GROUP = 'CREATE_GROUP';
 export const REMOVE_REQUEST_FROM_GROUP = 'REMOVE_REQUEST_FROM_GROUP'
 
 
-
 export const fetchUserGroups = () => {
     return async (dispatch, getState) => {
       
@@ -24,17 +23,8 @@ export const fetchUserGroups = () => {
 
           groupIdsArray.forEach(groupId => {
             Fire.firebase.database().ref("groups/"+groupId).once('value').then((snapshot => {
-              
-              
-              let requestArray = []
-
-              if(snapshot.val().requests){
-                 requestArray = Object.keys(snapshot.val().requests).map(key => {
-                  return key
-                });
-              }
           
-              const group = {id: snapshot.key,...snapshot.val(), requests: requestArray}
+              const group = {id: snapshot.key,...snapshot.val()}
               dispatch({type: ADD_GROUP, group})
             }))
           });

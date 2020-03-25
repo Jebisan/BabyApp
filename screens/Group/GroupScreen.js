@@ -33,15 +33,18 @@ useEffect(() => {
   useEffect(() => {     
 
    getMembers();
+   getRequests();
 
+   /*
    if(groupData.requests){
      getRequests();
    }
-
+*/
   }, [groupData])
 
 
   const getMembers = () => {
+    setMembers([]);    
 
     Fire.firebase.database().ref("groupMembers/"+groupData.id).once('value').then(snapshot => {
       const membersArray = Object.keys(snapshot.val()).map(key => {
@@ -66,40 +69,37 @@ useEffect(() => {
         )
       })
       })
-    setMembers([]);    
   }
 
   const getRequests = () => {
- 
-    
-    setRequests([]);
-    groupData.requests.forEach(request => {
-      const requestData = request
+    setRequests([]);    
 
-      Fire.firebase.database().ref("users/" + request).once('value').then((snapshot => {
-        const obj = snapshot.val()          
+    Fire.firebase.database().ref("groupRequests/"+groupData.id).once('value').then(snapshot => {
+      if(snapshot.val()){
+
+        const requestsArray = Object.keys(snapshot.val()).map(key => {
+          return key
+        });
         
-        const request = {
-          personId: snapshot.key,
-          name: obj.name, 
-          photoUrl: obj.photoUrl?obj.photoUrl:'http://criticare.isccm.org/assets/images/male_placeholder.png',
-          pushToken: obj.pushToken,
-          birthday: obj.birthday,
-          gender: obj.gender,
-          postalCode: obj.postalCode,
-          city: obj.city,
-          dueDate: obj.dueDate,     
-          }    
-        
-        
-        console.log(request);
-        setRequests(previous => [...previous, request])
+        requestsArray.forEach(requester => {
+          Fire.firebase.database().ref("users/"+requester).once('value').then((snapshot => {
+            const obj = snapshot.val()  
+            
+            const user = {
+              id: snapshot.key,
+              name: obj.name, 
+              photoUrl: obj.photoUrl?obj.photoUrl:'http://criticare.isccm.org/assets/images/male_placeholder.png',
+              pushToken: obj.pushToken,
+              birthday: obj.birthday,
+              dueDate: obj.dueDate
+            }        
+            setRequests(previous => [...previous, user])
+          })
+          )
+        })
+      }
       })
-      )
-    }) 
-    
   }
-
 
   return (
     <View style={styles.parent}>
@@ -135,7 +135,7 @@ useEffect(() => {
         <Text style={styles.membersTitle}>ANMODNINGER ({requests.length})</Text>
       <View style={styles.picturesContainer} >
           {requests.map((request) =>
-            <TouchableOpacity key={request.personId} onPress={() => props.navigation.navigate('Request', {
+            <TouchableOpacity key={request.id} onPress={() => props.navigation.navigate('Request', {
               requestData: request,
               groupAdmin: groupData.admin,
               requestKey: request.requestKey,
