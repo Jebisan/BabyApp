@@ -2,16 +2,15 @@ import React, {useState, useEffect} from 'react';
 import {Button, View, StyleSheet, Text, ScrollView ,SafeAreaView, Image, TouchableOpacity} from 'react-native';
 import Fire from '../../Fire';
 import {useDispatch, useSelector} from 'react-redux'
-import {requestForMembership, addRequestToUser} from '../../store/actions/group'
+import {addRequestToGroup, addRequestToUser} from '../../store/actions/group'
 
 
 const GroupDetail = props => {
   const dispatch = useDispatch();
   const userId = useSelector(state => state.auth.userId)
-  const _requests = useSelector(state => state.auth.requests)
   const groups = useSelector(state => state.groups)
-  const requestsObject = props.navigation.getParam('requests')
-
+  const redux = useSelector(state => state);
+  const requests = useSelector(state => state.auth.requests)
 
   const groupId = props.navigation.getParam('groupId')
   const name = props.navigation.getParam('name')
@@ -22,26 +21,29 @@ const GroupDetail = props => {
 
 
   useEffect(() => {
+    console.log(redux)
     getMembers()
-    if(requestsObject) {
-      getRequests();
-    }
+
   }, [])
 
+  
   useEffect(() => {
-      if(_requests.find(request => request==groupId)){
+      if(requests.find(request => request==groupId)){
         setRequesting(true)
 }  
-  }, [_requests])
+  }, [requests])
 
 
   const getMembers = () => {
     setMembers([]);
     const membersObject = props.navigation.getParam('members')
-    const membersArray = Object.keys(membersObject).map(key => membersObject[key])
+    
+    
+    const membersArray = Object.keys(membersObject).map(key => key)
 
-    membersArray.forEach(dm => {
-        Fire.firebase.database().ref("users/"+dm).once('value').then((snapshot => {
+
+    membersArray.forEach(member => {
+        Fire.firebase.database().ref("users/"+member).once('value').then((snapshot => {
         const obj = snapshot.val()  
         
         const user = {
@@ -88,13 +90,10 @@ const GroupDetail = props => {
 
 const request = () => {
   console.log('REQUESTING..');
-  dispatch(requestForMembership(userId, groupId))
+  dispatch(addRequestToGroup(userId, groupId))
   dispatch(addRequestToUser(groupId))
 }
 
-useEffect(() => {
-  
-}, [_requests])
 
 
   return (

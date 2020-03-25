@@ -3,7 +3,7 @@ import { SafeAreaView } from 'react-native';
 import {GiftedChat} from 'react-native-gifted-chat';
 import Fire from '../../Fire';
 import {connect} from 'react-redux';
-import {addChatToUser, addChatToPerson} from '../../store/actions/auth'
+import {addChatToUser, addChatToPerson} from '../../store/actions/directMessage'
 import NotificationCenter from '../../NotificationCenter';
 
 class DirectMessage extends React.Component {
@@ -87,7 +87,7 @@ send = async messages =>{
             }
            )})
 
-          this.props._addChatToUser(chatId)
+          this.props._addChatToUser(chatId, personId)
           this.props._addChatToPerson(chatId, personId)
       }
 
@@ -198,7 +198,7 @@ componentDidUpdate(){
     }
 
     const mapDispatchToProps = (dispatch) => ({
-      _addChatToUser: (chatId) => dispatch(addChatToUser(chatId)),
+      _addChatToUser: (chatId, personId) => dispatch(addChatToUser(chatId, personId)),
       _addChatToPerson: (chatId, personId) => dispatch(addChatToPerson(chatId, personId)),
     });
 

@@ -6,9 +6,9 @@ import moment from 'moment';
 import 'moment/locale/da';
 import ProgressCircle from 'react-native-progress-circle'
 import {useSelector, useDispatch} from 'react-redux';
-import {removeRequestFromGroup, removeRequestFromUser} from '../../store/actions/group';
-import {addUserToGroup} from '../../store/actions/auth';
-import {addGroupToUser} from '../../store/actions/auth';
+
+import {removeRequestFromGroup, removeRequestFromUser, addGroupToUser, addUserToGroup} from '../../store/actions/group';
+
 import NotificationCenter from '../../NotificationCenter'
 
 const Request = props => {

@@ -4,7 +4,6 @@ import {ADD_REQUEST_TO_USER} from '../actions/group'
 const INITIAL_STATE = {
   token: null,
   userId: null,
-  displayName: null,
   firstname: null,
   lastname: null,
   name: null,
@@ -17,13 +16,14 @@ const INITIAL_STATE = {
   photoUrl: null,
   groups: null,
   pushToken: null,
-  requests: null
+  requests: [],
 };
 
 export default authReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case AUTHENTICATE:
       return {
+        ...state,
         token: action.token,
         userId: action.userId,
         email: action.email
@@ -44,6 +44,7 @@ export default authReducer = (state = INITIAL_STATE, action) => {
         city: action.city,
         photoUrl: action.photoUrl,
         pushToken: action.pushToken,
+        requests: action.requests
       }
       
     case SET_PHOTO_URL:

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {Button, StyleSheet, FlatList, Image, View, Text, TouchableOpacity } from 'react-native';
 import {useSelector} from 'react-redux';
 import Fire from '../../Fire';
@@ -7,45 +7,66 @@ import HeaderButton from '../../components/HeaderButton';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 const GroupScreen = props => {
+  const { navigation } = props;
   const groupData = useSelector(state => state.groups).find(group => group.id==props.navigation.getParam('id'))
   const [members, setMembers] = useState([])
   const [requests, setRequests] = useState([])
 
-  
-  useEffect(() => {
-    props.navigation.setParams({
+  const saveGroupData = useCallback(() => {
+    const data = {
       id: groupData.id,
-      members: groupData.members,
+      members: members,
       groupName: groupData.name
-    });
-     
+    };
+
+    props.navigation.navigate('GroupChat', {
+      groupData: data
+    })
+
+}, [members])
+
+useEffect(() => {
+  navigation.setParams({save: saveGroupData});
+}, [saveGroupData]);
+
+  
+  useEffect(() => {     
 
    getMembers();
-    getRequests();
+
+   if(groupData.requests){
+     getRequests();
+   }
+
   }, [groupData])
 
 
   const getMembers = () => {
-    setMembers([]);
-    
-    groupData.members.forEach(member => {
-      Fire.firebase.database().ref("users/"+member).once('value').then((snapshot => {
-        const obj = snapshot.val()  
-        
-        const user = {
-          id: snapshot.key,
-          name: obj.name, 
-          photoUrl: obj.photoUrl?obj.photoUrl:'http://criticare.isccm.org/assets/images/male_placeholder.png',
-          pushToken: obj.pushToken,
-          birthday: obj.birthday,
-          dueDate: obj.dueDate
-        }        
-        setMembers(previous => [...previous, user])
-       
+
+    Fire.firebase.database().ref("groupMembers/"+groupData.id).once('value').then(snapshot => {
+      const membersArray = Object.keys(snapshot.val()).map(key => {
+        return key
+      });
+      console.log(membersArray)
+
+      membersArray.forEach(member => {
+        Fire.firebase.database().ref("users/"+member).once('value').then((snapshot => {
+          const obj = snapshot.val()  
+
+          const user = {
+            id: snapshot.key,
+            name: obj.name, 
+            photoUrl: obj.photoUrl?obj.photoUrl:'http://criticare.isccm.org/assets/images/male_placeholder.png',
+            pushToken: obj.pushToken,
+            birthday: obj.birthday,
+            dueDate: obj.dueDate
+          }        
+          setMembers(previous => [...previous, user])
+        })
+        )
       })
-      )
-    })
-    
+      })
+    setMembers([]);    
   }
 
   const getRequests = () => {
@@ -164,11 +185,9 @@ GroupScreen.navigationOptions = navigationData => {
     <Item
       title="groupchat"
       iconName= 'ios-chatboxes'
-      onPress={() => navigationData.navigation.navigate('GroupChat', {
-        id: id,
-        members: members,
-        groupName: groupName
-      })}
+      onPress={
+        navigationData.navigation.getParam('save')
+      }
     />
   </HeaderButtons>  };
 };

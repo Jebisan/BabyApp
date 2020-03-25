@@ -21,6 +21,7 @@ const [weeksToBirth, setWeeksToBirth] = useState(0);
 const [daysToBirth, setDaysToBirth] = useState(0);
 
 useEffect(() => {  
+  console.log(groups);
   setAge();
   setDueDate();
   setToday();
@@ -33,6 +34,7 @@ useEffect(() => {
   const dueDate = useSelector(state => state.auth.dueDate);
   const city = useSelector(state => state.auth.city);
   const postalCode = useSelector(state => state.auth.postalCode);
+  const groups = useSelector(state => state.groups);
 
   const setDueDate = () => {
     var splittedDueDate = dueDate.split('-');

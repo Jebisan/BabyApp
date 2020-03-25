@@ -17,7 +17,6 @@ import {useDispatch, useSelector} from 'react-redux';
 
 
  const Find = (props) => {
-  const myGroups = useSelector(state => state.groups)
 
   const dispatch = useDispatch();
   const userId = useSelector(state => state.auth.userId);
@@ -119,12 +118,10 @@ const getGroups = () => {
    if(notification.origin=='received') {
     switch(notification.data.type) {
       case 'DM':
-      console.log('new DM recieved in foregrounde')
-      //dispatch(fetchUserDms());
-
+      console.log('new DM recieved in foreground')
+      dispatch(fetchUserDms());
         break;
         case 'GM':
-
           break;
           default:
           }
@@ -133,6 +130,7 @@ const getGroups = () => {
     if(notification.origin=='selected') {
       switch(notification.data.type) {
         case 'DM':
+          dispatch(fetchUserDms());
           props.navigation.navigate('DirectMessage', {
             conversationCreated: true,
             chatId: notification.data.chatId,

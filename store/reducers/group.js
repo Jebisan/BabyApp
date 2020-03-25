@@ -1,15 +1,10 @@
-import {SET_GROUPS, CREATE_GROUP, ADD_USER_TO_GROUP} from '../actions/auth'
-import {REMOVE_REQUEST_FROM_GROUP, REQUEST_FOR_MEMBERSHIP, ADD_GROUP, } from '../actions/group'
+import {REMOVE_REQUEST_FROM_GROUP, REQUEST_FOR_MEMBERSHIP, ADD_GROUP, CREATE_GROUP, ADD_USER_TO_GROUP } from '../actions/group'
 
 const INITIAL_STATE = [];
 
 export default groupReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     
-      case SET_GROUPS:
-        return [
-          ...action.groups
-        ];
         case ADD_GROUP:
           return [
             ...state, action.group

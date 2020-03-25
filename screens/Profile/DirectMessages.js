@@ -1,8 +1,9 @@
 import React, {useEffect, useState, useReducer} from 'react';
 import {Button, StyleSheet, FlatList, View, Text, TouchableOpacity } from 'react-native';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import Chat from '../../components/Chat';
 import Fire from '../../Fire';
+import {fetchUserDms} from '../../store/actions/directMessage'
 
 const initialChats = [];
 
@@ -51,13 +52,11 @@ const DirectMessages = props => {
     initialChats
   );
 
-  const dmState = useSelector(state => state.directMessages)
   const directMessages = useSelector(state => state.directMessages)
   const userId = useSelector(state => state.auth.userId)
 
 
   useEffect(() => {
-    console.log(dmState);
   getChats();
 
   return () => {

@@ -25,31 +25,29 @@ class GroupChat extends React.Component {
   }
 
   getMembers = () => {
-    const members = this.props.navigation.getParam('members')
+    const members = this.props.navigation.getParam('groupData').members
+    console.log(members);
+    
     members.forEach(member => {
 
-      Fire.firebase.database().ref("users/"+member).once('value').then((snapshot => {
-        const obj = snapshot.val()    
-        
-        const member = {
-          id: snapshot.key,
-          name: obj.name, 
-          photoUrl: obj.photoUrl,
-          pushToken: obj.pushToken,
+        const memberObj = {
+          id: member.id,
+          name: member.name, 
+          photoUrl: member.photoUrl,
+          pushToken: member.pushToken,
         }
-        this.setState(prevState => ({members: [...prevState.members, member]}))
+        this.setState(prevState => ({members: [...prevState.members, memberObj]}))
         
-      })
-      );
     });
+    
   }
 
 
 
 
 send = messages =>{
-const groupId = this.props.navigation.getParam('id')
-const groupName = this.props.navigation.getParam('groupName')
+const groupId = this.props.navigation.getParam('groupData').id
+const groupName = this.props.navigation.getParam('groupData').groupName
 
   messages.forEach(item => {
       const message = {   
@@ -73,7 +71,11 @@ const groupName = this.props.navigation.getParam('groupName')
           )}) 
 
           this.state.members.forEach(member => {
-            NotificationCenter.sendNotification('Ny besked fra ' + message.user.name + " i "+ groupName, message.text, member.pushToken, {type: 'GM', groupId: this.props.navigation.getParam('id'), members: this.props.navigation.getParam('members'), groupName: this.props.navigation.getParam('groupName')})
+            NotificationCenter.sendNotification(
+              'Ny besked fra ' + message.user.name + " i "+ groupName, 
+              message.text, 
+              member.pushToken, 
+              {type: 'GM', groupId: this.props.navigation.getParam('groupData').id, members: this.props.navigation.getParam('groupData').members, groupName: this.props.navigation.getParam('groupData'.groupName)})
           });
         }    
   )};
@@ -94,7 +96,7 @@ const groupName = this.props.navigation.getParam('groupName')
 };
 
   get messages() {
-    const groupId = this.props.navigation.getParam('id');
+    const groupId = this.props.navigation.getParam('groupData').id;
 
       return Fire.firebase.database().ref("groupMessages/"+groupId+"/messages");
     }
