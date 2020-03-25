@@ -17,7 +17,7 @@ const userId = useSelector(state => state.auth.userId)
 
 
 const groupId = props.navigation.getParam('groupId');
-const personId = props.navigation.getParam('personId');
+const personId = props.navigation.getParam('requestData').personId;
 
 
 const name = props.navigation.getParam('requestData').name ;
@@ -31,7 +31,7 @@ const groupAdmin = props.navigation.getParam('groupAdmin');
 
 
 const groupName = props.navigation.getParam('groupName');
-const pushToken = props.navigation.getParam('pushToken');
+const pushToken = props.navigation.getParam('requestData').pushToken;
 
 
 const [newBirthday, setNewBirthday] = useState([]);
@@ -90,7 +90,7 @@ const denyRequest = () => {
 const acceptRequest = () => {
   dispatch(removeRequestFromGroup(groupId, personId ))
   dispatch(removeRequestFromUser(personId, groupId))
-  dispatch(addUserToGroup(personId, groupId))
+  dispatch(addUserToGroup(personId, groupId, {id: personId, name, dueDate, birthday, photoUrl, pushToken}))
   dispatch(addGroupToUser(personId, groupId))
 
   NotificationCenter.sendNotification('Anmodning bekræftet', 'Din anmodning til gruppen '+"'" + groupName + "'"+ ' er blevet godkendt', pushToken)

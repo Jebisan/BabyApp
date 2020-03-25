@@ -1,21 +1,23 @@
 import React, {useEffect, useState, useCallback} from 'react';
 import {Button, StyleSheet, FlatList, Image, View, Text, TouchableOpacity } from 'react-native';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import Fire from '../../Fire';
 import { Ionicons} from '@expo/vector-icons';
 import HeaderButton from '../../components/HeaderButton';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+import {getMembers, getRequests} from '../../store/actions/group'
 
 const GroupScreen = props => {
   const { navigation } = props;
   const groupData = useSelector(state => state.groups).find(group => group.id==props.navigation.getParam('id'))
-  const [members, setMembers] = useState([])
+  const dispatch = useDispatch();
+
   const [requests, setRequests] = useState([])
 
   const saveGroupData = useCallback(() => {
     const data = {
       id: groupData.id,
-      members: members,
+      members: groupData.members,
       groupName: groupData.name
     };
 
@@ -23,83 +25,24 @@ const GroupScreen = props => {
       groupData: data
     })
 
-}, [members])
+}, [groupData.members])
 
 useEffect(() => {
   navigation.setParams({save: saveGroupData});
 }, [saveGroupData]);
 
   
-  useEffect(() => {     
 
-   getMembers();
-   getRequests();
+  useEffect(() => {
+    
 
-   /*
-   if(groupData.requests){
-     getRequests();
-   }
-*/
-  }, [groupData])
+    dispatch(getMembers(groupData.id));
+    dispatch(getRequests(groupData.id));
+
+  }, [])
 
 
-  const getMembers = () => {
-    setMembers([]);    
-
-    Fire.firebase.database().ref("groupMembers/"+groupData.id).once('value').then(snapshot => {
-      const membersArray = Object.keys(snapshot.val()).map(key => {
-        return key
-      });
-      console.log(membersArray)
-
-      membersArray.forEach(member => {
-        Fire.firebase.database().ref("users/"+member).once('value').then((snapshot => {
-          const obj = snapshot.val()  
-
-          const user = {
-            id: snapshot.key,
-            name: obj.name, 
-            photoUrl: obj.photoUrl?obj.photoUrl:'http://criticare.isccm.org/assets/images/male_placeholder.png',
-            pushToken: obj.pushToken,
-            birthday: obj.birthday,
-            dueDate: obj.dueDate
-          }        
-          setMembers(previous => [...previous, user])
-        })
-        )
-      })
-      })
-  }
-
-  const getRequests = () => {
-    setRequests([]);    
-
-    Fire.firebase.database().ref("groupRequests/"+groupData.id).once('value').then(snapshot => {
-      if(snapshot.val()){
-
-        const requestsArray = Object.keys(snapshot.val()).map(key => {
-          return key
-        });
-        
-        requestsArray.forEach(requester => {
-          Fire.firebase.database().ref("users/"+requester).once('value').then((snapshot => {
-            const obj = snapshot.val()  
-            
-            const user = {
-              id: snapshot.key,
-              name: obj.name, 
-              photoUrl: obj.photoUrl?obj.photoUrl:'http://criticare.isccm.org/assets/images/male_placeholder.png',
-              pushToken: obj.pushToken,
-              birthday: obj.birthday,
-              dueDate: obj.dueDate
-            }        
-            setRequests(previous => [...previous, user])
-          })
-          )
-        })
-      }
-      })
-  }
+  
 
   return (
     <View style={styles.parent}>
@@ -116,7 +59,7 @@ useEffect(() => {
         <View style={styles.membersContainer}>
           <Text style={styles.membersTitle}>MEDLEMMER </Text>
         <View style={styles.picturesContainer} >
-            {members.map((member) =>
+            {groupData.members.map((member) =>
                 <View key={member.id} > 
                     <Image source={{ uri: member.photoUrl }} style={styles.profilePicture}></Image>  
                 </View>
@@ -132,18 +75,16 @@ useEffect(() => {
 
 
         <View style={styles.membersContainer}>
-        <Text style={styles.membersTitle}>ANMODNINGER ({requests.length})</Text>
+        <Text style={styles.membersTitle}>ANMODNINGER ({groupData.requests.length})</Text>
       <View style={styles.picturesContainer} >
-          {requests.map((request) =>
-            <TouchableOpacity key={request.id} onPress={() => props.navigation.navigate('Request', {
+          {groupData.requests.map((request) =>
+            <TouchableOpacity key={request.personId} onPress={() => props.navigation.navigate('Request', {
               requestData: request,
-              groupAdmin: groupData.admin,
-              requestKey: request.requestKey,
+
               groupId: groupData.id,
-              personId: request.personId,
-              requests: request.requests,
               groupName: groupData.name,
-              pushToken: request.pushToken
+              groupAdmin: groupData.admin,
+
             })}>
               <View key={request.id} > 
                   <Image source={{ uri: request.photoUrl }} style={styles.profilePicture}></Image>  

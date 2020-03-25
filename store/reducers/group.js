@@ -1,4 +1,4 @@
-import {REMOVE_REQUEST_FROM_GROUP, REQUEST_FOR_MEMBERSHIP, ADD_GROUP, CREATE_GROUP, ADD_USER_TO_GROUP } from '../actions/group'
+import {ADD_GROUP, CREATE_GROUP, ADD_USER_TO_GROUP, ADD_USER_TO_REQUESTS, REMOVE_REQUEST_FROM_GROUP } from '../actions/group'
 
 const INITIAL_STATE = [];
 
@@ -7,7 +7,7 @@ export default groupReducer = (state = INITIAL_STATE, action) => {
     
         case ADD_GROUP:
           return [
-            ...state, action.group
+            ...state, action.group,
           ];
 
       case CREATE_GROUP: 
@@ -21,10 +21,6 @@ export default groupReducer = (state = INITIAL_STATE, action) => {
             city: action.city,
             groupType: action.groupType,
             photoUrl: action.photoUrl,
-            /*
-            members: action.members,
-            requests: action.requests
-            */
           }
         ];
         case ADD_USER_TO_GROUP:
@@ -32,23 +28,38 @@ export default groupReducer = (state = INITIAL_STATE, action) => {
             if (group.id === action.groupId) {
               return {
                 ...group,
-                members: [...group.members, action.userId]
+                members: [...group.members, action.user]
               };
             } else {
               return group;
             };
           });
-        case REMOVE_REQUEST_FROM_GROUP:
-          return state.map(group => {
-            if (group.id === action.groupId) {
-              return {
-                ...group,
-                requests: [...group.requests.filter(request => request.key!==action.requestKey)]
+
+          case ADD_USER_TO_REQUESTS:
+            return state.map(group => {
+              if (group.id === action.groupId) {
+                return {
+                  ...group,
+                  requests: [...group.requests, action.user]
+                };
+              } else {
+                return group;
               };
-            } else {
-              return group;
-            };
-          });
+            });
+
+            case REMOVE_REQUEST_FROM_GROUP:
+              return state.map(group => {
+                if (group.id === action.groupId) {
+                  return {
+                    ...group,
+                    requests: [...group.requests.filter(request => request.personId!==action.personId)]
+                  };
+                } else {
+                  return group;
+                };
+              });
+              /*
+              
         case REQUEST_FOR_MEMBERSHIP: 
         return state.map(group => {
           if (group.id === action.groupId) {
@@ -60,7 +71,7 @@ export default groupReducer = (state = INITIAL_STATE, action) => {
             return group;
           };
         });
-     
+        */
     default:
       return state;
   }

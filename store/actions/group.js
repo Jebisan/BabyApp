@@ -5,8 +5,9 @@ export const ADD_GROUP = 'ADD_GROUP'
 export const ADD_REQUEST_TO_USER = 'ADD_REQUEST_TO_USER'
 export const ADD_USER_TO_GROUP = 'ADD_USER_TO_GROUP';
 export const CREATE_GROUP = 'CREATE_GROUP';
-export const REMOVE_REQUEST_FROM_GROUP = 'REMOVE_REQUEST_FROM_GROUP'
-
+export const REMOVE_REQUEST_FROM_GROUP = 'REMOVE_REQUEST_FROM_GROUP';
+export const ADD_MEMBER_TO_GROUP = 'ADD_MEMBER_TO_GROUP';
+export const ADD_USER_TO_REQUESTS = 'ADD_USER_TO_REQUESTS';
 
 export const fetchUserGroups = () => {
     return async (dispatch, getState) => {
@@ -24,7 +25,7 @@ export const fetchUserGroups = () => {
           groupIdsArray.forEach(groupId => {
             Fire.firebase.database().ref("groups/"+groupId).once('value').then((snapshot => {
           
-              const group = {id: snapshot.key,...snapshot.val()}
+              const group = {id: snapshot.key, ...snapshot.val(), members: [], requests: []}
               dispatch({type: ADD_GROUP, group})
             }))
           });
@@ -70,7 +71,7 @@ export const removeRequestFromGroup = (groupId, personId ) => {
       const token = getState().auth.token;    
   
         const response = await fetch(
-          `https://babyapp-ed94d.firebaseio.com/groups/${groupId}/requests/${personId}.json?auth=${token}`,
+          `https://babyapp-ed94d.firebaseio.com/groupRequests/${groupId}/${personId}.json?auth=${token}`,
           {
             method: 'DELETE'
           }
@@ -111,7 +112,7 @@ export const removeRequestFromGroup = (groupId, personId ) => {
           
         const resData = await response.json();
   
-        dispatch({type: REMOVE_REQUEST_FROM_GROUP, userId, requestKey})
+     //   dispatch({type: REMOVE_REQUEST_FROM_GROUP, userId, requestKey})
   
     };
   };
@@ -228,7 +229,7 @@ export const removeRequestFromGroup = (groupId, personId ) => {
     };
   };
 
-  export const addUserToGroup = (userId, groupId ) => {
+  export const addUserToGroup = (userId, groupId, user ) => {
     return async (dispatch, getState) => {
   
       const token = getState().auth.token;    
@@ -253,5 +254,75 @@ export const removeRequestFromGroup = (groupId, personId ) => {
         }
           
         const resData = await response.json();
+        dispatch({type: ADD_USER_TO_GROUP, groupId, user})
+
     };
   };
+
+  export const getMembers = (groupId) => {
+    return async (dispatch, getState) => {
+
+    Fire.firebase.database().ref("groupMembers/"+groupId).once('value').then(snapshot => {
+      const membersArray = Object.keys(snapshot.val()).map(key => {
+        return key
+      });
+
+      membersArray.forEach(member => {
+        Fire.firebase.database().ref("users/"+member).once('value').then((snapshot => {
+          const obj = snapshot.val()  
+
+          const user = {
+            id: snapshot.key,
+            name: obj.name, 
+            photoUrl: obj.photoUrl?obj.photoUrl:'http://criticare.isccm.org/assets/images/male_placeholder.png',
+            pushToken: obj.pushToken,
+            birthday: obj.birthday,
+            dueDate: obj.dueDate
+          }       
+
+        dispatch({type: ADD_USER_TO_GROUP, groupId, user})
+        })
+        )
+      })
+      })
+    };
+  }
+
+
+
+  export const getRequests = (groupId) => {
+    return async (dispatch, getState) => {
+
+
+    Fire.firebase.database().ref("groupRequests/"+groupId).once('value').then(snapshot => {
+      if(snapshot.val()){
+
+        const requestsArray = Object.keys(snapshot.val()).map(key => {
+          return key
+        });
+        
+        requestsArray.forEach(requester => {
+          Fire.firebase.database().ref("users/"+requester).once('value').then((snapshot => {
+            const obj = snapshot.val()  
+            
+            const user = {
+              personId: snapshot.key,
+              name: obj.name, 
+              photoUrl: obj.photoUrl?obj.photoUrl:'http://criticare.isccm.org/assets/images/male_placeholder.png',
+              pushToken: obj.pushToken,
+              birthday: obj.birthday,
+              city: obj.city,
+              postalCode: obj.postalCode,
+              gender: obj.gender,
+              dueDate: obj.dueDate,
+            }    
+
+            dispatch({type: ADD_USER_TO_REQUESTS, groupId, user})
+    
+          })
+          )
+        })
+      }
+      })
+    }
+  }
