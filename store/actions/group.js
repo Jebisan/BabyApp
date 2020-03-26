@@ -282,10 +282,13 @@ export const removeRequestFromGroup = (groupId, personId ) => {
             const user = {
               id: snapshot.key,
               name: obj.name, 
+              gender: obj.gender,
+              dueDate: obj.dueDate,
+              city: obj.city,
+              postalCode: obj.postalCode,
+              birthday: obj.birthday,
               photoUrl: obj.photoUrl?obj.photoUrl:'http://criticare.isccm.org/assets/images/male_placeholder.png',
               pushToken: obj.pushToken,
-              birthday: obj.birthday,
-              dueDate: obj.dueDate
             }       
             
             dispatch({type: ADD_USER_TO_GROUP, groupId, user})

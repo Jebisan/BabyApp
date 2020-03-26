@@ -59,7 +59,8 @@ const GroupsStack = createStackNavigator({
     GroupChat: GroupChat,
     GroupScreen: GroupScreen,
     AddUsersToGroup: AddUsersToGroup,
-    Request: Request
+    Request: Request,
+    UserDetail: UserDetail
 }
 );
 

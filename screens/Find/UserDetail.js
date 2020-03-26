@@ -112,23 +112,27 @@ useEffect(() => {
                 <Image source={photoUrl?{ uri: photoUrl }:{uri: 'http://criticare.isccm.org/assets/images/male_placeholder.png'}} style={styles.image} resizeMode="cover"></Image>
             </View>
 
-            <TouchableOpacity onPress={() => props.navigation.navigate('DirectMessage',{
-              conversationCreated: conversationCreated,
-              personId: props.navigation.getParam('id'),
-              chatId: chatId,
-              pushToken: pushToken
+            {props.navigation.getParam('id')==userId?null:
+              <View style={styles.buttonsContainer}>
+              <TouchableOpacity onPress={() => props.navigation.navigate('DirectMessage',{
+                conversationCreated: conversationCreated,
+                personId: props.navigation.getParam('id'),
+                chatId: chatId,
+                pushToken: pushToken
+              }
+              )} style={styles.dm}>
+              <MaterialIcons name="chat" size={15} color="#DFD8C8"></MaterialIcons>
+              </TouchableOpacity>
+              
+              <TouchableOpacity onPress={() => Alert.alert('Not yet supported')}  style={styles.add}>
+              <Ionicons name="ios-add" size={30} color="#DFD8C8" style={{ marginTop: 5, marginLeft: 1 }}></Ionicons>
+              </TouchableOpacity>
+              </View>
             }
             
 
-              
-            
-            )} style={styles.dm}>
-                <MaterialIcons name="chat" size={15} color="#DFD8C8"></MaterialIcons>
-            </TouchableOpacity>
-            
-            <TouchableOpacity onPress={() => Alert.alert('Not yet supported')}  style={styles.add}>
-                <Ionicons name="ios-add" size={30} color="#DFD8C8" style={{ marginTop: 5, marginLeft: 1 }}></Ionicons>
-            </TouchableOpacity>
+
+
         </View>
 
         <View style={styles.infoContainer}>
@@ -245,7 +249,7 @@ const styles = StyleSheet.create({
   dm: {
       backgroundColor: "#41444B",
       position: "absolute",
-      top: 20,
+      bottom: 106,
       width: 30,
       height: 30,
       borderRadius: 20,
@@ -392,6 +396,9 @@ const styles = StyleSheet.create({
     color: "#52575D",
     marginHorizontal: 14
   },
+  buttonsContainer: {
+    position: 'relative'
+  }
 });
 
 export default UserDetail;

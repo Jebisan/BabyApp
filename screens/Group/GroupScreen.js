@@ -10,6 +10,7 @@ import {getMembers, getRequests} from '../../store/actions/group'
 const GroupScreen = props => {
   const { navigation } = props;
   const groupData = useSelector(state => state.groups).find(group => group.id==props.navigation.getParam('id'))
+  const userId = useSelector(state => state.auth.userId)
   const dispatch = useDispatch();
 
   const [requests, setRequests] = useState([])
@@ -57,17 +58,31 @@ useEffect(() => {
         <View style={styles.membersContainer}>
           <Text style={styles.membersTitle}>MEDLEMMER </Text>
         <View style={styles.picturesContainer} >
+        
             {groupData.members.map((member) =>
-                <View key={member.id} > 
-                    <Image source={{ uri: member.photoUrl }} style={styles.profilePicture}></Image>  
-                </View>
-                
+
+                <TouchableOpacity key={member.id} onPress={() => props.navigation.navigate('UserDetail', {
+                id: member.id,
+                name: member.name,
+                gender: member.gender,
+                dueDate: member.dueDate,
+                city: member.city,
+                postalCode: member.postalCode,
+                birthday: member.birthday,
+                photoUrl: member.photoUrl,
+                pushToken: member.pushToken
+              })}  > 
+                  <Image source={{ uri: member.photoUrl }} style={styles.profilePicture}></Image>  
+              </TouchableOpacity>
+
               )}
+
               <TouchableOpacity onPress={() => props.navigation.navigate('AddUsersToGroup', {
                 //groupData
               })} >
                 <Ionicons style={styles.addIcon} name='ios-add-circle-outline' size={43} />
               </TouchableOpacity>
+
         </View>
         </View>
 
@@ -88,6 +103,7 @@ useEffect(() => {
                   <Image source={{ uri: request.photoUrl }} style={styles.profilePicture}></Image>  
               </View>
               </TouchableOpacity>
+              
             )}
       </View>
       </View>
