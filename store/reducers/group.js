@@ -21,6 +21,8 @@ export default groupReducer = (state = INITIAL_STATE, action) => {
             city: action.city,
             groupType: action.groupType,
             photoUrl: action.photoUrl,
+            members: [],
+            requests: []
           }
         ];
         case ADD_USER_TO_GROUP:

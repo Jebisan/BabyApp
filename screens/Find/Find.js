@@ -12,12 +12,15 @@ import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 import {useDispatch, useSelector} from 'react-redux';
+import { Tooltip } from 'react-native-elements';
+import { useRef } from "react";
+
 
 
 
 
  const Find = (props) => {
-
+  const togglePopDownMessage = useRef(null);
   const dispatch = useDispatch();
   const userId = useSelector(state => state.auth.userId);
 
@@ -119,6 +122,9 @@ const getGroups = () => {
     switch(notification.data.type) {
       case 'DM':
       console.log('new DM recieved in foreground')
+      
+      togglePopDownMessage.current.toggleTooltip();
+
       dispatch(fetchUserDms());
         break;
         case 'GM':
@@ -154,6 +160,19 @@ const getGroups = () => {
 
     return (
       <View style={styles.searchContainer}>
+      <Tooltip 
+      ref={togglePopDownMessage}
+
+      popover={<Text>Ny besked</Text>}
+      toggleOnPress={true}
+      withOverlay={false}
+      onClose={() => props.navigation.navigate('DirectMessages')}
+      >
+        
+
+      </Tooltip>
+
+
           <SearchableDropdown
           setTextFieldInFocus={(value) => setTextFieldInFocus(value)}
           onItemSelect={(item) => {

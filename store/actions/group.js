@@ -256,7 +256,9 @@ export const removeRequestFromGroup = (groupId, personId ) => {
         }
           
         const resData = await response.json();
-        dispatch({type: ADD_USER_TO_GROUP, groupId, user})
+        if(user){
+          dispatch({type: ADD_USER_TO_GROUP, groupId, user})
+        }
 
     };
   };
