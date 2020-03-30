@@ -16,22 +16,25 @@ export const fetchUserGroups = () => {
       
       const userId = getState().auth.userId;    
   
-        Fire.firebase.database().ref("users/"+userId+"/groups").once('value').then((snapshot => {
+        Fire.firebase.database().ref("users/"+userId+"/groups").once('value').then(snapshot => {
   
-          const groupObject = snapshot.val()
-         
-         let groupIdsArray = Object.keys(groupObject).map(key => {
-            return key
-          });
+          if(snapshot.val()){
 
-          groupIdsArray.forEach(groupId => {
-            Fire.firebase.database().ref("groups/"+groupId).once('value').then((snapshot => {
-          
-              const group = {id: snapshot.key, ...snapshot.val(), members: [], requests: []}
-              dispatch({type: ADD_GROUP, group})
-            }))
-          });
-        }))
+            const groupObject = snapshot.val()
+            
+            let groupIdsArray = Object.keys(groupObject).map(key => {
+              return key
+            });
+            
+            groupIdsArray.forEach(groupId => {
+              Fire.firebase.database().ref("groups/"+groupId).once('value').then((snapshot => {
+                
+                const group = {id: snapshot.key, ...snapshot.val(), members: [], requests: []}
+                dispatch({type: ADD_GROUP, group})
+              }))
+            }); 
+          }
+        })
       };
     };
 
@@ -43,7 +46,7 @@ export const addRequestToGroup = (userId, groupId ) => {
     const token = getState().auth.token;    
 
       const response = await fetch(
-        `https://babyapp-ed94d.firebaseio.com/groups/${groupId}/requests/${userId}.json?auth=${token}`,
+        `https://babyapp-ed94d.firebaseio.com/groupRequests/${groupId}/${userId}.json?auth=${token}`,
         {
           method: 'PUT',
           headers: {

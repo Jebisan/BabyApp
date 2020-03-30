@@ -2,36 +2,63 @@ import React, {useState, useEffect} from 'react';
 import {Button, View, StyleSheet, Text, ScrollView ,SafeAreaView, Image, TouchableOpacity} from 'react-native';
 import Fire from '../../Fire';
 import {useDispatch, useSelector} from 'react-redux'
-import {addRequestToGroup, addRequestToUser} from '../../store/actions/group'
+import {addRequestToGroup, addRequestToUser} from '../../store/actions/group';
+import NotificationCenter from '../../NotificationCenter';
 
 
 const GroupDetail = props => {
   const dispatch = useDispatch();
   const userId = useSelector(state => state.auth.userId)
+  const userName = useSelector(state => state.auth.name)
+
   const groups = useSelector(state => state.groups)
   const redux = useSelector(state => state);
   const requests = useSelector(state => state.auth.requests)
+  
 
   const groupId = props.navigation.getParam('groupId')
   const name = props.navigation.getParam('name')
   const description = props.navigation.getParam('description')
+  const admin = props.navigation.getParam('admin');
   
   const [members, setMembers] = useState([]);
   const [requesting, setRequesting] = useState(false);
-
-
-  useEffect(() => {
-    console.log(redux)
-    getMembers()
-
-  }, [])
-
   
   useEffect(() => {
       if(requests.find(request => request==groupId)){
         setRequesting(true)
 }  
   }, [requests])
+
+  useEffect(() => {
+    console.log(admin);
+    if(groups.length!==0){
+      const existingGroup = groups.find(group => group.id==groupId)
+  
+        if(existingGroup) {
+          console.log('Already enrolled in group!')
+          props.navigation.goBack();
+
+          props.navigation.navigate('GroupScreen', {
+            id: existingGroup.id,
+            members: existingGroup.members,
+            groupName: existingGroup.name,
+            admin: existingGroup.admin,
+            description: existingGroup.description
+          })
+        } else {
+          console.log('Not enrolled in Group! ')
+          getMembers()
+
+        }
+      
+    } else {
+      console.log('Empty groups.. ')
+      getMembers()
+
+    }
+      
+  }, [])
 
 
   const getMembers = () => {
@@ -62,35 +89,24 @@ const GroupDetail = props => {
       })
   }
 
-     useEffect(() => {
-      if(groups.length!==0){
-        const existingGroup = groups.find(group => group.id==groupId)
-    
-          if(existingGroup) {
-            console.log('Already enrolled in group!')
-            props.navigation.goBack();
-
-            props.navigation.navigate('GroupScreen', {
-              id: existingGroup.id,
-              members: existingGroup.members,
-              groupName: existingGroup.name,
-              admin: existingGroup.admin,
-              description: existingGroup.description
-            })
-          } else {
-            console.log('Not enrolled in Group! ')
-          }
-        
-      } else {
-        console.log('Empty groups.. ')
-      }
-        
-    }, [])
+     
 
 const request = () => {
   console.log('REQUESTING..');
   dispatch(addRequestToGroup(userId, groupId))
   dispatch(addRequestToUser(groupId))
+  sendNotificationToAdmin();
+}
+
+const sendNotificationToAdmin = () => {
+
+  Fire.firebase.database().ref("users/"+admin).once('value').then(snapshot => {
+
+    console.log(snapshot.val().pushToken);
+
+    NotificationCenter.sendNotification('Gruppeanmodning', userName + " har anmodet om medlemskab i din gruppe '"+name+"'", snapshot.val().pushToken)
+
+    })
 }
 
 

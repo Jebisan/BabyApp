@@ -189,6 +189,8 @@ componentDidUpdate(){
     render() {
       return <SafeAreaView style={{flex:1}}> 
                 <GiftedChat 
+                timeFormat={'HH:mm'}
+                
                 showUserAvatar
                 messages={this.state.messages} 
                 onSend={this.send} 

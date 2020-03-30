@@ -124,15 +124,7 @@ GroupScreen.navigationOptions = navigationData => {
   return {
     headerTitle: groupName,
 
-    headerLeft: 
 
-    <HeaderButtons HeaderButtonComponent={HeaderButton}>
-    <Item
-      title="groupchat"
-      iconName= 'ios-arrow-back'
-      onPress={() => navigationData.navigation.goBack()}
-    />
-  </HeaderButtons>,
 
     headerRight: 
 

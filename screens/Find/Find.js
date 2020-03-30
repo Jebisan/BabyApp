@@ -278,6 +278,7 @@ const getGroups = () => {
                 city={item.city}
                 postalCode={item.postalCode}
                 photoUrl={item.photoUrl}
+                admin = {item.admin}
                 />
                 </TouchableOpacity>
               }

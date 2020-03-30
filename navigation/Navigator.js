@@ -68,7 +68,8 @@ const FindStack = createStackNavigator({
     Find: Find,
     UserDetail: UserDetail,
     GroupDetail: GroupDetail,
-    DirectMessage: DirectMessage
+    DirectMessage: DirectMessage,
+    GroupScreen: GroupScreen
 
 }
 );
