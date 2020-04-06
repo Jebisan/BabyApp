@@ -142,6 +142,9 @@ const listenForChatChange = (dm) => {
 
   return (
     <View style={styles.parent}>   
+    <View style={styles.emptyMessagesContainer}>
+    <Text style={styles.noMessagesText}>Ingen beskeder</Text>
+    </View>
     {
       
         <FlatList
@@ -194,4 +197,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
     height: 44,
   },
+  noMessagesText: {
+    fontSize: 18,
+    color: 'grey'
+  },
+  emptyMessagesContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    top: 250
+  
+  }
 })

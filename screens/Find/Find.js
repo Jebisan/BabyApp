@@ -18,7 +18,6 @@ import { useRef } from "react";
 
 
 
-
  const Find = (props) => {
   const togglePopDownMessage = useRef(null);
   const dispatch = useDispatch();
@@ -69,8 +68,10 @@ const getGroups = () => {
     if(selectedIndex==0){
       let tempUserArray = [] 
       users.forEach(user => {
-        if(user.city.includes(city.name)){
+        if(user.city.trim().includes(city.name2.trim())){
           tempUserArray.push(user);
+        } else {
+
         }
       });
     setFilteredUsers(tempUserArray)
@@ -168,11 +169,7 @@ const getGroups = () => {
       withOverlay={false}
       onClose={() => props.navigation.navigate('DirectMessages')}
       >
-        
-
       </Tooltip>
-
-
           <SearchableDropdown
           setTextFieldInFocus={(value) => setTextFieldInFocus(value)}
           onItemSelect={(item) => {
@@ -202,8 +199,7 @@ const getGroups = () => {
                   borderWidth: 1,
                   borderColor: '#ccc',
                   borderRadius: 5,
-              },
-              
+              }, 
             }
           }
           listProps={
@@ -212,9 +208,6 @@ const getGroups = () => {
             }
           }
       />
-
-   
-
           {textFieldInFocus ? (
             null
           ) : (
@@ -227,74 +220,73 @@ const getGroups = () => {
             
             />
 
-            <View style={styles.foundUsersContainer}>
-            <SafeAreaView style={styles.container}>
-
-          {selectedIndex===0? 
-            <FlatList
-            data={filteredUsers}
-            renderItem={({ item }) => 
-            <TouchableOpacity onPress={() => props.navigation.navigate('UserDetail', {
-              id: item.key,
-              name: item.name,
-              gender: item.gender,
-              dueDate: item.dueDate,
-              city: item.city,
-              postalCode: item.postalCode,
-              birthday: item.birthday,
-              photoUrl: item.photoUrl,
-              pushToken: item.pushToken
-            })}>
-                <User
-                name={item.name}
-                dueDate={item.dueDate}
-                gender={item.gender}
-                city={item.city}
-                postalCode={item.postalCode}
-                photoUrl={item.photoUrl}
-                />
-                </TouchableOpacity>
-              }
-            keyExtractor={item => item.key}
-          />
-          : null}
-
-          {selectedIndex===1? 
-            <FlatList
-            data={filteredGroups}
-            renderItem={({ item }) => 
-            <TouchableOpacity onPress={() => props.navigation.navigate('GroupDetail', {
-              groupId: item.key,
-              name: item.name,
-              description: item.description,
-              members: item.members,
-              admin: item.admin,
-              guestView: true
-            })}>
-                <Group
-                id={item.key}
-                name={item.name}
-                description={item.description}
-                city={item.city}
-                postalCode={item.postalCode}
-                photoUrl={item.photoUrl}
-                admin = {item.admin}
-                />
-                </TouchableOpacity>
-              }
-            keyExtractor={item => item.key}
-          />
-          : null}
-        
+  
+  
 
 
-          </SafeAreaView>
-          
+<View style={styles.foundUsersContainer}>
+    <SafeAreaView style={styles.listContainer}>
+      {selectedIndex===0? 
+        <FlatList
+        data={filteredUsers}
+        renderItem={({ item }) => 
+        <TouchableOpacity onPress={() => props.navigation.navigate('UserDetail', {
+          id: item.key,
+          name: item.name,
+          gender: item.gender,
+          dueDate: item.dueDate,
+          city: item.city,
+          postalCode: item.postalCode,
+          birthday: item.birthday,
+          photoUrl: item.photoUrl,
+          pushToken: item.pushToken
+        })}>
+        <User
+        name={item.name}
+        dueDate={item.dueDate}
+        gender={item.gender}
+        city={item.city}
+        postalCode={item.postalCode}
+        photoUrl={item.photoUrl}
+        />
+        </TouchableOpacity>
+      }
+      keyExtractor={item => item.key}
+      />
+      : null}
+      
+      {selectedIndex===1? 
+        <FlatList
+        data={filteredGroups}
+        renderItem={({ item }) => 
+        <TouchableOpacity onPress={() => props.navigation.navigate('GroupDetail', {
+          groupId: item.key,
+          name: item.name,
+          description: item.description,
+          members: item.members,
+          admin: item.admin,
+          guestView: true
+        })}>
+        <Group
+        id={item.key}
+        name={item.name}
+        description={item.description}
+        city={item.city}
+        postalCode={item.postalCode}
+        photoUrl={item.photoUrl}
+        admin = {item.admin}
+        />
+        </TouchableOpacity>
+      }
+      keyExtractor={item => item.key}
+      />
+      : null}
+      
+      </SafeAreaView>          
           </View>
           </View>
           )
           }
-
 </View>
     );
   }
@@ -304,11 +296,11 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   foundUsersContainer: {
-    /*
-    borderColor: 'black',
-    borderWidth: 1,
-    borderStyle: 'solid',
-    */
+    height: "87,5%",
+    marginTop: '-1%',
+  },
+  listContainer: {
+    flex: 1
   },
   buttonContainer: {
     flexDirection:'row',
