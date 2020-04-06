@@ -6,6 +6,7 @@ import { Ionicons} from '@expo/vector-icons';
 import HeaderButton from '../../components/HeaderButton';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import {getMembers, getRequests} from '../../store/actions/group'
+import {convertDate} from '../../Shared'
 
 const GroupScreen = props => {
   const { navigation } = props;
@@ -51,6 +52,7 @@ useEffect(() => {
           </View>
         <View style={styles.column}>
           <Text style={styles.title}>{groupData.name}</Text>
+          <Text style={styles.subTitle}>{convertDate(groupData.dueDate)}</Text>
           <Text style={styles.subTitle}>{groupData.description}</Text>
         </View>      
         </View>

@@ -130,7 +130,7 @@ const CreateAdditionalInformation = props => {
         <View style={styles.row}>
         
         <View style={{ marginTop: 32 }}>
-        <Text style={styles.inputTitle}>Fødselsdag</Text>
+        <Text style={styles.inputTitle}>Fødselsdato</Text>
         <DatePicker
         style={{ width: 100}}
         date={birthday} //initial date from state

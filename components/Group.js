@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, StyleSheet, Text, Image } from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
+import {convertDate} from '../Shared'
 
 
 
@@ -24,7 +25,7 @@ const Group = props => {
 
       <View style={styles.verticalContainer}>
         <Text style= {styles.titleText}>{props.name}</Text>
-        <Text style= {styles.descriptionText}>{props.description}</Text>
+        <Text style= {styles.descriptionText}>{convertDate(props.dueDate)}</Text>
         <Text style= {styles.descriptionText2}>{props.postalCode} {props.city}</Text>
       </View>
       </View>

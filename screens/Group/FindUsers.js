@@ -32,7 +32,7 @@ const FindUsers = props => {
       selectedUserIds: selectedUserIds
     }
 
-    dispatch(createGroup(groupData.name, groupData.description, groupData.postalCode,groupData.city,groupData.type,selectedUserIds, groupData.photoUrl))
+    dispatch(createGroup(groupData.name, groupData.description, groupData.postalCode,groupData.city,groupData.type,selectedUserIds, groupData.photoUrl, groupData.dueDate))
 
    props.navigation.navigate('Groups')
 

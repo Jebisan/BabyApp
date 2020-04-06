@@ -4,6 +4,7 @@ import Fire from '../../Fire';
 import {useDispatch, useSelector} from 'react-redux'
 import {addRequestToGroup, addRequestToUser} from '../../store/actions/group';
 import NotificationCenter from '../../NotificationCenter';
+import {convertDate} from '../../Shared'
 
 
 const GroupDetail = props => {
@@ -20,6 +21,7 @@ const GroupDetail = props => {
   const name = props.navigation.getParam('name')
   const description = props.navigation.getParam('description')
   const admin = props.navigation.getParam('admin');
+  const dueDate = props.navigation.getParam('dueDate');
   
   const [members, setMembers] = useState([]);
   const [requesting, setRequesting] = useState(false);
@@ -119,6 +121,7 @@ const sendNotificationToAdmin = () => {
           </View>
         <View style={styles.column}>
           <Text style={styles.title}>{name}</Text>
+          <Text style={styles.subTitle}>{convertDate(dueDate)}</Text>
           <Text style={styles.subTitle}>{description}</Text>
         </View>      
         </View>

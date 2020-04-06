@@ -80,7 +80,7 @@ const getGroups = () => {
     if(selectedIndex==1){
       let tempGroupArray = [] 
       groups.forEach(group => {
-        if(group.city.includes(city.name)){
+        if(group.city.includes(city.name2)){
           tempGroupArray.push(group);
         }
       });
@@ -265,7 +265,8 @@ const getGroups = () => {
           description: item.description,
           members: item.members,
           admin: item.admin,
-          guestView: true
+          guestView: true,
+          dueDate: item.dueDate
         })}>
         <Group
         id={item.key}
@@ -275,6 +276,7 @@ const getGroups = () => {
         postalCode={item.postalCode}
         photoUrl={item.photoUrl}
         admin = {item.admin}
+        dueDate = {item.dueDate}
         />
         </TouchableOpacity>
       }

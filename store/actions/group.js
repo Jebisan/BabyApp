@@ -154,7 +154,7 @@ export const removeRequestFromGroup = (groupId, personId ) => {
     };
   };
 
-  export const createGroup = (name, description, postalCode, city, groupType, selectedUserIds, photoUrl) => {
+  export const createGroup = (name, description, postalCode, city, groupType, selectedUserIds, photoUrl, dueDate) => {
     return async (dispatch, getState) => {
   
       console.log('Selected users:');
@@ -178,6 +178,7 @@ export const removeRequestFromGroup = (groupId, personId ) => {
               city,
               groupType,
               photoUrl,
+              dueDate
             })
           }
         );
@@ -189,7 +190,7 @@ export const removeRequestFromGroup = (groupId, personId ) => {
           
         const resData = await response.json();
         
-        dispatch({type: CREATE_GROUP, admin:userId, id: resData.name, name, description, postalCode, city, groupType, photoUrl});
+        dispatch({type: CREATE_GROUP, admin:userId, id: resData.name, name, description, postalCode, city, groupType, photoUrl, dueDate});
       
 
         selectedUserIds.forEach(user => {

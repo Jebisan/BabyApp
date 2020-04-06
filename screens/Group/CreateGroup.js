@@ -2,7 +2,9 @@ import React, {useState, useEffect, useCallback} from 'react';
 import {View, StyleSheet, Text, TextInput, Button } from 'react-native';
 import cityData from '../../cities';
 import {ButtonGroup} from 'react-native-elements';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import DatePicker from 'react-native-datepicker';
+import {convertDate} from '../../Shared';
 
 
 const CreateGroup = props => {
@@ -13,7 +15,17 @@ const CreateGroup = props => {
   const [description, setDescription] = useState('');
   const [postalCode, setPostalCode] = useState('')
   const [city, setCity] = useState('')
+  const [formattedDate, setFormattedDate] = useState('shit')
+
   const dispatch = useDispatch();
+
+  const myDueDate = useSelector(state => state.auth.dueDate)
+
+  
+
+  useEffect(() => {
+    setFormattedDate(convertDate(myDueDate))
+  }, [myDueDate])
 
   const saveGroupData = useCallback(() => {
     const groupData = {
@@ -22,14 +34,15 @@ const CreateGroup = props => {
       postalCode: postalCode,
       city: city,
       photoUrl: 'https://firebasestorage.googleapis.com/v0/b/babyapp-ed94d.appspot.com/o/group.png?alt=media&token=5e41547b-be06-4bc0-a93b-47fdc659e00d',
-      type: selectedIndex
+      type: selectedIndex,
+      dueDate: myDueDate
     };
 
     props.navigation.navigate('FindUsers', {
       groupData: groupData
     })
 
-}, [name, description, postalCode, city, selectedIndex])
+}, [name, description, postalCode, city, myDueDate, selectedIndex])
 
   useEffect(() => {
     navigation.setParams({save: saveGroupData});
@@ -39,8 +52,8 @@ const CreateGroup = props => {
   useEffect(() => {
     if(postalCode.length===4){
       cityData.forEach(city => {
-        if(city.id===postalCode){
-          setCity(city.name)
+        if(city.id==postalCode){
+          setCity(city.name2)
         } else if (postalCode===''){
           setCity('')
         }
@@ -96,6 +109,10 @@ value={city}
 
 
 </View>
+<View style={{ marginTop: 32 }}>
+<Text style={styles.inputTitle}>Termin i {formattedDate}.</Text>
+
+</View>
 
 <View style= {styles.buttonGroupContainer} >
 <ButtonGroup
@@ -105,11 +122,9 @@ buttons={buttons}
 containerStyle={{height: 30}} 
 />
 </View>
-<View>
 
-<View style={styles.searchBar}>
-</View>
-</View>
+
+
     </View>
   );
 };
@@ -151,6 +166,27 @@ const styles = StyleSheet.create({
     top: 20,
     width: 300,
   },
+  dateInput: {
+    borderTopColor: 'white',
+    borderLeftColor: 'white',
+    borderRightColor: 'white',
+    borderBottomColor: "#8A8F9E",
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    height: 40,
+    fontSize: 15,
+    color: "#161F3D",
+    width: 100
+  },
+  dateText:{
+    fontSize: 15,
+    color: "#161F3D",
+    width: 100
+  },
+  inputTitle: {
+    color: "#8A8F9E",
+    fontSize: 14,
+    
+},
 
 });
 
