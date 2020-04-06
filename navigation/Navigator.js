@@ -11,6 +11,9 @@ import Login from '../screens/Auth/Login';
 import SignUp from '../screens/Auth/SignUp';
 import CreateAdditionalInformation from '../screens/Auth/CreateAdditionalInformation';
 
+//HOME
+import HomeScreen from '../screens/Home/HomeScreen';
+
 //CHATSCREENS
 import GroupChat from '../screens/ChatScreens/GroupChat';
 import DirectMessage from '../screens/ChatScreens/DirectMessage';
@@ -106,6 +109,18 @@ const AppDrawerNavigator = createDrawerNavigator(
 
 
 const AppTabNavigator = createBottomTabNavigator({
+'Home': {screen: HomeScreen, navigationOptions: {
+        tabBarIcon: tabInfo => {
+            return (
+                <Ionicons 
+                name='md-home' 
+                size={25} 
+                color='black' 
+                />
+            );
+        }
+    }
+},
 'Find': {screen: FindStack, navigationOptions: {
         tabBarIcon: tabInfo => {
             return (

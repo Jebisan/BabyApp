@@ -37,6 +37,7 @@ const Groups = props => {
       city = {item.city}
       postalCode = {item.postalCode}
       photoUrl = {item.photoUrl}
+      dueDate = {item.dueDate}
       />
       </TouchableOpacity>
     }
