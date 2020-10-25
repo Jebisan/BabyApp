@@ -44,7 +44,8 @@ export default authReducer = (state = INITIAL_STATE, action) => {
         city: action.city,
         photoUrl: action.photoUrl,
         pushToken: action.pushToken,
-        requests: action.requests
+        requests: action.requests,
+        firstTimer: action.firstTimer
       }
       
     case SET_PHOTO_URL:

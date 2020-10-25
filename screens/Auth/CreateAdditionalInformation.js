@@ -4,7 +4,9 @@ import {useDispatch} from 'react-redux';
 import {signUp, createAdditionalData} from '../../store/actions/auth';
 import DatePicker from 'react-native-datepicker';
 import cityData from '../../cities';
-import { Ionicons } from "@expo/vector-icons";;
+import { Ionicons } from "@expo/vector-icons";
+import { CheckBox } from 'react-native-elements'
+
 
 
 
@@ -15,18 +17,19 @@ const CreateAdditionalInformation = props => {
 
   const [firstname, setFirstname] = useState('')
   const [lastname, setLastname] = useState('')
-  const [birthday, setBirthday] = useState('')
-  const [dueDate, setDueDate] = useState('')
+  const [birthday, setBirthday] = useState('01-01-2021')
+  const [dueDate, setDueDate] = useState('01-01-2021')
   const [gender, setGender] = useState('Kvinde')
   const [postalCode, setPostalCode] = useState('')
   const [city, setCity] = useState('')
+  const [firstTimer, setFirstTimer] = useState(false)
 
 
   useEffect(() => {
     if(postalCode.length===4){
       cityData.forEach(city => {
-        if(city.id===postalCode){
-          setCity(city.name)
+        if(city.id==postalCode){
+          setCity(city.name2)
         } else if (postalCode===''){
           setCity('')
         }
@@ -42,7 +45,7 @@ const CreateAdditionalInformation = props => {
     setIsLoading(true);
 
       try {
-        await dispatch(createAdditionalData(firstname, lastname,firstname + " " + lastname, birthday, gender, postalCode, city, dueDate))
+        await dispatch(createAdditionalData(firstname, lastname,firstname + " " + lastname, birthday, gender, postalCode, city, dueDate, firstTimer))
         props.navigation.navigate('MainScreen')
         setIsLoading(false);
       } catch (err) {
@@ -179,6 +182,20 @@ const CreateAdditionalInformation = props => {
   <Picker.Item label="Mand" value="Mand" />
   </Picker>
 </View>
+
+
+<View style={styles.pickerContainer}>
+  <Text style={styles.inputTitle}>Førstegangsfødende</Text>
+  <Picker
+  style={styles.onePicker} itemStyle={styles.onePickerItem}
+  selectedValue={firstTimer}
+  onValueChange={text => setFirstTimer(text)}
+  >
+  <Picker.Item label="Ja" value= {true} />
+  <Picker.Item label="Nej" value= {false} />
+  </Picker>
+</View>
+
 
 </View>
 

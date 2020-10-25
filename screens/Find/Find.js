@@ -12,11 +12,8 @@ import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 import {useDispatch, useSelector} from 'react-redux';
-import { Tooltip } from 'react-native-elements';
 import { useRef } from "react";
-
-
-
+import LocationPicker from '../../components/LocationPicker'
 
  const Find = (props) => {
   const togglePopDownMessage = useRef(null);
@@ -65,26 +62,28 @@ const getGroups = () => {
 }
 
   useEffect(() => {    
-    if(selectedIndex==0){
-      let tempUserArray = [] 
-      users.forEach(user => {
-        if(user.city.trim().includes(city.name2.trim())){
-          tempUserArray.push(user);
-        } else {
+    if(city) {
 
-        }
-      });
-    setFilteredUsers(tempUserArray)
-    }
-
-    if(selectedIndex==1){
-      let tempGroupArray = [] 
-      groups.forEach(group => {
-        if(group.city.includes(city.name2)){
-          tempGroupArray.push(group);
-        }
-      });
-    setFilteredGroups(tempGroupArray);
+      if(selectedIndex==0){
+        let tempUserArray = [] 
+        users.forEach(user => {
+          if(user.city.trim().includes(city.name2.trim())){
+            tempUserArray.push(user);
+          } else {
+          }
+        });
+        setFilteredUsers(tempUserArray)
+      }
+      
+      if(selectedIndex==1){
+        let tempGroupArray = [] 
+        groups.forEach(group => {
+          if(group.city.includes(city.name2)){
+            tempGroupArray.push(group);
+          }
+        });
+        setFilteredGroups(tempGroupArray);
+      }
     }
   }, [city, selectedIndex])
 
@@ -117,8 +116,6 @@ const getGroups = () => {
   };
 
   const _handleNotification = notification => {
-   
-
    if(notification.origin=='received') {
     switch(notification.data.type) {
       case 'DM':
@@ -155,21 +152,11 @@ const getGroups = () => {
             default:
             }
           }
-
   };
 
 
     return (
       <View style={styles.searchContainer}>
-      <Tooltip 
-      ref={togglePopDownMessage}
-
-      popover={<Text>Ny besked</Text>}
-      toggleOnPress={true}
-      withOverlay={false}
-      onClose={() => props.navigation.navigate('DirectMessages')}
-      >
-      </Tooltip>
           <SearchableDropdown
           setTextFieldInFocus={(value) => setTextFieldInFocus(value)}
           onItemSelect={(item) => {
@@ -215,7 +202,7 @@ const getGroups = () => {
             <ButtonGroup
             onPress={index => setSelectedIndex(index)}
             selectedIndex={selectedIndex}
-            buttons={['Personer', 'Grupper']}
+            buttons={['Personer', 'Grupper', 'Kort']}
             containerStyle={{height: 30}} 
             
             />
@@ -239,6 +226,7 @@ const getGroups = () => {
           postalCode: item.postalCode,
           birthday: item.birthday,
           photoUrl: item.photoUrl,
+          firstTimer: item.firstTimer,
           pushToken: item.pushToken
         })}>
         <User
@@ -283,6 +271,11 @@ const getGroups = () => {
       keyExtractor={item => item.key}
       />
       : null}
+
+      {selectedIndex===2? 
+        <LocationPicker navigation = {props.navigation} />
+        : null
+    }
       
       </SafeAreaView>          
           </View>

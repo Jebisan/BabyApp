@@ -25,6 +25,7 @@ const postalCode = props.navigation.getParam('postalCode');
 const birthday = props.navigation.getParam('birthday');
 const photoUrl = props.navigation.getParam('photoUrl');
 const dueDate = props.navigation.getParam('dueDate');
+const firstTimer = props.navigation.getParam('firstTimer');
 const pushToken = props.navigation.getParam('pushToken');
 const [chatId, setChatId] = useState(false);
 
@@ -156,7 +157,7 @@ useEffect(() => {
 
         <View style={styles.infoRow}>
           <MaterialIcons style={styles.infoSymbol} name="child-care" size={24} color="#52575D"></MaterialIcons>
-          <Text style={styles.infoText}>Barn på 4 år</Text>
+          <Text style={styles.infoText}>{firstTimer?'Yes!':'Nope'}</Text>
         </View>
 
         <View style={styles.infoRow}>

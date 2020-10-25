@@ -64,7 +64,7 @@ const SignUp = props => {
               </View>
               */}
               <View style={styles.formContainer}>
-              
+              <Button title='Næste' onPress={() => props.navigation.navigate('CreateAdditionalInformation')} />
             
               <View style={styles.form} >
               <View style={{ marginTop: 32 }}>

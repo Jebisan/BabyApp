@@ -20,21 +20,27 @@ const [newToday, setNewToday] = useState([]);
 const [weeksToBirth, setWeeksToBirth] = useState(0);
 const [daysToBirth, setDaysToBirth] = useState(0);
 
-useEffect(() => {  
-  console.log(groups);
-  setAge();
-  setDueDate();
-  setToday();
-}, [])
+
 
   const birthday = useSelector(state => state.auth.birthday);
   const name = useSelector(state => state.auth.name);
+  const firstTimer = useSelector(state => state.auth.firstTimer);
   const photoUrl = useSelector(state => state.auth.photoUrl);
   const gender = useSelector(state => state.auth.gender);
   const dueDate = useSelector(state => state.auth.dueDate);
   const city = useSelector(state => state.auth.city);
   const postalCode = useSelector(state => state.auth.postalCode);
   const groups = useSelector(state => state.groups);
+  const auth = useSelector(state => state.auth);
+
+
+  useEffect(() => {  
+    console.log(firstTimer);
+    setAge();
+    setDueDate();
+    setToday();
+  }, [])
+
 
   const setDueDate = () => {
     var splittedDueDate = dueDate.split('-');
@@ -101,7 +107,7 @@ useEffect(() => {
 
         <View style={styles.infoRow}>
           <MaterialIcons style={styles.infoSymbol} name="child-care" size={24} color="#52575D"></MaterialIcons>
-          <Text style={styles.infoText}>Barn på 4 år</Text>
+          <Text style={styles.infoText}>{firstTimer?'Yes!':'Nope'}</Text>
         </View>
 
         <View style={styles.infoRow}>

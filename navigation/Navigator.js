@@ -27,6 +27,7 @@ import DirectMessages from '../screens/Profile/DirectMessages';
 import GroupDetail from '../screens/Find/GroupDetail'
 import UserDetail from '../screens/Find/UserDetail'
 import Find from '../screens/Find/Find';
+import MapScreen from '../screens/MapScreen';
 
 //GROUPS
 import Groups from '../screens/Group/Groups';
@@ -72,15 +73,15 @@ const FindStack = createStackNavigator({
     UserDetail: UserDetail,
     GroupDetail: GroupDetail,
     DirectMessage: DirectMessage,
-    GroupScreen: GroupScreen
-
+    GroupScreen: GroupScreen,
+    Map: MapScreen
 }
 );
 
 const AppDrawerNavigator = createDrawerNavigator(
     {
-    Profile: {screen: ProfileStack},
-    Settings: {screen: SettingsStack},
+    Profil: {screen: ProfileStack},
+    Indstillinger: {screen: SettingsStack},
 }, 
 {
     contentOptions: {

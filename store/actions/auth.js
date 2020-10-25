@@ -165,7 +165,8 @@ export const fetchUserData = (userId) => {
           city: data.city,
           photoUrl: data.photoUrl,
           pushToken: data.pushToken,
-          requests: requestsArray
+          requests: requestsArray,
+          firstTimer: data.firstTimer
         });  
   }
   }
@@ -253,7 +254,7 @@ const saveDataToStorage = (email, token, userId, expirationDate) => {
 }
 
 
-export const createAdditionalData = (firstname, lastname, name, birthday, gender, postalCode, city, dueDate) => {
+export const createAdditionalData = (firstname, lastname, name, birthday, gender, postalCode, city, dueDate, firstTimer) => {
   return async (dispatch, getState) => {
 
     const token = getState().auth.token;    
@@ -277,6 +278,7 @@ export const createAdditionalData = (firstname, lastname, name, birthday, gender
             postalCode,
             city,
             dueDate,
+            firstTimer
           })
         }
       );
@@ -287,7 +289,7 @@ export const createAdditionalData = (firstname, lastname, name, birthday, gender
       }
         
       const resData = await response.json();
-      dispatch({type: SET_FIREBASE_DATA, firstname, lastname, name,birthday, gender, postalCode, city, dueDate});
+      dispatch({type: SET_FIREBASE_DATA, firstname, lastname, name,birthday, gender, postalCode, city, dueDate, firstTimer});
     }
   };
 };
