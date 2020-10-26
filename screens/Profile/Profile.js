@@ -35,10 +35,11 @@ const [daysToBirth, setDaysToBirth] = useState(0);
 
 
   useEffect(() => {  
-    console.log(firstTimer);
-    setAge();
-    setDueDate();
-    setToday();
+    if(dueDate){
+      setDueDate();
+      setToday();
+      setAge();
+    }
   }, [])
 
 
@@ -121,21 +122,24 @@ const [daysToBirth, setDaysToBirth] = useState(0);
         </View>
         </View>
 
-
-            <View style={[styles.statsBox, { borderColor: "#DFD8C8", borderLeftWidth: 1, borderRightWidth: 1 }]}>
-              <ProgressCircle
-                percent={((40-weeksToBirth)/40)*100}
-                radius={55}
-                borderWidth={8}
-                color="#c6ffd7"
-                shadowColor="lightgrey"
-                bgColor="#fff"
-                  >
-                <Text style={styles.weekNumber}>{40-weeksToBirth}</Text>
-                <Text style={styles.weekText}>uger i dag</Text>
-                <Text style={styles.weekSubtext}>{daysToBirth} dage tilbage</Text>
-              </ProgressCircle>
-          </View>
+{
+  dueDate?
+  <View style={[styles.statsBox, { borderColor: "#DFD8C8", borderLeftWidth: 1, borderRightWidth: 1 }]}>
+  <ProgressCircle
+  percent={((40-weeksToBirth)/40)*100}
+  radius={55}
+  borderWidth={8}
+  color="#c6ffd7"
+  shadowColor="lightgrey"
+  bgColor="#fff"
+  >
+  <Text style={styles.weekNumber}>{40-weeksToBirth}</Text>
+  <Text style={styles.weekText}>uger i dag</Text>
+  <Text style={styles.weekSubtext}>{daysToBirth} dage tilbage</Text>
+  </ProgressCircle>
+  </View>
+  :null
+}
 
             <View style={styles.statsBox}>
                 <Text style={styles.interestsTitle}>INTERESSER</Text>
@@ -152,9 +156,9 @@ const [daysToBirth, setDaysToBirth] = useState(0);
 
 Profile.navigationOptions = navigationData => {
   return {
-    headerTitle: 'Profile',
+    headerTitle: '',
+    
     headerLeft:  
-
     <HeaderButtons HeaderButtonComponent={HeaderButton}>
     <Item
       title="drawer"
@@ -162,8 +166,8 @@ Profile.navigationOptions = navigationData => {
       onPress={() => navigationData.navigation.openDrawer()}
     />
   </HeaderButtons>,
-    headerRight: 
 
+    headerRight: 
     <HeaderButtons HeaderButtonComponent={HeaderButton}>
     <Item
       title="DM"

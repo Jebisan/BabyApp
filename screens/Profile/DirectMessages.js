@@ -182,7 +182,7 @@ export default DirectMessages;
 DirectMessages.navigationOptions = navigationData => {
 
   return {
-    headerTitle: 'DMs',
+    headerTitle: 'Indbakke',
   };
 };
 

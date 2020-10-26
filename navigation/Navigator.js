@@ -27,7 +27,7 @@ import DirectMessages from '../screens/Profile/DirectMessages';
 import GroupDetail from '../screens/Find/GroupDetail'
 import UserDetail from '../screens/Find/UserDetail'
 import Find from '../screens/Find/Find';
-import MapScreen from '../screens/MapScreen';
+import MapScreen from '../components/MapScreen';
 
 //GROUPS
 import Groups from '../screens/Group/Groups';
@@ -148,7 +148,7 @@ const AppTabNavigator = createBottomTabNavigator({
 },
 
 
-    Profil: {screen: AppDrawerNavigator, navigationOptions: {
+    Dig: {screen: AppDrawerNavigator, navigationOptions: {
         tabBarIcon: tabInfo => {
             return (
                 <Ionicons 

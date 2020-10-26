@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Button,
@@ -10,11 +10,11 @@ import {
 } from 'react-native';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
-import MapScreen from '../screens/MapScreen';
+import MapScreen from './MapScreen';
 
-const LocationPicker = props => {
+const MapContainer = props => {
   const [isFetching, setIsFetching] = useState(false);
-  const [pickedLocation, setPickedLocation] = useState();
+  const [pickedLocation, setPickedLocation] = useState(props.location);
 
   const verifyPermissions = async () => {
     const result = await Permissions.askAsync(Permissions.LOCATION);
@@ -29,21 +29,20 @@ const LocationPicker = props => {
     return true;
   };
 
-  const getLocationHandler = async () => {
+  useEffect(() => {
+   getLocationHandler(props.coordinates);
+
+  }, [props.coordinates])
+
+  const getLocationHandler = async (coordinates) => {
     const hasPermission = await verifyPermissions();
     if (!hasPermission) {
       return;
-    }
+  }
 
     try {
+      setPickedLocation(coordinates)
       setIsFetching(true);
-      const location = await Location.getCurrentPositionAsync({
-        timeout: 5000
-      });
-      setPickedLocation({
-        lat: location.coords.latitude,
-        lng: location.coords.longitude
-      });
     } catch (err) {
       Alert.alert(
         'Could not fetch location!',
@@ -54,10 +53,9 @@ const LocationPicker = props => {
     setIsFetching(false);
   };
 
-
   return (
     <View style={styles.locationPicker}>
-    <MapScreen  
+      <MapScreen  
     location={pickedLocation}
     />
     </View>
@@ -70,4 +68,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LocationPicker;
+export default MapContainer;

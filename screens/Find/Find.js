@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Button, Text, View, SafeAreaView, FlatList, TouchableOpacity} from "react-native";
-import cityData from '../../cities';
+// import cityData from '../../cities';
 import User from '../../components/User';
 import Group from '../../components/Group';
 import Fire from '../../Fire';
@@ -13,7 +13,8 @@ import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 import {useDispatch, useSelector} from 'react-redux';
 import { useRef } from "react";
-import LocationPicker from '../../components/LocationPicker'
+import MapContainer from '../../components/MapContainer';
+import Autocomplete from 'react-native-autocomplete-input';
 
  const Find = (props) => {
   const togglePopDownMessage = useRef(null);
@@ -22,12 +23,13 @@ import LocationPicker from '../../components/LocationPicker'
 
   const [searchText, setSearchText] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [city, setCity] = useState('')
   const [users, setUsers] = useState([])
   const [groups, setGroups] = useState([])
   const [filteredUsers, setFilteredUsers] = useState([])
   const [filteredGroups, setFilteredGroups] = useState([])
-  const [textFieldInFocus, setTextFieldInFocus] = useState(false)
+  const [cityData, setCityData] = useState([])
+  const [hideResults, setHideResults] = useState(false);
+  const [coordinates, setCoordinates] = useState(undefined);
  
   useEffect(() => {
     registerForPushNotificationsAsync();
@@ -49,7 +51,6 @@ import LocationPicker from '../../components/LocationPicker'
 };
 
 const getGroups = () => {
-  
   Fire.groups.once('value').then((snapshot) =>{
     obj = snapshot.val()
     var result = Object.keys(obj).map((value) => {
@@ -61,33 +62,69 @@ const getGroups = () => {
   });
 }
 
-  useEffect(() => {    
-    if(city) {
-
-      if(selectedIndex==0){
-        let tempUserArray = [] 
-        users.forEach(user => {
-          if(user.city.trim().includes(city.name2.trim())){
-            tempUserArray.push(user);
-          } else {
-          }
+useEffect(() => {
+  setHideResults(false);
+  if(searchText) {
+    const tempPostnummerData = []
+    fetch(`https://dawa.aws.dk/postnumre/autocomplete?q=${searchText}`).then((response) => {
+      if (response.status !== 200) {
+        console.log('Looks like there was a problem. Status Code: ' +
+        response.status);
+        return;
+      }      
+      response.json().then(data => {
+        const newData = [];
+        data.forEach(city => {
+          newData.push(city.postnummer);
         });
-        setFilteredUsers(tempUserArray)
-      }
-      
-      if(selectedIndex==1){
-        let tempGroupArray = [] 
-        groups.forEach(group => {
-          if(group.city.includes(city.name2)){
-            tempGroupArray.push(group);
-          }
-        });
-        setFilteredGroups(tempGroupArray);
-      }
+        setCityData(newData);
+      });
     }
-  }, [city, selectedIndex])
+    ).catch(function(err) {
+      console.log('Fetch Error :-S', err);
+    });
+  } 
+  else {
+    setCityData([]);
+  }
+}, [searchText])
 
 
+const renderResults = city => {
+    if(selectedIndex==0){
+      let tempUserArray = [] 
+      users.forEach(user => {
+        if(user.city.trim().includes(city.navn.trim())){
+          tempUserArray.push(user);
+        } else {
+        }
+      });
+      setFilteredUsers(tempUserArray)
+    }
+    
+    if(selectedIndex==1){
+      let tempGroupArray = [] 
+      groups.forEach(group => {
+        if(group.city.includes(city.navn.trim())){
+          tempGroupArray.push(group);
+        }
+      });
+      setFilteredGroups(tempGroupArray);
+    }
+
+    if(selectedIndex==2){
+      const coordinates = {
+        latitude: city.visueltcenter_y,
+        longitude: city.visueltcenter_x,
+        latitudeDelta: 7.0922,
+        longitudeDelta: 7.0421
+      }
+      setCoordinates(coordinates);
+    }
+  
+}
+
+ 
 
   const registerForPushNotificationsAsync = async () => {
     if (Constants.isDevice) {
@@ -153,140 +190,114 @@ const getGroups = () => {
             }
           }
   };
+  
+  setSelectedCityHandler = (item) => {
+    renderResults(item);
+    setHideResults(true);
+    setSearchText('');
+  }
 
 
     return (
-      <View style={styles.searchContainer}>
-          <SearchableDropdown
-          setTextFieldInFocus={(value) => setTextFieldInFocus(value)}
-          onItemSelect={(item) => {
-            setCity(item);
-          }}
-          containerStyle={{ padding: 5 }}
-          itemStyle={{
-            padding: 10,
-            marginTop: 2,
-            backgroundColor: '#ddd',
-            borderColor: '#bbb',
-            borderWidth: 1,
-            borderRadius: 5,
-            backgroundColor: '#f6f6f6'
-          }}
-          itemTextStyle={{ color: '#222' }}
-          itemsContainerStyle={{ maxHeight: 166 }}
-          items={cityData}
-          resetValue={false}
-          textInputProps={
-            {
-              onTextChange: text => setSearchText(text),
-              placeholder: "Vælg by",
-              underlineColorAndroid: "transparent",
-              style: {
-                  padding: 12,
-                  borderWidth: 1,
-                  borderColor: '#ccc',
-                  borderRadius: 5,
-              }, 
-            }
-          }
-          listProps={
-            {
-              nestedScrollEnabled: true,
-            }
-          }
-      />
-          {textFieldInFocus ? (
-            null
-          ) : (
-            <View>
-            <ButtonGroup
-            onPress={index => setSelectedIndex(index)}
-            selectedIndex={selectedIndex}
-            buttons={['Personer', 'Grupper', 'Kort']}
-            containerStyle={{height: 30}} 
-            
-            />
-
-  
-  
+<View style= {styles.parentContainer} >
+<Autocomplete
+keyExtractor={item => item.nr}
+data={cityData}
+hideResults={hideResults}
+placeholder="Søg efter by"
+defaultValue={searchText}
+onChangeText={text => setSearchText(text)}
+renderItem={({ item, i }) => (
+  <TouchableOpacity onPress={() => setSelectedCityHandler(item)}>
+    <Text>{item.navn}</Text>
+</TouchableOpacity>
+)}
+/>
+<ButtonGroup
+onPress={index => setSelectedIndex(index)}
+selectedIndex={selectedIndex}
+buttons={['Personer', 'Grupper', 'Kort']}
+containerStyle={{height: 30}} 
+/>
 
 
 <View style={styles.foundUsersContainer}>
-    <SafeAreaView style={styles.listContainer}>
-      {selectedIndex===0? 
-        <FlatList
-        data={filteredUsers}
-        renderItem={({ item }) => 
-        <TouchableOpacity onPress={() => props.navigation.navigate('UserDetail', {
-          id: item.key,
-          name: item.name,
-          gender: item.gender,
-          dueDate: item.dueDate,
-          city: item.city,
-          postalCode: item.postalCode,
-          birthday: item.birthday,
-          photoUrl: item.photoUrl,
-          firstTimer: item.firstTimer,
-          pushToken: item.pushToken
-        })}>
-        <User
-        name={item.name}
-        dueDate={item.dueDate}
-        gender={item.gender}
-        city={item.city}
-        postalCode={item.postalCode}
-        photoUrl={item.photoUrl}
-        />
-        </TouchableOpacity>
-      }
-      keyExtractor={item => item.key}
-      />
-      : null}
-      
-      {selectedIndex===1? 
-        <FlatList
-        data={filteredGroups}
-        renderItem={({ item }) => 
-        <TouchableOpacity onPress={() => props.navigation.navigate('GroupDetail', {
-          groupId: item.key,
-          name: item.name,
-          description: item.description,
-          members: item.members,
-          admin: item.admin,
-          guestView: true,
-          dueDate: item.dueDate
-        })}>
-        <Group
-        id={item.key}
-        name={item.name}
-        description={item.description}
-        city={item.city}
-        postalCode={item.postalCode}
-        photoUrl={item.photoUrl}
-        admin = {item.admin}
-        dueDate = {item.dueDate}
-        />
-        </TouchableOpacity>
-      }
-      keyExtractor={item => item.key}
-      />
-      : null}
+<SafeAreaView style={styles.listContainer}>
+{selectedIndex===0? 
+  <FlatList
+  data={filteredUsers}
+  renderItem={({ item }) => 
+  <TouchableOpacity onPress={() => props.navigation.navigate('UserDetail', {
+    id: item.key,
+    name: item.name,
+    gender: item.gender,
+    dueDate: item.dueDate,
+    city: item.city,
+    postalCode: item.postalCode,
+    birthday: item.birthday,
+    photoUrl: item.photoUrl,
+    firstTimer: item.firstTimer,
+    pushToken: item.pushToken
+  })}>
+  <User
+  name={item.name}
+  dueDate={item.dueDate}
+  gender={item.gender}
+  city={item.city}
+  postalCode={item.postalCode}
+  photoUrl={item.photoUrl}
+  />
+  </TouchableOpacity>
+}
+keyExtractor={item => item.key}
+/>
+: null}
 
-      {selectedIndex===2? 
-        <LocationPicker navigation = {props.navigation} />
-        : null
-    }
-      
-      </SafeAreaView>          
-          </View>
-          </View>
-          )
-          }
+{selectedIndex===1? 
+  <FlatList
+  data={filteredGroups}
+  renderItem={({ item }) => 
+  <TouchableOpacity onPress={() => props.navigation.navigate('GroupDetail', {
+    groupId: item.key,
+    name: item.name,
+    description: item.description,
+    members: item.members,
+    admin: item.admin,
+    guestView: true,
+    dueDate: item.dueDate
+  })}>
+  <Group
+  id={item.key}
+  name={item.name}
+  description={item.description}
+  city={item.city}
+  postalCode={item.postalCode}
+  photoUrl={item.photoUrl}
+  admin = {item.admin}
+  dueDate = {item.dueDate}
+  />
+  </TouchableOpacity>
+}
+keyExtractor={item => item.key}
+/>
+: null}
+
+{selectedIndex===2? 
+  <MapContainer coordinates = {coordinates} navigation = {props.navigation} />
+  : null
+}
+
+</SafeAreaView>          
 </View>
-    );
-  }
+</View>
+)}
 
 const styles = StyleSheet.create({
+  parentContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+  },
   button: {
     padding: 10,
   },
@@ -305,3 +316,4 @@ const styles = StyleSheet.create({
 });
 
 export default Find;
+
