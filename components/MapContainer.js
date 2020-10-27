@@ -57,6 +57,7 @@ const MapContainer = props => {
     <View style={styles.locationPicker}>
       <MapScreen  
     location={pickedLocation}
+     navigation={props.navigation}
     />
     </View>
   );

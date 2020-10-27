@@ -11,7 +11,6 @@ const Groups = props => {
   const groups = useSelector(state => state.groups)
 
   useEffect(() => {
-    //console.log(groups)
   }, [])
 
 
@@ -28,7 +27,8 @@ const Groups = props => {
         members: item.members,
         groupName: item.name,
         admin: item.admin,
-        description: item.description
+        description: item.description,
+        location: item.location
       })}
       >
       <Group

@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import MapView from 'react-native-maps';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import MapView, {Marker} from 'react-native-maps';
+import { useSelector } from 'react-redux';
 
 const MapScreen = props => {
+
+  const groups = useSelector(state => state.groups)
+
 
   const [location, setLocation] = useState(mapRegion);
 
@@ -19,13 +23,34 @@ const MapScreen = props => {
     }
   }, [props.location])
 
+
   const mapRegion = {
     latitude: 37.78,
     longitude: -122.43,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421
   };
-  return <MapView style={styles.map} region={location} />;
+
+  useEffect(() => {
+    console.log(groups);
+  }) 
+
+  return (
+      <MapView style={styles.map} region={location}>
+    
+   {groups.map((group, index) => (
+       <Marker key={group.id} coordinate={group.location} onPress={() => props.navigation.navigate('GroupDetail', {
+        groupId: group.id,
+        name: group.name,
+        description: group.description,
+        members: group.members,
+        admin: group.admin,
+        guestView: true,
+        dueDate: group.dueDate
+      })}  ></Marker>
+    ))}
+      </MapView>
+  )
 };
 
 const styles = StyleSheet.create({

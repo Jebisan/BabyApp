@@ -38,7 +38,6 @@ useEffect(() => {
   useEffect(() => {
       dispatch(getMembers(groupData.id));
       dispatch(getRequests(groupData.id));
-    
   }, [])
 
 

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Button, Text, View, SafeAreaView, FlatList, TouchableOpacity} from "react-native";
-// import cityData from '../../cities';
 import User from '../../components/User';
 import Group from '../../components/Group';
 import Fire from '../../Fire';
