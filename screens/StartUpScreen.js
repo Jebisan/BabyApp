@@ -3,6 +3,8 @@ import {View, ActivityIndicator, StyleSheet, AsyncStorage, Alert} from 'react-na
 import {authenticate, fetchUserData} from '../store/actions/auth';
 import {fetchUserDms} from '../store/actions/directMessage';
 import {fetchUserGroups} from '../store/actions/group';
+import {fetchAllGroups} from '../store/actions/allGroups';
+import {fetchAllUsers} from '../store/actions/allUsers';
 import {useDispatch} from 'react-redux';
 
 
@@ -32,13 +34,13 @@ const StartUpScreen = props => {
 
             const expirationTime = expirationDate.getTime() - new Date().getTime();
 
-
-
             dispatch(authenticate(email, userId, token, expirationTime));
             try{
                 dispatch(fetchUserData(userId));
                 dispatch(fetchUserDms());
                 dispatch(fetchUserGroups());
+                dispatch(fetchAllGroups());
+                dispatch(fetchAllUsers());
                 props.navigation.navigate('MainScreen')
             } catch (error) {
                 props.navigation.navigate('Login');

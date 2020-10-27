@@ -282,7 +282,10 @@ export const removeRequestFromGroup = (groupId, personId ) => {
         membersArray.forEach(member => {
           Fire.firebase.database().ref("users/"+member).once('value').then((snapshot => {
             const obj = snapshot.val()  
-            
+
+            if(!obj){
+              return;
+            }
             const user = {
               id: snapshot.key,
               name: obj.name, 

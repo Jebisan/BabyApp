@@ -142,11 +142,11 @@ const listenForChatChange = (dm) => {
 
   return (
     <View style={styles.parent}>   
+    { !chats?
     <View style={styles.emptyMessagesContainer}>
     <Text style={styles.noMessagesText}>Ingen beskeder</Text>
     </View>
-    {
-      
+    :
         <FlatList
         data={chats}
         keyExtractor={item => item.id}
@@ -165,14 +165,12 @@ const listenForChatChange = (dm) => {
         timestamp = {item.timestamp}
         read = {item.read}
         />
-        </TouchableOpacity>
-        
+        </TouchableOpacity> 
       }
       />
-      
     }
     </View>
-
+    
   );
 };
 

@@ -6,6 +6,8 @@ import { createStore , combineReducers, applyMiddleware} from 'redux';
 import {Provider} from 'react-redux';
 import authReducer from './store/reducers/auth';
 import groupReducer from './store/reducers/group';
+import allGroupsReducer from './store/reducers/allGroups';
+import allUsersReducer from './store/reducers/allUsers';
 import directMessageReducer from './store/reducers/directMessage';
 import {composeWithDevTools} from 'redux-devtools-extension';
 import ReduxThunk from 'redux-thunk';
@@ -17,8 +19,10 @@ export default function App() {
 
   const rootReducer = combineReducers({
     auth: authReducer,
+    allGroups: allGroupsReducer,
+    allUsers: allUsersReducer,
     groups: groupReducer,
-    directMessages: directMessageReducer
+    directMessages: directMessageReducer,
   });
 
   const store = createStore(rootReducer, applyMiddleware(ReduxThunk)); 

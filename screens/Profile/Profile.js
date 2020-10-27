@@ -12,15 +12,11 @@ import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 const Profile = props => {
 
-
 const [newBirthday, setNewBirthday] = useState([]);
 const [newDueDate, setNewDueDate] = useState([]);
 const [newToday, setNewToday] = useState([]);
-
 const [weeksToBirth, setWeeksToBirth] = useState(0);
 const [daysToBirth, setDaysToBirth] = useState(0);
-
-
 
   const birthday = useSelector(state => state.auth.birthday);
   const name = useSelector(state => state.auth.name);

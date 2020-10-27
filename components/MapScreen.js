@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 
 const MapScreen = props => {
 
-  const groups = useSelector(state => state.groups)
+  const allGroups = useSelector(state => state.allGroups)
 
 
   const [location, setLocation] = useState(mapRegion);
@@ -32,14 +32,14 @@ const MapScreen = props => {
   };
 
   useEffect(() => {
-    console.log(groups);
+    console.log(allGroups);
   }) 
 
   return (
       <MapView style={styles.map} region={location}>
     
-   {groups.map((group, index) => (
-       <Marker key={group.id} coordinate={group.location} onPress={() => props.navigation.navigate('GroupDetail', {
+   {allGroups.map((group, index) => (
+       <Marker key={group.key} coordinate={group.location} onPress={() => props.navigation.navigate('GroupDetail', {
         groupId: group.id,
         name: group.name,
         description: group.description,

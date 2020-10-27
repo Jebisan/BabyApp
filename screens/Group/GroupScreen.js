@@ -16,6 +16,10 @@ const GroupScreen = props => {
 
   const [requests, setRequests] = useState([])
 
+  useEffect(() => {
+   console.log(groupData); 
+  })
+
   const saveGroupData = useCallback(() => {
     const data = {
       id: groupData.id,

@@ -9,57 +9,23 @@ import {addPushTokenToUser} from '../../store/actions/auth'
 import {fetchUserDms} from '../../store/actions/directMessage'
 import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
-import Constants from 'expo-constants';
 import {useDispatch, useSelector} from 'react-redux';
 import { useRef } from "react";
 import MapContainer from '../../components/MapContainer';
 import Autocomplete from 'react-native-autocomplete-input';
 
  const Find = (props) => {
-  const togglePopDownMessage = useRef(null);
-  const dispatch = useDispatch();
-  const userId = useSelector(state => state.auth.userId);
+  const allGroups = useSelector(state => state.allGroups)
+  const allUsers = useSelector(state => state.allUsers)
 
   const [searchText, setSearchText] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [users, setUsers] = useState([])
-  const [groups, setGroups] = useState([])
   const [filteredUsers, setFilteredUsers] = useState([])
   const [filteredGroups, setFilteredGroups] = useState([])
   const [cityData, setCityData] = useState([])
   const [hideResults, setHideResults] = useState(false);
   const [coordinates, setCoordinates] = useState(undefined);
- 
-  useEffect(() => {
-    registerForPushNotificationsAsync();
-   getUsers();
-   getGroups();
-  }, [])
 
-  const getUsers = () => {
-    Fire.users.once('value').then((snapshot) =>{
-     obj = snapshot.val()
-     var result = Object.keys(obj).map((value) => {
-        return {key: value,  ...obj[value]};
-     });
-     filteredResult = result.filter(user => user.key!==userId)
-     setUsers(filteredResult)
-   }).catch(error => {
-     console.log(error);
-   });
-};
-
-const getGroups = () => {
-  Fire.groups.once('value').then((snapshot) =>{
-    obj = snapshot.val()
-    var result = Object.keys(obj).map((value) => {
-      return {key: value,  ...obj[value]};
-    });
-    setGroups(result)
-  }).catch(error => {
-    console.log(error);
-  });
-}
 
 useEffect(() => {
   setHideResults(false);
@@ -91,8 +57,9 @@ useEffect(() => {
 
 const renderResults = city => {
     if(selectedIndex==0){
+      console.log(allUsers);
       let tempUserArray = [] 
-      users.forEach(user => {
+      allUsers.forEach(user => {
         if(user.city.trim().includes(city.navn.trim())){
           tempUserArray.push(user);
         } else {
@@ -103,7 +70,8 @@ const renderResults = city => {
     
     if(selectedIndex==1){
       let tempGroupArray = [] 
-      groups.forEach(group => {
+      allGroups.forEach(group => {
+        console.log(group)
         if(group.city.includes(city.navn.trim())){
           tempGroupArray.push(group);
         }
@@ -119,76 +87,8 @@ const renderResults = city => {
         longitudeDelta: 7.0421
       }
       setCoordinates(coordinates);
-    }
-  
+    }  
 }
-
- 
-
-  const registerForPushNotificationsAsync = async () => {
-    if (Constants.isDevice) {
-      const { status: existingStatus } = await Permissions.getAsync(
-        Permissions.NOTIFICATIONS
-      );
-      let finalStatus = existingStatus;
-      if (existingStatus !== 'granted') {
-        const { status } = await Permissions.askAsync(
-          Permissions.NOTIFICATIONS
-        );
-        finalStatus = status;
-      }
-      if (finalStatus !== 'granted') {
-        alert('Failed to get push token for push notification!');
-        return;
-      }
-      let token = await Notifications.getExpoPushTokenAsync();
-      dispatch(addPushTokenToUser(token));
-      Notifications.addListener(_handleNotification);
-
-
-    } else {
-      console.log('Must use physical device for Push Notifications');
-    }
-  };
-
-  const _handleNotification = notification => {
-   if(notification.origin=='received') {
-    switch(notification.data.type) {
-      case 'DM':
-      console.log('new DM recieved in foreground')
-      
-      togglePopDownMessage.current.toggleTooltip();
-
-      dispatch(fetchUserDms());
-        break;
-        case 'GM':
-          break;
-          default:
-          }
-        }
-
-    if(notification.origin=='selected') {
-      switch(notification.data.type) {
-        case 'DM':
-          dispatch(fetchUserDms());
-          props.navigation.navigate('DirectMessage', {
-            conversationCreated: true,
-            chatId: notification.data.chatId,
-            pushToken: notification.data.pushToken
-          });
-          
-          break;
-          case 'GM':
-            props.navigation.navigate('GroupChat', {
-              id: notification.data.groupId,
-              members: notification.data.members,
-              groupName: notification.data.groupName
-            });
-            break;
-            default:
-            }
-          }
-  };
   
   setSelectedCityHandler = (item) => {
     renderResults(item);
