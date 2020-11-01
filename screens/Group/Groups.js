@@ -8,10 +8,10 @@ import HeaderButton from '../../components/HeaderButton'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
 
 const Groups = props => {
-	const groups = useSelector(state => state.groups)
+	const myGroups = useSelector(state => state.myGroups)
 
 	useEffect(() => {
-		console.log(groups)
+		console.log(myGroups)
 	}, [])
 
 
@@ -20,7 +20,7 @@ const Groups = props => {
     
 
 			<FlatList
-				data={groups}
+				data={myGroups}
 				keyExtractor={item => item.id}
 				renderItem={({item}) =>
 					<TouchableOpacity onPress={() => props.navigation.navigate('GroupScreen', {

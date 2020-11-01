@@ -10,14 +10,15 @@ import {convertDate} from '../../Shared'
 
 const GroupScreen = props => {
   const { navigation } = props;
-  const groupData = useSelector(state => state.groups).find(group => group.id==props.navigation.getParam('id'))
+  const groupData = useSelector(state => state.myGroups).find(group => group.id==props.navigation.getParam('id'))
+  const myGroups = useSelector(state => state.myGroups);
   const userId = useSelector(state => state.auth.userId)
   const dispatch = useDispatch();
 
   const [requests, setRequests] = useState([])
 
   useEffect(() => {
-   console.log(groupData); 
+   // console.log(groupData); 
   })
 
   const saveGroupData = useCallback(() => {
@@ -40,7 +41,10 @@ useEffect(() => {
   
 
   useEffect(() => {
+    // Only fetch members if they are not already fetched and saved
+    if(groupData.members.length === 0){
       dispatch(getMembers(groupData.id));
+    }
       dispatch(getRequests(groupData.id));
   }, [])
 

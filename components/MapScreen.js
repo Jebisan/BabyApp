@@ -31,19 +31,14 @@ const MapScreen = props => {
     longitudeDelta: 0.0421
   };
 
-  useEffect(() => {
-    console.log(allGroups);
-  }) 
-
   return (
       <MapView style={styles.map} region={location}>
     
    {allGroups.map((group, index) => (
        <Marker key={group.key} coordinate={group.location} onPress={() => props.navigation.navigate('GroupDetail', {
-        groupId: group.id,
+        groupId: group.key,
         name: group.name,
         description: group.description,
-        members: group.members,
         admin: group.admin,
         guestView: true,
         dueDate: group.dueDate

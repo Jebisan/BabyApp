@@ -8,7 +8,7 @@ const Settings = props => {
 
   return (
     <View style = {styles.parent}>
-      <Text style= {styles.headerText}>Settings!</Text>
+      <Text style= {styles.subTitle}>Der er i øjeblikket ingen indstillinger</Text>
     </View>
 
   );
@@ -18,7 +18,7 @@ export default Settings;
 
 Settings.navigationOptions = navigationData => {
   return {
-    headerTitle: 'Settings',
+    headerTitle: 'Indstillinger',
     headerLeft:  
 
     <HeaderButtons HeaderButtonComponent={HeaderButton}>

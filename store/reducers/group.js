@@ -2,7 +2,7 @@ import {ADD_GROUP, CREATE_GROUP, ADD_USER_TO_GROUP, ADD_USER_TO_REQUESTS, REMOVE
 
 const INITIAL_STATE = []
 
-export default groupReducer = (state = INITIAL_STATE, action) => {
+export default myGroupsReducer = (state = INITIAL_STATE, action) => {
 	switch (action.type) {
     
 	case ADD_GROUP:

@@ -5,7 +5,7 @@ import {enableScreens} from 'react-native-screens';
 import { createStore , combineReducers, applyMiddleware} from 'redux';
 import {Provider} from 'react-redux';
 import authReducer from './store/reducers/auth';
-import groupReducer from './store/reducers/group';
+import myGroupsReducer from './store/reducers/group';
 import allGroupsReducer from './store/reducers/allGroups';
 import allUsersReducer from './store/reducers/allUsers';
 import directMessageReducer from './store/reducers/directMessage';
@@ -21,7 +21,7 @@ export default function App() {
     auth: authReducer,
     allGroups: allGroupsReducer,
     allUsers: allUsersReducer,
-    groups: groupReducer,
+    myGroups: myGroupsReducer,
     directMessages: directMessageReducer,
   });
 

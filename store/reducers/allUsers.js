@@ -4,9 +4,10 @@ const INITIAL_STATE = []
 export default allUsersReducer = (state = INITIAL_STATE, action) => {
 	switch (action.type) {
 	case 'FETCH_ALL_USERS':
-		console.log(action.users)
 		return action.users
-
+		
+		case 'LOGOUT':
+			return INITIAL_STATE;
 	default:
 		return state
 	}

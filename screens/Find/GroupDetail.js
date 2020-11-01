@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {Button, View, StyleSheet, Text, ScrollView ,SafeAreaView, Image, TouchableOpacity} from 'react-native'
+import {Button, View, StyleSheet, Text, ScrollView ,SafeAreaView, Image, TouchableOpacity, ActivityIndicator} from 'react-native'
 import Fire from '../../Fire'
 import {useDispatch, useSelector} from 'react-redux'
 import {addRequestToGroup, addRequestToUser} from '../../store/actions/group'
@@ -12,7 +12,8 @@ const GroupDetail = props => {
 	const userId = useSelector(state => state.auth.userId)
 	const userName = useSelector(state => state.auth.name)
 
-	const groups = useSelector(state => state.groups)
+	const allGroups = useSelector(state => state)
+	const myGroups = useSelector(state => state.myGroups)
 	const requests = useSelector(state => state.auth.requests)
   
 
@@ -24,19 +25,18 @@ const GroupDetail = props => {
   
 	const [members, setMembers] = useState([])
 	const [requesting, setRequesting] = useState(false)
+	const [loading, setLoading] = useState(true)
   
-	useEffect(() => {
-		if(requests.find(request => request==groupId)){
-			setRequesting(true)
-		}  
-	}, [requests])
+	
 
 	useEffect(() => {
-		console.log(admin)
-		if(groups.length!==0){
-			const existingGroup = groups.find(group => group.id==groupId)
+		console.log(allGroups)
+
+		if(myGroups.length!==0){
+			const existingGroup = myGroups.find(group => group.id==groupId)
   
 			if(existingGroup) {
+
 				console.log('Already enrolled in group!')
 				props.navigation.goBack()
 
@@ -47,20 +47,25 @@ const GroupDetail = props => {
 					admin: existingGroup.admin,
 					description: existingGroup.description
 				})
+
+
 			} else {
 				console.log('Not enrolled in Group! ')
 				getMembers()
-
+				setLoading(false);
 			}
-      
 		} else {
 			console.log('Empty groups.. ')
 			getMembers()
 
 		}
-      
 	}, [])
 
+	useEffect(() => {
+		if(requests.find(request => request==groupId)){
+			setRequesting(true)
+		}  
+	}, [requests])
 
 	const getMembers = () => {
 		setMembers([])    
@@ -69,12 +74,10 @@ const GroupDetail = props => {
 			const membersArray = Object.keys(snapshot.val()).map(key => {
 				return key
 			})
-			console.log(membersArray)
 
 			membersArray.forEach(member => {
 				Fire.firebase.database().ref('users/'+member).once('value').then((snapshot => {
 					const obj = snapshot.val()  
-
 					const user = {
 						id: snapshot.key,
 						name: obj.name, 
@@ -102,11 +105,7 @@ const GroupDetail = props => {
 	const sendNotificationToAdmin = () => {
 
 		Fire.firebase.database().ref('users/'+admin).once('value').then(snapshot => {
-
-			console.log(snapshot.val().pushToken)
-
 			NotificationCenter.sendNotification('Gruppeanmodning', userName + ' har anmodet om medlemskab i din gruppe \''+name+'\'', snapshot.val().pushToken)
-
 		})
 	}
 
@@ -114,86 +113,60 @@ const GroupDetail = props => {
 
 	return (
 		<View style={styles.parent}>
-			<View style={styles.topContainer}>
-				<View>
-					<Image source={{ uri: 'http://criticare.isccm.org/assets/images/male_placeholder.png' }} style={styles.groupImage}></Image>  
-				</View>
-				<View style={styles.column}>
-					<Text style={styles.title}>{name}</Text>
-					<Text style={styles.subTitle}>{convertDate(dueDate)}</Text>
-					<Text style={styles.subTitle}>{description}</Text>
-				</View>      
+		{
+			loading ? <ActivityIndicator size='large' /> :
+			<View>
+			<View  style={styles.topContainer} >
+			<View>
+			<Image source={{ uri: 'http://criticare.isccm.org/assets/images/male_placeholder.png' }} style={styles.groupImage}></Image>  
 			</View>
-
+			<View style={styles.column}>
+			<Text style={styles.title}>{name}</Text>
+			<Text style={styles.subTitle}>{convertDate(dueDate)}</Text>
+			<Text style={styles.subTitle}>{description}</Text>
+			</View>      
+			</View>
+			
 			<View style={styles.membersContainer}>
-				<Text style={styles.membersTitle}>MEDLEMMER </Text>
-				<View style={styles.picturesContainer}>
-
-					{
-						members.map((member) =>
-              
-							<TouchableOpacity key={member.id} onPress={ () => props.navigation.navigate('UserDetail', {
-
-								id: member.id,
-								name: member.name,
-								gender: member.gender,
-								city: member.city,
-								postalCode: member.postalCode, 
-								birthday: member.birthday,
-								photoUrl: member.photoUrl,
-								dueDate: member.dueDate,
-								pushToken: member.pushToken
-
-							})} > 
-								<Image source={{ uri: member.photoUrl }} style={styles.profilePicture}></Image>  
-							</TouchableOpacity>
-                
-						)
-					}
-				</View>
-			</View>
-
+			<Text style={styles.membersTitle}>MEDLEMMER </Text>
+			<View style={styles.picturesContainer}>
+			
 			{
-				/*
-          <View style={styles.membersContainer}>
-          <Text style={styles.membersTitle}>ANMODNINGER </Text>
-          <View style={styles.picturesContainer}>
-          
-          {
-            requests.map((member) =>
-            
-            <TouchableOpacity key={member.personId} onPress={ () => props.navigation.navigate('UserDetail', {
-              
-              id: member.id,
-              name: member.name,
-              gender: member.gender,
-              city: member.city,
-              postalCode: member.postalCode, 
-              birthday: member.birthday,
-              photoUrl: member.photoUrl,
-              dueDate: member.dueDate,
-              pushToken: member.pushToken
-              
-            })} > 
-            <Image source={{ uri: member.photoUrl }} style={styles.profilePicture}></Image>  
-            </TouchableOpacity> 
-            )
-          }
-          </View>
-          </View>
-          
-        */}
+				members.map((member) =>
+				
+				<TouchableOpacity key={member.id} onPress={ () => props.navigation.navigate('UserDetail', {
+					
+					id: member.id,
+					name: member.name,
+					gender: member.gender,
+					city: member.city,
+					postalCode: member.postalCode, 
+					birthday: member.birthday,
+					photoUrl: member.photoUrl,
+					dueDate: member.dueDate,
+					pushToken: member.pushToken
+					
+				})} > 
+				<Image source={{ uri: member.photoUrl }} style={styles.profilePicture}></Image>  
+				</TouchableOpacity>
+				
+				)
+			}
+			</View>
+			</View>
 			{
 				!requesting?   
-					<View style={styles.requestButtonContainer} >
-						<Button title='Anmod' onPress={request} />
-					</View> 
-					:
-					<View style={styles.requestButtonContainer} >
-						<Button disabled title='Anmodning sendt' onPress={request} />
-					</View> 
+				<View style={styles.requestButtonContainer} >
+				<Button title='Anmod' onPress={request} />
+				</View> 
+				:
+				<View style={styles.requestButtonContainer} >
+				<Button disabled title='Anmodning sendt' onPress={request} />
+				</View> 
 			}
-		</View>
+			</View>
+		}
+			</View>
 	)
 }
 

@@ -57,7 +57,6 @@ useEffect(() => {
 
 const renderResults = city => {
     if(selectedIndex==0){
-      console.log(allUsers);
       let tempUserArray = [] 
       allUsers.forEach(user => {
         if(user.city.trim().includes(city.navn.trim())){
@@ -71,7 +70,6 @@ const renderResults = city => {
     if(selectedIndex==1){
       let tempGroupArray = [] 
       allGroups.forEach(group => {
-        console.log(group)
         if(group.city.includes(city.navn.trim())){
           tempGroupArray.push(group);
         }
@@ -160,7 +158,6 @@ keyExtractor={item => item.key}
     groupId: item.key,
     name: item.name,
     description: item.description,
-    members: item.members,
     admin: item.admin,
     guestView: true,
     dueDate: item.dueDate
