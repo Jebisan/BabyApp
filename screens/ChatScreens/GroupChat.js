@@ -25,7 +25,7 @@ class GroupChat extends React.Component {
   }
 
   getMembers = () => {
-    const members = this.props.navigation.getParam('groupData').members
+    const members = this.props.route.params.groupData.members
     console.log(members);
     
     members.forEach(member => {
@@ -43,8 +43,9 @@ class GroupChat extends React.Component {
   }
 
 send = messages =>{
-const groupId = this.props.navigation.getParam('groupData').id
-const groupName = this.props.navigation.getParam('groupData').groupName
+const groupName = this.props.route.params.groupData.groupName;
+const groupId = this.props.route.params.groupData.id;
+const members = this.props.route.params.groupData.members;
 
   messages.forEach(item => {
       const message = {   
@@ -72,7 +73,7 @@ const groupName = this.props.navigation.getParam('groupData').groupName
               'Ny besked fra ' + message.user.name + " i "+ groupName, 
               message.text, 
               member.pushToken, 
-              {type: 'GM', groupId: this.props.navigation.getParam('groupData').id, members: this.props.navigation.getParam('groupData').members, groupName: this.props.navigation.getParam('groupData'.groupName)})
+              {type: 'GM', groupId, members, groupName})
           });
         }    
   )};
@@ -93,7 +94,7 @@ const groupName = this.props.navigation.getParam('groupData').groupName
 };
 
   get messages() {
-    const groupId = this.props.navigation.getParam('groupData').id;
+    const groupId = this.props.route.params.groupData.id;
 
       return Fire.firebase.database().ref("groupMessages/"+groupId+"/messages");
     }

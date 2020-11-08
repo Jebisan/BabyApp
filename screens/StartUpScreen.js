@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {View, ActivityIndicator, StyleSheet, AsyncStorage, Alert} from 'react-native';
-import {authenticate, fetchUserData} from '../store/actions/auth';
+import {authenticate, fetchUserData, setDidTryAutoLogin} from '../store/actions/auth';
 import {fetchUserDms} from '../store/actions/directMessage';
 import {fetchUserGroups} from '../store/actions/group';
 import {fetchAllGroups} from '../store/actions/allGroups';
@@ -19,7 +19,8 @@ const StartUpScreen = props => {
             setLoading(true);
             const userData = await AsyncStorage.getItem('userData');
             if(!userData) {
-                props.navigation.navigate('Login')
+           //     props.navigation.navigate('Login')
+           dispatch(setDidTryAutoLogin())
                 return;
             }
             const transformedData = JSON.parse(userData);
@@ -28,7 +29,8 @@ const StartUpScreen = props => {
 
             if(expirationDate <= new Date() || !token ||!userId) {
                 console.log('No valid token stored :( ')
-                props.navigation.navigate('Login')
+                dispatch(setDidTryAutoLogin())
+           //     props.navigation.navigate('Login')
                 return; 
             } 
 
@@ -41,9 +43,11 @@ const StartUpScreen = props => {
                 dispatch(fetchUserGroups());
                 dispatch(fetchAllGroups());
                 dispatch(fetchAllUsers());
-                props.navigation.navigate('MainScreen')
+
+           //     props.navigation.navigate('MainScreen')
             } catch (error) {
-                props.navigation.navigate('Login');
+                console.log('Error fetch user data in StartUpScreen')
+           //     props.navigation.navigate('Login');
             }
 
         };

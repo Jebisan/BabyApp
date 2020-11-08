@@ -16,13 +16,12 @@ const GroupDetail = props => {
 	const myGroups = useSelector(state => state.myGroups)
 	const requests = useSelector(state => state.auth.requests)
   
+	const groupId = props.route.params.groupId;
+	const name = props.route.params.name;
+	const description = props.route.params.description;
+	const admin = props.route.params.admin;
+	const dueDate = props.route.params.dueDate;
 
-	const groupId = props.navigation.getParam('groupId')
-	const name = props.navigation.getParam('name')
-	const description = props.navigation.getParam('description')
-	const admin = props.navigation.getParam('admin')
-	const dueDate = props.navigation.getParam('dueDate')
-  
 	const [members, setMembers] = useState([])
 	const [requesting, setRequesting] = useState(false)
 	const [loading, setLoading] = useState(true)

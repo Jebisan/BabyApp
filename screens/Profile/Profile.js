@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Button, View, StyleSheet, Image, Text, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
-import { DrawerNavigator } from 'react-navigation';
+import { View, StyleSheet, Image, Text, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-navigation'
 import {Ionicons, MaterialIcons} from '@expo/vector-icons';
 import {useSelector} from 'react-redux';
 import ImagePicker from '../../components/ImagePicker';
@@ -150,11 +150,11 @@ const [daysToBirth, setDaysToBirth] = useState(0);
 };
 
 
-Profile.navigationOptions = navigationData => {
+export const screenOptions = navigationData => {
   return {
     headerTitle: '',
     
-    headerLeft:  
+    headerLeft: () =>  
     <HeaderButtons HeaderButtonComponent={HeaderButton}>
     <Item
       title="drawer"
@@ -163,7 +163,7 @@ Profile.navigationOptions = navigationData => {
     />
   </HeaderButtons>,
 
-    headerRight: 
+    headerRight: () =>
     <HeaderButtons HeaderButtonComponent={HeaderButton}>
     <Item
       title="DM"

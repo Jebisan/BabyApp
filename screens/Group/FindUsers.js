@@ -9,7 +9,7 @@ import {useDispatch, useSelector} from 'react-redux'
 
 const FindUsers = props => {
 
-	const groupData = props.navigation.getParam('groupData')
+	const groupData = props.route.params ? props.route.params.groupData : null
   
 	const [users, setUsers] = useState([])
 	const [filteredUsers, setFilteredUsers] = useState([])
@@ -26,12 +26,6 @@ const FindUsers = props => {
 			selectedUserIds.push(user.id)
 		})
 
-
-		const newData = {
-			groupData: groupData,
-			selectedUserIds: selectedUserIds
-		}
-
 		dispatch(createGroup(groupData.name, groupData.description, groupData.postalCode,groupData.city,groupData.type,selectedUserIds, groupData.photoUrl, groupData.dueDate))
 
 		props.navigation.navigate('Groups')
@@ -40,13 +34,10 @@ const FindUsers = props => {
 
 
 	useEffect(() => {
-		props.navigation.setParams({save: _createGroup})
+		props.navigation.setOptions({
+		headerRight: () => <Button title='Opret' onPress={_createGroup} />
+		})
 	}, [_createGroup])
-
-
-	useEffect(() => {    
-		getUsers()
-	}, [])
 
 
 	useEffect(() => {
@@ -127,12 +118,9 @@ const FindUsers = props => {
 	)
 }
 
-FindUsers.navigationOptions = navigationData => {
-	const save = navigationData.navigation.getParam('save')
-
+export const screenOptions = navigationData => {
 	return {
 		headerTitle: 'Find brugere',
-		headerRight: <Button title='Opret' onPress={save} />
 	}
 }
 

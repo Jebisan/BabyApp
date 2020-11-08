@@ -4,8 +4,6 @@ import HeaderButton from '../../components/HeaderButton';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 const Settings = props => {
-
-
   return (
     <View style = {styles.parent}>
       <Text style= {styles.subTitle}>Der er i øjeblikket ingen indstillinger</Text>
@@ -19,7 +17,7 @@ export default Settings;
 Settings.navigationOptions = navigationData => {
   return {
     headerTitle: 'Indstillinger',
-    headerLeft:  
+    headerLeft: () =>   
 
     <HeaderButtons HeaderButtonComponent={HeaderButton}>
     <Item

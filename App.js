@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import NavigationContainer from './navigation/NavigationContainer';
+import AppNavigator from './navigation/AppNavigator';
 import {enableScreens} from 'react-native-screens';
 import { createStore , combineReducers, applyMiddleware} from 'redux';
 import {Provider} from 'react-redux';
@@ -9,7 +9,6 @@ import myGroupsReducer from './store/reducers/group';
 import allGroupsReducer from './store/reducers/allGroups';
 import allUsersReducer from './store/reducers/allUsers';
 import directMessageReducer from './store/reducers/directMessage';
-import {composeWithDevTools} from 'redux-devtools-extension';
 import ReduxThunk from 'redux-thunk';
 
 
@@ -29,7 +28,7 @@ export default function App() {
 
   return (
    <Provider store = {store}>
-      <NavigationContainer/>
+      <AppNavigator/>
    </Provider>
   );
 }

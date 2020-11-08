@@ -3,7 +3,7 @@
     "name": "RN First App",
     "slug": "rn-first-app",
     "privacy": "public",
-    "sdkVersion": "36.0.0",
+    "sdkVersion": "39.0.0",
     "platforms": [
       "ios",
       "android",

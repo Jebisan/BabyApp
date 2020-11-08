@@ -2,16 +2,14 @@ import React, {useEffect} from 'react'
 import {StyleSheet, FlatList, View, TouchableOpacity } from 'react-native'
 import {useSelector} from 'react-redux'
 import Group from '../../components/Group'
-
-
 import HeaderButton from '../../components/HeaderButton'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
 
 const Groups = props => {
 	const myGroups = useSelector(state => state.myGroups)
+	const state = useSelector(state => state)
 
 	useEffect(() => {
-		console.log(myGroups)
 	}, [])
 
 
@@ -51,12 +49,10 @@ const Groups = props => {
 export default Groups
 
 
-Groups.navigationOptions = navigationData => {
-	const togglePredict = navigationData.navigation.getParam('togglePred')
-
+export const screenOptions = navigationData => {
 	return {
-		headerTitle: 'Groups',
-		headerRight: 
+		headerTitle: navigationData.route.name,
+		headerRight: () =>
 
     <HeaderButtons HeaderButtonComponent={HeaderButton}>
     	<Item

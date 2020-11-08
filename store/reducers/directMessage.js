@@ -27,6 +27,8 @@ const directMessageReducer = (state = INITIAL_STATE, action) => {
 			...state,
 			action.newDm
 		]
+	case 'LOGOUT':
+		return INITIAL_STATE;
 
 	default:
 		return state

@@ -18,10 +18,11 @@ class DirectMessage extends React.Component {
 
 
   componentDidMount() { 
-    console.log(this.props.navigation.getParam('conversationCreated'))
     this.setState({active:true})
 
-    if(this.props.navigation.getParam('conversationCreated')){
+    const conversationCreated = this.props.route.params.conversationCreated;
+
+    if(conversationCreated){
       this.setState({conversationCreated:true})
       this.readMessage();
 
@@ -54,10 +55,11 @@ send = async messages =>{
           }
       }
 
-      const chatId = this.props.navigation.getParam('chatId')
-      const personId = this.props.navigation.getParam('personId')
-      const pushToken = this.props.navigation.getParam('pushToken')
-      const myPushToken = this.props.navigation.getParam('pushToken')
+      
+
+      const chatId = this.props.route.params.chatId;
+      const personId = this.props.route.params.personId; 
+      const pushToken = this.props.route.params.pushToken;
       
       if(this.state.conversationCreated){
         fetch(`https://babyapp-ed94d.firebaseio.com/directMessages/${chatId}/messages.json?auth=${this.props.token}`,
@@ -126,7 +128,7 @@ send = async messages =>{
             return response.json();
           })
 
-      NotificationCenter.sendNotification('Ny besked fra ' + message.user.name, message.text, pushToken, {type: 'DM', chatId: chatId, pushToken: myPushToken})}
+      NotificationCenter.sendNotification('Ny besked fra ' + message.user.name, message.text, pushToken, {type: 'DM', chatId: chatId})}
   )};
 
   
@@ -145,7 +147,7 @@ send = async messages =>{
 };
 
   get messages() {
-    const chatId = this.props.navigation.getParam('chatId')
+    const chatId = this.props.route.params.chatId
       return Fire.firebase.database().ref("directMessages/"+chatId+'/messages');
 }
 
@@ -158,7 +160,7 @@ get user() {
 }
 
 readMessage = () => {
-  const chatId = this.props.navigation.getParam('chatId')
+  const chatId = this.props.route.params.chatId
 
 
   fetch(`https://babyapp-ed94d.firebaseio.com/chats/${chatId}/lastMessage/readBy/${this.props.userId}.json?auth=${this.props.token}`,

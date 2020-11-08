@@ -9,7 +9,7 @@ import {useDispatch, useSelector} from 'react-redux';
 
 const AddUsersToGroup = props => {
 
-  const groupData = props.navigation.getParam('groupData')
+  const groupData = props.route.params.groupData;
   
   const [users, setUsers] = useState([])
   const [filteredUsers, setFilteredUsers] = useState([])
@@ -36,7 +36,9 @@ const AddUsersToGroup = props => {
 
 
 useEffect(() => {
-  props.navigation.setParams({save: _createGroup});
+  props.navigation.setOptions({
+    headerRight: () => <Button title='Tilføj' onPress={save} />
+  });
 }, [_createGroup]);
 
 
@@ -134,12 +136,9 @@ keyExtractor={item => item.id}
   );
 };
 
-AddUsersToGroup.navigationOptions = navigationData => {
-  const save = navigationData.navigation.getParam('save');
-
+export const screenOptions = navigationData => {
   return {
     headerTitle: 'Find brugere',
-    headerRight: <Button title='Tilføj' onPress={save} />
   };
 };
 

@@ -31,10 +31,10 @@ const Login = props => {
         dispatch(fetchUserData(userId));
         dispatch(fetchUserGroups);
         dispatch(fetchUserDms);
-        props.navigation.navigate('MainScreen')
+   //OLD     props.navigation.navigate('MainScreen')
       } catch (error) {
       console.log('Navigating..')
-      props.navigation.navigate('CreateAdditionalInformation')
+   //OLD   props.navigation.navigate('CreateAdditionalInformation')
       }
     }
     fetchData();

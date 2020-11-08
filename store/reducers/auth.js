@@ -1,9 +1,10 @@
-import { AUTHENTICATE, LOGOUT, SET_FIREBASE_DATA, SET_PHOTO_URL, SET_PUSH_TOKEN} from '../actions/auth'
+import { AUTHENTICATE, LOGOUT, SET_DID_TRY_AUTO_LOGIN, SET_FIREBASE_DATA, SET_PHOTO_URL, SET_PUSH_TOKEN} from '../actions/auth'
 import {ADD_REQUEST_TO_USER} from '../actions/group'
 
 const INITIAL_STATE = {
   token: null,
   userId: null,
+  didTryAutoLogin: false,
   firstname: null,
   lastname: null,
   name: null,
@@ -26,10 +27,19 @@ export default authReducer = (state = INITIAL_STATE, action) => {
         ...state,
         token: action.token,
         userId: action.userId,
-        email: action.email
+        email: action.email,
+        didTryAutoLogin: true
       };
+      case SET_DID_TRY_AUTO_LOGIN:
+        return {
+          ...state,
+          didTryAutoLogin: true
+        }
     case LOGOUT:
-      return INITIAL_STATE;
+      return {
+        ...INITIAL_STATE,
+        didTryAutoLogin: true
+      };
 
     case SET_FIREBASE_DATA:
       return {

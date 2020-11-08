@@ -10,9 +10,11 @@ import {convertDate} from '../../Shared'
 
 const GroupScreen = props => {
   const { navigation } = props;
-  const groupData = useSelector(state => state.myGroups).find(group => group.id==props.navigation.getParam('id'))
+  const groupData = useSelector(state => state.myGroups).find(group => group.id==props.route.params.id);
   const myGroups = useSelector(state => state.myGroups);
   const userId = useSelector(state => state.auth.userId)
+
+  
   const dispatch = useDispatch();
 
   const [requests, setRequests] = useState([])
@@ -35,7 +37,17 @@ const GroupScreen = props => {
 }, [groupData.members])
 
 useEffect(() => {
-  navigation.setParams({save: saveGroupData});
+  navigation.setOptions({
+    headerRight: () =>
+
+    <HeaderButtons HeaderButtonComponent={HeaderButton}>
+    <Item
+      title="groupchat"
+      iconName= 'ios-chatboxes'
+      onPress={saveGroupData}
+    />
+  </HeaderButtons>
+  });
 }, [saveGroupData]);
 
   
@@ -126,26 +138,10 @@ useEffect(() => {
 
 
 GroupScreen.navigationOptions = navigationData => {
-  const id = navigationData.navigation.getParam('id');
-  const members = navigationData.navigation.getParam('members');
-  const groupName = navigationData.navigation.getParam('groupName');
 
   return {
-    headerTitle: groupName,
-
-
-
-    headerRight: 
-
-    <HeaderButtons HeaderButtonComponent={HeaderButton}>
-    <Item
-      title="groupchat"
-      iconName= 'ios-chatboxes'
-      onPress={
-        navigationData.navigation.getParam('save')
-      }
-    />
-  </HeaderButtons>  };
+    headerTitle: groupName
+  };
 };
 
 

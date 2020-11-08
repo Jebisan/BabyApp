@@ -5,10 +5,15 @@ export const LOGOUT = 'LOGOUT';
 export const SET_FIREBASE_DATA = 'SET_FIREBASE_DATA';
 export const SET_PHOTO_URL = 'SET_PHOTO_URL';
 export const SET_PUSH_TOKEN = 'SET_PUSH_TOKEN';
+export const SET_DID_TRY_AUTO_LOGIN = 'SET_DID_TRY_AUTO_LOGIN';
 import * as Facebook from 'expo-facebook';
 import firebase from 'firebase';
 
 let timer;
+
+export const setDidTryAutoLogin = () => {
+  return { type: SET_DID_TRY_AUTO_LOGIN }
+}
 
 export const logOut = () => {
     clearLogoutTimer();

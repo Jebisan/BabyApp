@@ -42,7 +42,13 @@ const CreateGroup = props => {
 	}, [name, description, postalCode, city, myDueDate, selectedIndex])
 
 	useEffect(() => {
-		navigation.setParams({save: saveGroupData})
+		navigation.setOptions({
+			headerRight: () => 
+			<Button title='Næste' 
+				onPress={saveGroupData} 
+			/>
+		})
+
 	}, [saveGroupData])
 
 
@@ -126,16 +132,11 @@ const CreateGroup = props => {
 	)
 }
 
-CreateGroup.navigationOptions = navigationData => {
+export const screenOptions = navigationData => {
+	const save = navigationData.route.params ? navigationData.route.params : null;
 
 	return {
-		headerTitle: 'Ny gruppe',
-		headerRight: 
-    <Button title='Næste' 
-    	onPress={
-    		navigationData.navigation.getParam('save')
-    	} 
-    />
+		headerTitle: 'Ny gruppe'
 	}
 }
 

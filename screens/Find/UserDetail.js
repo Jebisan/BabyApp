@@ -17,16 +17,17 @@ const UserDetail = props => {
 	const userId = useSelector(state => state.auth.userId)
 
 
-	const id = props.navigation.getParam('id')
-	const name = props.navigation.getParam('name')
-	const gender = props.navigation.getParam('gender')
-	const city = props.navigation.getParam('city')
-	const postalCode = props.navigation.getParam('postalCode')
-	const birthday = props.navigation.getParam('birthday')
-	const photoUrl = props.navigation.getParam('photoUrl')
-	const dueDate = props.navigation.getParam('dueDate')
-	const firstTimer = props.navigation.getParam('firstTimer')
-	const pushToken = props.navigation.getParam('pushToken')
+	const id = props.route.params.id;
+	const name = props.route.params.name;
+	const gender = props.route.params.gender;
+	const city = props.route.params.city;
+	const postalCode = props.route.params.postalCode;
+	const birthday = props.route.params.birthday;
+	const photoUrl = props.route.params.photoUrl;
+	const dueDate = props.route.params.dueDate;
+	const firstTimer = props.route.params.firstTimer;
+	const pushToken = props.route.params.pushToken;
+
 	const [chatId, setChatId] = useState(false)
 
 	const [conversationCreated, setConversationCreated] = useState(undefined)
@@ -113,11 +114,11 @@ const UserDetail = props => {
 						<Image source={photoUrl?{ uri: photoUrl }:{uri: 'http://criticare.isccm.org/assets/images/male_placeholder.png'}} style={styles.image} resizeMode="cover"></Image>
 					</View>
 
-					{props.navigation.getParam('id')==userId?null:
+					{id==userId?null:
 						<View style={styles.buttonsContainer}>
 							<TouchableOpacity onPress={() => props.navigation.navigate('DirectMessage',{
 								conversationCreated: conversationCreated,
-								personId: props.navigation.getParam('id'),
+								personId: id,
 								chatId: chatId,
 								pushToken: pushToken
 							}

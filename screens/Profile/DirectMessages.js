@@ -177,8 +177,7 @@ const listenForChatChange = (dm) => {
 export default DirectMessages;
 
 
-DirectMessages.navigationOptions = navigationData => {
-
+export const screenOptions = navigationData => {
   return {
     headerTitle: 'Indbakke',
   };

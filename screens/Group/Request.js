@@ -16,22 +16,21 @@ const dispatch = useDispatch();
 const userId = useSelector(state => state.auth.userId)
 
 
-const groupId = props.navigation.getParam('groupId');
-const personId = props.navigation.getParam('requestData').personId;
+const groupId = props.route.params.groupId;
 
+const personId = props.route.params.requestData.personId;
 
-const name = props.navigation.getParam('requestData').name ;
-const gender = props.navigation.getParam('requestData').gender;
-const birthday = props.navigation.getParam('requestData').birthday;
-const photoUrl = props.navigation.getParam('requestData').photoUrl;
-const dueDate = props.navigation.getParam('requestData').dueDate;
-const city = props.navigation.getParam('requestData').city;
-const postalCode = props.navigation.getParam('requestData').postalCode;
-const groupAdmin = props.navigation.getParam('groupAdmin');
+const name = props.route.params.requestData.name;
+const gender = props.route.params.requestData.gender;
+const birthday = props.route.params.requestData.birthday;
+const photoUrl = props.route.params.requestData.photoUrl;
+const dueDate = props.route.params.requestData.dueDate;
+const city = props.route.params.requestData.city;
+const postalCode = props.route.params.requestData.postalCode;
+const pushToken = props.route.params.requestData.pushToken;
+const groupName = props.route.params.groupName;
 
-
-const groupName = props.navigation.getParam('groupName');
-const pushToken = props.navigation.getParam('requestData').pushToken;
+const groupAdmin = props.route.params.groupAdmin;
 
 
 const [newBirthday, setNewBirthday] = useState([]);
