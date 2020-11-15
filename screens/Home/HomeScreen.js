@@ -28,21 +28,16 @@ useEffect(() => {
       let token = await Notifications.getExpoPushTokenAsync();
       dispatch(addPushTokenToUser(token));
       Notifications.addListener(_handleNotification);
-
-
     } else {
       console.log('Must use physical device for Push Notifications');
     }
   };
 
   const _handleNotification = notification => {
+    // NOTIFICATION RECEIVED IN FOREGROUND
    if(notification.origin=='received') {
     switch(notification.data.type) {
       case 'DM':
-      console.log('new DM recieved in foreground')
-      
-      togglePopDownMessage.current.toggleTooltip();
-
       dispatch(fetchUserDms());
         break;
         case 'GM':
@@ -50,7 +45,7 @@ useEffect(() => {
           default:
           }
         }
-
+    // NOTIFICATION RECEIVED IN BACKGROUND
     if(notification.origin=='selected') {
       switch(notification.data.type) {
         case 'DM':

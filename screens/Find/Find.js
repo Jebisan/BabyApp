@@ -98,6 +98,7 @@ const renderResults = city => {
     return (
 <View style= {styles.parentContainer} >
 <Autocomplete
+style={styles.searchInput}
 keyExtractor={item => item.nr}
 data={cityData}
 hideResults={hideResults}
@@ -209,6 +210,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     padding: 1,
   },
+  searchInput: {
+    paddingLeft: 20,
+    height: 35,
+    backgroundColor: 'white'
+  }
 });
 
 export default Find;

@@ -1,5 +1,4 @@
 import firebase from 'firebase';
-import * as Facebook from 'expo-facebook';
 
 class Fire {
     constructor() {
@@ -29,8 +28,6 @@ init = () => {
     get groups() {
       return firebase.database().ref("groups");
   }
-
-
 
     get firebase(){
         return firebase;

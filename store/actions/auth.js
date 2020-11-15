@@ -157,6 +157,12 @@ export const fetchUserData = (userId) => {
           return key
         });
       }
+
+      if(data.children){
+        childrenArray = Object.keys(data.children).map(key => {
+          return {id: key, ...data.children[key]};
+        });
+      }
       
          dispatch({
           type: SET_FIREBASE_DATA, 
@@ -171,7 +177,8 @@ export const fetchUserData = (userId) => {
           photoUrl: data.photoUrl,
           pushToken: data.pushToken,
           requests: requestsArray,
-          firstTimer: data.firstTimer
+          firstTimer: data.firstTimer,
+          children: childrenArray
         });  
   }
   }

@@ -10,13 +10,18 @@ import {useDispatch, useSelector} from 'react-redux';
 const AddUsersToGroup = props => {
 
   const groupData = props.route.params.groupData;
+
+  const users = useSelector(state => state.allUsersReducer);
   
-  const [users, setUsers] = useState([])
   const [filteredUsers, setFilteredUsers] = useState([])
   const [selectedUsers, setSelectedUsers] = useState([])
   const [searchText, setSearchText] = useState('');
   const userId = useSelector(state => state.auth.userId)
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    console.log('Update', searchText);
+  })
 
   
   const _createGroup = useCallback(() => {
@@ -37,18 +42,13 @@ const AddUsersToGroup = props => {
 
 useEffect(() => {
   props.navigation.setOptions({
-    headerRight: () => <Button title='Tilføj' onPress={save} />
+    headerRight: () => <Button title='Tilføj' onPress={_createGroup} />
   });
 }, [_createGroup]);
 
 
-  useEffect(() => {    
-    getUsers();
-  }, []);
-
-
   useEffect(() => {
-
+    console.log('Hej', users);
     if(searchText!==''){
       let tempArray = [];
       users.forEach(user => {
@@ -60,19 +60,6 @@ useEffect(() => {
 
     }
   }, [searchText]);
-
-
-  const getUsers = () => {
-    Fire.users.once('value').then((snapshot) =>{
-     obj = snapshot.val()
-     var result = Object.keys(obj).map((value) => {
-       return {id: value,  ...obj[value]};
-     });
-     setUsers(result)
-   }).catch(error => {
-     console.log(error)
-   });
-};
 
 const userTappedHandler = (_user) => {
   if(selectedUsers.find(user => user.id === _user.id)){

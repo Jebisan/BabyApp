@@ -12,13 +12,10 @@ const Settings = props => {
   );
 };
 
-export default Settings;
-
-Settings.navigationOptions = navigationData => {
+export const screenOptions = navigationData => {
   return {
     headerTitle: 'Indstillinger',
-    headerLeft: () =>   
-
+    headerLeft: () =>  
     <HeaderButtons HeaderButtonComponent={HeaderButton}>
     <Item
       title="drawer"
@@ -45,3 +42,5 @@ const styles = StyleSheet.create({
 
   }
 })
+
+export default Settings;

@@ -9,7 +9,6 @@ import { Ionicons, FontAwesome } from '@expo/vector-icons'
 import {logOut} from '../store/actions/auth'
 
 //AUTH
-import StartUpScreen from '../screens/StartUpScreen'
 import Login from '../screens/Auth/Login'
 import SignUp from '../screens/Auth/SignUp'
 import CreateAdditionalInformation from '../screens/Auth/CreateAdditionalInformation'
@@ -22,9 +21,10 @@ import GroupChat from '../screens/ChatScreens/GroupChat'
 import DirectMessage from '../screens/ChatScreens/DirectMessage'
 
 //PROFILE
-import Settings from '../screens/Profile/Settings'
+import Settings, {screenOptions as settingsScreenOptions} from '../screens/Profile/Settings'
 import Profile, {screenOptions as profileScreenOptions} from '../screens/Profile/Profile'
 import DirectMessages, {screenOptions as directMessagesScreenOptions} from '../screens/Profile/DirectMessages'
+import ChildScreen, {screenOptions as childScreenScreenOptions} from '../screens/Profile/ChildScreen'
 
 //FIND
 import GroupDetail from '../screens/Find/GroupDetail'
@@ -38,15 +38,8 @@ import FindUsers, {screenOptions as findUsersScreenOptions} from '../screens/Gro
 import CreateGroup, {screenOptions as createGroupScreenOptions} from '../screens/Group/CreateGroup'
 import GroupScreen, {screenOptions as groupScreenScreenOptions} from '../screens/Group/GroupScreen'
 import AddUsersToGroup, {screenOptions as addUsersToGroupScreenOptions} from '../screens/Group/AddUsersToGroup'
-import Request from '../screens/Group/Request' // SHOULD BE MOVED TO COMPONENTS. NOT SCREEN.
+import Request from '../screens/Group/Request' // SHOULD BE MOVED TO COMPONENTS. NOT A SCREEN.
 
-/*
-const AuthStack = createSwitchNavigator({
-	Login: Login,
-	SignUp: SignUp,
-}
-)
-*/
 
 const AuthStackNavigator = createStackNavigator();
 
@@ -56,24 +49,6 @@ export const AuthNavigator = () => {
 		<AuthStackNavigator.Screen name = 'SignUp' component = {SignUp} />
 	</AuthStackNavigator.Navigator>
 }
-
-const ProfileStackNavigator = createStackNavigator();
-
-export const ProfileStack = () => {
-return <ProfileStackNavigator.Navigator>
-			<ProfileStackNavigator.Screen name = 'Profile' component = {Profile} options = {profileScreenOptions} />
-			<ProfileStackNavigator.Screen name = 'DirectMessages' component = {DirectMessages} options = {directMessagesScreenOptions} />
-			<ProfileStackNavigator.Screen name = 'DirectMessage' component = {DirectMessage} />
-</ProfileStackNavigator.Navigator>
-};
-/*
-const ProfileStack = createStackNavigator({
-	Profile: Profile, 
-	DirectMessages: {screen: DirectMessages},
-	DirectMessage: {screen: DirectMessage}
-}
-)
-*/
 
 const GroupsStackNavigator = createStackNavigator();
 
@@ -89,19 +64,6 @@ export const GroupsNaviagator = () => {
 				<GroupsStackNavigator.Screen name = 'UserDetail' component = {UserDetail} />
 	</GroupsStackNavigator.Navigator>
 }
-/*
-const GroupsStack = createStackNavigator({
-	Groups: Groups,
-	CreateGroup: CreateGroup,
-	FindUsers: FindUsers,
-	GroupChat: GroupChat,
-	GroupScreen: GroupScreen,
-	AddUsersToGroup: AddUsersToGroup,
-	Request: Request,
-	UserDetail: UserDetail
-}
-)
-*/
 
 const FindStackNavigator = createStackNavigator();
 
@@ -110,27 +72,25 @@ export const FindNaviagator = () => {
 				<FindStackNavigator.Screen name = 'Find' component = {Find} />
 				<FindStackNavigator.Screen name = 'UserDetail' component = {UserDetail} />
 				<FindStackNavigator.Screen name = 'GroupDetail' component = {GroupDetail} />
+				<FindStackNavigator.Screen name = 'GroupChat' component = {GroupChat} />
 				<FindStackNavigator.Screen name = 'DirectMessage' component = {DirectMessage} />
 				<FindStackNavigator.Screen name = 'GroupScreen' component = {GroupScreen} options = {groupScreenScreenOptions} />
 				<FindStackNavigator.Screen name = 'MapScreen' component = {MapScreen} />
 	</FindStackNavigator.Navigator>
 }
-/*
-const FindStack = createStackNavigator({
-	Find: Find,
-	UserDetail: UserDetail,
-	GroupDetail: GroupDetail,
-	DirectMessage: DirectMessage,
-	GroupScreen: GroupScreen,
-	Map: MapScreen
-}
-)
-*/
 
+const DirectMessagesStackNavigator = createStackNavigator();
+
+export const DirectMessagesNavigator = () => {
+	return <DirectMessagesStackNavigator.Navigator>
+	<DirectMessagesStackNavigator.Screen name = 'DirectMessages' component = {DirectMessages} options = {directMessagesScreenOptions} />
+	<DirectMessagesStackNavigator.Screen name = 'DirectMessage' component = {DirectMessage} />
+	</DirectMessagesStackNavigator.Navigator>
+}
 
 const ProfileDrawerNavigator = createDrawerNavigator();
 
-export const ProfileNavigator = () => {
+export const DrawerNavigator = () => {
 	const dispatch = useDispatch()
 
 	return <ProfileDrawerNavigator.Navigator 
@@ -150,35 +110,28 @@ export const ProfileNavigator = () => {
 			)
 		}
 	}
-	drawerContentOptions = {{
-		drawerPosition:'left'
-	}} >
-				<ProfileDrawerNavigator.Screen name = 'Profile' component = {ProfileStack}/>
-				<ProfileDrawerNavigator.Screen name = 'Indstillinger' component = {Settings}/>
+	drawerPosition={'right'}
+	>
+				<ProfileDrawerNavigator.Screen name = 'Profile' component = {ProfileNavigator} />
+				<ProfileDrawerNavigator.Screen name = 'Indstillinger' component = {Settings} options = {settingsScreenOptions} />
 	</ProfileDrawerNavigator.Navigator>
 };
 
-/*
-const AppDrawerNavigator = createDrawerNavigator(
-	{
-		Profil: {screen: ProfileStack},
-		Indstillinger: {screen: Settings},
-	}, 
-	{
-		contentOptions: {
-			drawerPosition:'left'
-		},
-		contentComponent: ''
-	}
-)
-*/
+const ProfileStackNavigator = createStackNavigator();
+
+export const ProfileNavigator = () => {
+	return <ProfileStackNavigator.Navigator>
+				<ProfileStackNavigator.Screen name = 'Profile' component = {Profile} options = {profileScreenOptions} />
+				<ProfileStackNavigator.Screen name = 'Child' component = {ChildScreen} options = {childScreenScreenOptions} />
+	</ProfileStackNavigator.Navigator>
+}
 
 const AppTabNavigator = createBottomTabNavigator();
 
 export const TabNavigator = () => {
 	return <AppTabNavigator.Navigator>
 	<AppTabNavigator.Screen 
-		name = 'Home' 
+		name = 'Hjem' 
 		component = {HomeScreen} 
 		options = {{
 			tabBarIcon: tabInfo => {
@@ -222,9 +175,24 @@ export const TabNavigator = () => {
 			}
 		}}
 		/>
+		<AppTabNavigator.Screen 
+		name = 'Beskeder' 
+		component = {DirectMessagesNavigator} 
+		options = {{
+			tabBarIcon: tabInfo => {
+				return (
+					<Ionicons 
+						name='md-mail' 
+						size={25} 
+						color='black' 
+					/>
+				)
+			}
+		}}
+		/>
 	<AppTabNavigator.Screen 
 		name = 'Dig' 
-		component = {ProfileNavigator} 
+		component = {DrawerNavigator} 
 		options = {{
 			tabBarIcon: tabInfo => {
 				return (
@@ -238,65 +206,4 @@ export const TabNavigator = () => {
 		}}
 		/>
 	</AppTabNavigator.Navigator>
-}
-/*
-const AppTabNavigator = createBottomTabNavigator({
-	'Home': {screen: HomeScreen, navigationOptions: {
-		tabBarIcon: tabInfo => {
-			return (
-				<Ionicons 
-					name='md-home' 
-					size={25} 
-					color='black' 
-				/>
-			)
-		}
-	}
-	},
-	'Find': {screen: FindStack, navigationOptions: {
-		tabBarIcon: tabInfo => {
-			return (
-				<Ionicons 
-					name='md-search' 
-					size={25} 
-					color='black' 
-				/>
-			)
-		}
-	}
-	},
-	'Grupper': {screen: GroupsStack, navigationOptions: {
-		tabBarIcon: tabInfo => {
-			return (
-				<FontAwesome 
-					name='group' 
-					size={25} 
-					color='black' 
-				/>
-			)
-		}
-	}
-	},
-	Dig: {screen: AppDrawerNavigator, navigationOptions: {
-		tabBarIcon: tabInfo => {
-			return (
-				<Ionicons 
-					name='md-person' 
-					size={27} 
-					color='black' 
-				/>
-			)
-		}
-	}
-	},
-});
-*/
-/*
-const AppSwitchNavigator = createSwitchNavigator({
-	StartUp: {screen: StartUpScreen},
-	AuthStack: {screen: AuthStack}, 
-	CreateAdditionalInformation: {screen: CreateAdditionalInformation},
-	MainScreen: {screen: AppNavigator},
-});
-export default createAppContainer (AppSwitchNavigator)
-*/
+};

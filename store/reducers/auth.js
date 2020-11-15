@@ -18,6 +18,7 @@ const INITIAL_STATE = {
   groups: null,
   pushToken: null,
   requests: [],
+  children: []
 };
 
 export default authReducer = (state = INITIAL_STATE, action) => {
@@ -55,7 +56,8 @@ export default authReducer = (state = INITIAL_STATE, action) => {
         photoUrl: action.photoUrl,
         pushToken: action.pushToken,
         requests: action.requests,
-        firstTimer: action.firstTimer
+        firstTimer: action.firstTimer,
+        children: action.children
       }
       
     case SET_PHOTO_URL:

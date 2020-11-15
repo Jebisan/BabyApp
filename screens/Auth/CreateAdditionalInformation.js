@@ -3,7 +3,6 @@ import {View,Image, TouchableOpacity, ScrollView, Picker ,StyleSheet, Text, Butt
 import {useDispatch} from 'react-redux';
 import {signUp, createAdditionalData} from '../../store/actions/auth';
 import DatePicker from 'react-native-datepicker';
-import cityData from '../../cities';
 import { Ionicons } from "@expo/vector-icons";
 import { CheckBox } from 'react-native-elements'
 

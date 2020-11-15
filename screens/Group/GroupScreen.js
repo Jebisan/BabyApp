@@ -38,6 +38,7 @@ const GroupScreen = props => {
 
 useEffect(() => {
   navigation.setOptions({
+    headerTitle: groupData.name,
     headerRight: () =>
 
     <HeaderButtons HeaderButtonComponent={HeaderButton}>
@@ -49,7 +50,6 @@ useEffect(() => {
   </HeaderButtons>
   });
 }, [saveGroupData]);
-
   
 
   useEffect(() => {
@@ -133,15 +133,6 @@ useEffect(() => {
 
     </View>
   );  
-};
-
-
-
-GroupScreen.navigationOptions = navigationData => {
-
-  return {
-    headerTitle: groupName
-  };
 };
 
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform, KeyboardAvoidingView, SafeAreaView, StyleSheet, View, Text, ActivityIndicator } from 'react-native';
-import {GiftedChat} from 'react-native-gifted-chat';
+import {GiftedChat, Bubble} from 'react-native-gifted-chat';
 import Fire from '../../Fire';
 import {connect} from 'react-redux';
 import NotificationCenter from '../../NotificationCenter';
@@ -127,7 +127,25 @@ const members = this.props.route.params.groupData.members;
                 messages={this.state.messages} 
                 onSend={this.send} 
                 user = {this.user} 
+                renderBubble={props => {
+                  return (
+                    <Bubble
+                      {...props}
+                      textStyle={{
+                        right: {
+                          color: 'white',
+                        },
+                      }}
+                      wrapperStyle={{
+                        left: {
+                          backgroundColor: '#e5e5ea',
+                        },
+                      }}
+                    />
+                  );
+                }}
                 />
+                
               </SafeAreaView>;}
     }
 

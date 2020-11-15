@@ -1,6 +1,6 @@
 import React from 'react';
 import { SafeAreaView } from 'react-native';
-import {GiftedChat} from 'react-native-gifted-chat';
+import {GiftedChat, Bubble} from 'react-native-gifted-chat';
 import Fire from '../../Fire';
 import {connect} from 'react-redux';
 import {addChatToUser, addChatToPerson} from '../../store/actions/directMessage'
@@ -192,7 +192,23 @@ componentDidUpdate(){
       return <SafeAreaView style={{flex:1}}> 
                 <GiftedChat 
                 timeFormat={'HH:mm'}
-                
+                renderBubble={props => {
+                  return (
+                    <Bubble
+                      {...props}
+                      textStyle={{
+                        right: {
+                          color: 'white',
+                        },
+                      }}
+                      wrapperStyle={{
+                        left: {
+                          backgroundColor: 'lightgrey',
+                        },
+                      }}
+                    />
+                  );
+                }}
                 showUserAvatar
                 messages={this.state.messages} 
                 onSend={this.send} 
@@ -202,6 +218,8 @@ componentDidUpdate(){
     }
 
     const mapDispatchToProps = (dispatch) => ({
+      // Redundant. Should be refactored to a single method. Dispatching to my DMs should not be necessary, as 
+      // dms should be fetched everytime I go into my dms. Maybe just leave it.. It might explode if you touch it.. 
       _addChatToUser: (chatId, personId) => dispatch(addChatToUser(chatId, personId)),
       _addChatToPerson: (chatId, personId) => dispatch(addChatToPerson(chatId, personId)),
     });
