@@ -19,11 +19,11 @@ import HomeScreen from '../screens/Home/HomeScreen'
 //CHATSCREENS
 import GroupChat from '../screens/ChatScreens/GroupChat'
 import DirectMessage from '../screens/ChatScreens/DirectMessage'
+import DirectMessages, {screenOptions as directMessagesScreenOptions} from '../screens/DirectMessages'
 
 //PROFILE
 import Settings, {screenOptions as settingsScreenOptions} from '../screens/Profile/Settings'
 import Profile, {screenOptions as profileScreenOptions} from '../screens/Profile/Profile'
-import DirectMessages, {screenOptions as directMessagesScreenOptions} from '../screens/Profile/DirectMessages'
 import ChildScreen, {screenOptions as childScreenScreenOptions} from '../screens/Profile/ChildScreen'
 
 //FIND

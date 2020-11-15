@@ -1,45 +1,15 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {View, ActivityIndicator, StyleSheet, Text, KeyboardAvoidingView, TextInput, Alert, ScrollView, Image, TouchableOpacity } from 'react-native';
 import {useDispatch} from 'react-redux';
-import {login, logInWithFacebook, fetchUserData} from '../../store/actions/auth';
-import {fetchUserDms} from '../../store/actions/directMessage';
-import {fetchUserGroups} from '../../store/actions/group';
-import { useSelector } from 'react-redux';
+import {login, logInWithFacebook} from '../../store/actions/auth';
 import InputTextField from '../../components/InputTextField';
 
 const Login = props => {
 
   const dispatch = useDispatch();
-  const [authenticated, setAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState()
   const [email, setEmail] = useState('Jebisan1@gmail.com')
   const [password, setPassword] = useState('251008l')
-  const userId = useSelector(state => state.auth.userId);
-  const _email = useSelector(state => state.auth.email);
-
-
-  useEffect(() => {
-  }, [])
-
-  useEffect(() => {
-    
-    if(userId!==null && authenticated==true){
-      console.log(userId, authenticated)
-    async function fetchData() {
-      try{
-        dispatch(fetchUserData(userId));
-        dispatch(fetchUserGroups);
-        dispatch(fetchUserDms);
-   //OLD     props.navigation.navigate('MainScreen')
-      } catch (error) {
-      console.log('Navigating..')
-   //OLD   props.navigation.navigate('CreateAdditionalInformation')
-      }
-    }
-    fetchData();
-  }
-  }, [userId, authenticated]);
   
 
   _loginWithFacebook = async() => {
@@ -51,40 +21,19 @@ const Login = props => {
       setIsLoading(false);
 
     } catch (err) {
-      /*
-      console.log('Navigating..')
-      props.navigation.navigate('CreateAdditionalInformation')*/
-      
         setError(err);
         setIsLoading(false);
     }
   }
 
   _login = async() => {
-    setError(null);
     setIsLoading(true);
     try {
       await dispatch(login(email, password));
-      setAuthenticated(true);
     } catch (err) {
-      setIsLoading(false);
-      if(!authenticated) {
-        setError(err.message);
-        setIsLoading(false);
-      } 
+      console.log('Login component', err)
     }
   }
-
-  useEffect(() => {
-    if(error){
-      Alert.alert('An error occured!', error, [{text: 'Okay!'}])
-    }
-    
-  }, [error])
-
-
-
-  
 
   return (
     <KeyboardAvoidingView behavior='position'>

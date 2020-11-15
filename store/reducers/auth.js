@@ -5,6 +5,7 @@ const INITIAL_STATE = {
   token: null,
   userId: null,
   didTryAutoLogin: false,
+  everythingFetched: false,
   firstname: null,
   lastname: null,
   name: null,
@@ -65,6 +66,11 @@ export default authReducer = (state = INITIAL_STATE, action) => {
         ...state,
         photoUrl: action.photoUrl
       }  
+      case 'SET_EVERYTHING_FETCHED':
+        return {
+          ...state,
+          everythingFetched: action.value
+        }  
       
       case SET_PUSH_TOKEN:
         return {

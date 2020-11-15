@@ -1,9 +1,9 @@
 import React, {useEffect, useState, useReducer} from 'react';
 import {Button, StyleSheet, FlatList, View, Text, TouchableOpacity } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
-import Chat from '../../components/Chat';
-import Fire from '../../Fire';
-import {fetchUserDms} from '../../store/actions/directMessage'
+import Chat from '../components/Chat';
+import Fire from '../Fire';
+import {fetchUserDms} from '../store/actions/directMessage'
 
 const initialChats = [];
 
@@ -57,6 +57,7 @@ const DirectMessages = props => {
 
 
   useEffect(() => {
+  dispatch({ type: 'RESET'});
   getChats();
 
   return () => {
@@ -185,9 +186,8 @@ export const screenOptions = navigationData => {
 
 
 const styles = StyleSheet.create({
-  container: {
+  parent: {
    flex: 1,
-   paddingTop: 22
   },
   item: {
     padding: 10,

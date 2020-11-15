@@ -8,6 +8,10 @@ export const SET_PUSH_TOKEN = 'SET_PUSH_TOKEN';
 export const SET_DID_TRY_AUTO_LOGIN = 'SET_DID_TRY_AUTO_LOGIN';
 import * as Facebook from 'expo-facebook';
 import firebase from 'firebase';
+import {fetchUserDms} from './directMessage';
+import {fetchUserGroups} from './group';
+import {fetchAllGroups} from './allGroups';
+import {fetchAllUsers} from './allUsers';
 
 let timer;
 
@@ -131,6 +135,8 @@ export const login = (email, password) => {
         ));
     const expirationDate = new Date( new Date().getTime() + parseInt(resData.expiresIn) * 1000);
     saveDataToStorage(email, resData.idToken, resData.localId, expirationDate);  
+
+  dispatch(fetchEverything(resData.localId))
   };
 };
 
@@ -151,6 +157,7 @@ export const fetchUserData = (userId) => {
       const data = await response.json();    
 
       let requestsArray = []
+
 
       if(data.requests){
         requestsArray = Object.keys(data.requests).map(key => {
@@ -340,3 +347,23 @@ export const addPushTokenToUser = (pushToken) => {
     
   };
 };
+
+export const fetchEverything = (userId) => {
+  return async (dispatch, getState) => {
+  console.log('Fetching everything..', userId);
+  Promise.all(
+      [
+      dispatch(fetchUserData(userId)),
+      dispatch(fetchUserDms()),
+      dispatch(fetchUserGroups()),
+      dispatch(fetchAllGroups()),
+      dispatch(fetchAllUsers())
+  ]
+      ).then(() => {
+          dispatch({'type': 'SET_EVERYTHING_FETCHED', value: true})
+      }).catch(error => {
+          Alert.alert('An error occured when fetching data.')
+          console.log(error);
+      }) 
+  };
+}

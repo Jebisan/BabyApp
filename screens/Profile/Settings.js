@@ -13,18 +13,18 @@ const Settings = props => {
 };
 
 export const screenOptions = navigationData => {
-  return {
-    headerTitle: 'Indstillinger',
-    headerLeft: () =>  
-    <HeaderButtons HeaderButtonComponent={HeaderButton}>
-    <Item
-      title="drawer"
-      iconName= 'md-menu'
-      onPress={() => navigationData.navigation.openDrawer()}
-    />
-  </HeaderButtons>,
-  };
-};
+	return {
+		headerTitle: 'Settings',
+		headerRight: () =>  
+			<HeaderButtons HeaderButtonComponent={HeaderButton}>
+				<Item
+					title="drawer"
+					iconName= 'md-menu'
+					onPress={() => navigationData.navigation.openDrawer()}
+				/>
+			</HeaderButtons>,
+	}
+}
 
 
 const styles = StyleSheet.create({

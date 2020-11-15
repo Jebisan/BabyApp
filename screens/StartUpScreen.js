@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {View, ActivityIndicator, StyleSheet, AsyncStorage, Alert} from 'react-native';
-import {authenticate, fetchUserData, setDidTryAutoLogin} from '../store/actions/auth';
-import {fetchUserDms} from '../store/actions/directMessage';
-import {fetchUserGroups} from '../store/actions/group';
-import {fetchAllGroups} from '../store/actions/allGroups';
-import {fetchAllUsers} from '../store/actions/allUsers';
+import {authenticate, fetchEverything, setDidTryAutoLogin} from '../store/actions/auth';
 import {useDispatch} from 'react-redux';
 
 
@@ -19,7 +15,6 @@ const StartUpScreen = props => {
             setLoading(true);
             const userData = await AsyncStorage.getItem('userData');
             if(!userData) {
-           //     props.navigation.navigate('Login')
            dispatch(setDidTryAutoLogin())
                 return;
             }
@@ -30,7 +25,6 @@ const StartUpScreen = props => {
             if(expirationDate <= new Date() || !token ||!userId) {
                 console.log('No valid token stored :( ')
                 dispatch(setDidTryAutoLogin())
-           //     props.navigation.navigate('Login')
                 return; 
             } 
 
@@ -38,28 +32,21 @@ const StartUpScreen = props => {
 
             dispatch(authenticate(email, userId, token, expirationTime));
             try{
-                dispatch(fetchUserData(userId));
-                dispatch(fetchUserDms());
-                dispatch(fetchUserGroups());
-                dispatch(fetchAllGroups());
-                dispatch(fetchAllUsers());
-
-           //     props.navigation.navigate('MainScreen')
+                dispatch(fetchEverything(userId, dispatch));
             } catch (error) {
                 console.log('Error fetch user data in StartUpScreen')
-           //     props.navigation.navigate('Login');
             }
-
         };
 
         tryLogin();
     }, [dispatch])
 
-
     return <View style={styles.screen}>
     <ActivityIndicator size='large'  />
     </View>
 }
+
+
 
 const styles = StyleSheet.create({
 screen: {
