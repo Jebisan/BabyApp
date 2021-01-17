@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react'
-import {StyleSheet, FlatList, View, TouchableOpacity } from 'react-native'
+import {StyleSheet, FlatList, View, TouchableOpacity, Alert } from 'react-native'
 import {useSelector} from 'react-redux'
 import Group from '../../components/Group'
 import HeaderButton from '../../components/HeaderButton'
@@ -51,14 +51,14 @@ export default Groups
 
 export const screenOptions = navigationData => {
 	return {
-		headerTitle: navigationData.route.name,
+		headerTitle: 'Mine grupper',
 		headerRight: () =>
 
     <HeaderButtons HeaderButtonComponent={HeaderButton}>
     	<Item
     		title="add"
     		iconName= 'ios-add'
-    		onPress={() => navigationData.navigation.navigate('CreateGroup')}
+    		onPress={() => Alert.alert('Not supported at the moment.')/*navigationData.navigation.navigate('CreateGroup')*/}
     	/>
     </HeaderButtons>  }
 }

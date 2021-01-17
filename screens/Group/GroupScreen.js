@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useCallback} from 'react';
-import {Button, StyleSheet, FlatList, Image, View, Text, TouchableOpacity } from 'react-native';
+import {Alert, StyleSheet, FlatList, Image, View, Text, TouchableOpacity } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import Fire from '../../Fire';
 import { Ionicons} from '@expo/vector-icons';
@@ -91,16 +91,17 @@ useEffect(() => {
                 postalCode: member.postalCode,
                 birthday: member.birthday,
                 photoUrl: member.photoUrl,
-                pushToken: member.pushToken
+                pushToken: member.pushToken,
+                children: member.children
               })}  > 
                   <Image source={{ uri: member.photoUrl }} style={styles.profilePicture}></Image>  
               </TouchableOpacity>
 
               )}
 
-              <TouchableOpacity onPress={() => props.navigation.navigate('AddUsersToGroup', {
-                //groupData
-              })} >
+              <TouchableOpacity onPress={ () => Alert.alert('Not supported at the moment') /*() => props.navigation.navigate('AddUsersToGroup', {
+                groupData 
+              })*/} >
                 <Ionicons style={styles.addIcon} name='ios-add-circle-outline' size={43} />
               </TouchableOpacity>
 

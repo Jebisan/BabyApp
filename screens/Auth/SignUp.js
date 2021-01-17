@@ -24,8 +24,9 @@ const SignUp = props => {
 
     if(password===confirmedPassword){
       try {
-        await dispatch(signUp(email, password))        
-        props.navigation.navigate('CreateAdditionalInformation')
+          Alert.alert('Not supported at this moment.');
+        //await dispatch(signUp(email, password))        
+        //props.navigation.navigate('CreateAdditionalInformation')
       } catch (err) {
         setError(err.message);
         setIsLoading(false);
@@ -64,8 +65,6 @@ const SignUp = props => {
               </View>
               */}
               <View style={styles.formContainer}>
-              <Button title='Næste' onPress={() => props.navigation.navigate('CreateAdditionalInformation')} />
-            
               <View style={styles.form} >
               <View style={{ marginTop: 32 }}>
               <Text style={styles.inputTitle}>Email</Text>
@@ -128,6 +127,13 @@ const SignUp = props => {
               </KeyboardAvoidingView>
       );
   }
+
+  export const screenOptions = navigationData => {
+
+	return {
+    headerShown: false
+	}
+}
 
 
   const styles = StyleSheet.create({

@@ -11,18 +11,14 @@ const AddUsersToGroup = props => {
 
   const groupData = props.route.params.groupData;
 
-  const users = useSelector(state => state.allUsersReducer);
+    const allUsers = useSelector(state => state.allUsers)
+
   
   const [filteredUsers, setFilteredUsers] = useState([])
   const [selectedUsers, setSelectedUsers] = useState([])
   const [searchText, setSearchText] = useState('');
   const userId = useSelector(state => state.auth.userId)
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    console.log('Update', searchText);
-  })
-
   
   const _createGroup = useCallback(() => {
   const selectedUserIds = []
@@ -48,10 +44,9 @@ useEffect(() => {
 
 
   useEffect(() => {
-    console.log('Hej', users);
     if(searchText!==''){
       let tempArray = [];
-      users.forEach(user => {
+      allUsers.forEach(user => {
         if(user.name.includes(searchText)){
           tempArray.push(user);
           setFilteredUsers(tempArray);
@@ -93,9 +88,9 @@ placeholder='Søg efter brugere'
 <FlatList
 data={filteredUsers}
 renderItem={({ item }) => 
-<TouchableOpacity onPress={() => userTappedHandler(item)}>
+<TouchableOpacity key={item.key} onPress={() => userTappedHandler(item)}>
     <User
-    key={item.id}
+    key={item.key}
     name={item.name}
     gender={item.gender}
     city={item.city}

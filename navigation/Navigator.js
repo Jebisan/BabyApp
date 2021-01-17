@@ -9,8 +9,8 @@ import { Ionicons, FontAwesome } from '@expo/vector-icons'
 import {logOut} from '../store/actions/auth'
 
 //AUTH
-import Login from '../screens/Auth/Login'
-import SignUp from '../screens/Auth/SignUp'
+import Login, {screenOptions as loginScreenOptions} from '../screens/Auth/Login'
+import SignUp, {screenOptions as signUpScreenOptions} from '../screens/Auth/SignUp'
 import CreateAdditionalInformation from '../screens/Auth/CreateAdditionalInformation'
 
 //HOME
@@ -27,8 +27,8 @@ import Profile, {screenOptions as profileScreenOptions} from '../screens/Profile
 import ChildScreen, {screenOptions as childScreenScreenOptions} from '../screens/Profile/ChildScreen'
 
 //FIND
-import GroupDetail from '../screens/Find/GroupDetail'
-import UserDetail from '../screens/Find/UserDetail'
+import GroupDetail, {screenOptions as groupDetailScreenOptions} from '../screens/Find/GroupDetail'
+import UserDetail, {screenOptions as userDetailScreenOptions} from '../screens/Find/UserDetail'
 import Find from '../screens/Find/Find'
 import MapScreen from '../components/MapScreen'
 
@@ -45,8 +45,8 @@ const AuthStackNavigator = createStackNavigator();
 
 export const AuthNavigator = () => {
 	return <AuthStackNavigator.Navigator>
-		<AuthStackNavigator.Screen name = 'Login' component = {Login} />
-		<AuthStackNavigator.Screen name = 'SignUp' component = {SignUp} />
+		<AuthStackNavigator.Screen name = 'Login' component = {Login} options = {loginScreenOptions} />
+		<AuthStackNavigator.Screen name = 'SignUp' component = {SignUp} options = {signUpScreenOptions} />
 	</AuthStackNavigator.Navigator>
 }
 
@@ -61,7 +61,9 @@ export const GroupsNaviagator = () => {
 				<GroupsStackNavigator.Screen name = 'AddUsersToGroup' component = {AddUsersToGroup} options = {addUsersToGroupScreenOptions} />
 				<GroupsStackNavigator.Screen name = 'GroupChat' component = {GroupChat} />
 				<GroupsStackNavigator.Screen name = 'Request' component = {Request} />
-				<GroupsStackNavigator.Screen name = 'UserDetail' component = {UserDetail} />
+				<GroupsStackNavigator.Screen name = 'UserDetail' component = {UserDetail} options = {userDetailScreenOptions} />
+				<GroupsStackNavigator.Screen name = 'Child' component = {ChildScreen} options = {childScreenScreenOptions} />
+
 	</GroupsStackNavigator.Navigator>
 }
 
@@ -70,12 +72,14 @@ const FindStackNavigator = createStackNavigator();
 export const FindNaviagator = () => {
 	return <FindStackNavigator.Navigator>
 				<FindStackNavigator.Screen name = 'Find' component = {Find} />
-				<FindStackNavigator.Screen name = 'UserDetail' component = {UserDetail} />
-				<FindStackNavigator.Screen name = 'GroupDetail' component = {GroupDetail} />
+				<FindStackNavigator.Screen name = 'UserDetail' component = {UserDetail} options = {userDetailScreenOptions} />
+				<FindStackNavigator.Screen name = 'GroupDetail' component = {GroupDetail} options = {groupDetailScreenOptions} />
 				<FindStackNavigator.Screen name = 'GroupChat' component = {GroupChat} />
 				<FindStackNavigator.Screen name = 'DirectMessage' component = {DirectMessage} />
 				<FindStackNavigator.Screen name = 'GroupScreen' component = {GroupScreen} options = {groupScreenScreenOptions} />
 				<FindStackNavigator.Screen name = 'MapScreen' component = {MapScreen} />
+				<FindStackNavigator.Screen name = 'Child' component = {ChildScreen} options = {childScreenScreenOptions} />
+
 	</FindStackNavigator.Navigator>
 }
 
@@ -113,7 +117,7 @@ export const DrawerNavigator = () => {
 	drawerPosition={'right'}
 	>
 				<ProfileDrawerNavigator.Screen name = 'Profile' component = {ProfileNavigator} />
-				<ProfileDrawerNavigator.Screen name = 'Indstillinger' component = {Settings} options = {settingsScreenOptions} />
+				<ProfileDrawerNavigator.Screen name = 'Indstillinger' component = {SettingsNavigator} options = {settingsScreenOptions} />
 	</ProfileDrawerNavigator.Navigator>
 };
 
@@ -124,6 +128,14 @@ export const ProfileNavigator = () => {
 				<ProfileStackNavigator.Screen name = 'Profile' component = {Profile} options = {profileScreenOptions} />
 				<ProfileStackNavigator.Screen name = 'Child' component = {ChildScreen} options = {childScreenScreenOptions} />
 	</ProfileStackNavigator.Navigator>
+}
+
+const SettingsStackNavigator = createStackNavigator();
+
+export const SettingsNavigator = () => {
+	return <SettingsStackNavigator.Navigator>
+				<SettingsStackNavigator.Screen name = 'Settings' component = {Settings} options = {settingsScreenOptions} />
+	</SettingsStackNavigator.Navigator>
 }
 
 const AppTabNavigator = createBottomTabNavigator();

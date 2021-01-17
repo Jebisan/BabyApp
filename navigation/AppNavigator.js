@@ -11,9 +11,11 @@ const AppNavigator = props => {
   const everythingFetched = useSelector(state => !!state.auth.everythingFetched);
 
   useEffect(() => {
+    /*
     console.log('isAuth:', isAuth, 
     'everything fetched:', everythingFetched, 
     'didTryAutoLogin', didTryAutoLogin)
+    */
   }, [isAuth, everythingFetched, didTryAutoLogin])
 
     return <NavigationContainer>

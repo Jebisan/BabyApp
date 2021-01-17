@@ -135,7 +135,8 @@ containerStyle={{height: 30}}
     birthday: item.birthday,
     photoUrl: item.photoUrl,
     firstTimer: item.firstTimer,
-    pushToken: item.pushToken
+    pushToken: item.pushToken,
+    children: item.children
   })}>
   <User
   name={item.name}

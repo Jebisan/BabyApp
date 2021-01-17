@@ -115,9 +115,16 @@ const Login = props => {
   );
 };
 
+
+export const screenOptions = navigationData => {
+
+	return {
+    headerShown: false
+	}
+}
+
 const styles = StyleSheet.create({
   parent: {
-    top: 10,
     marginHorizontal: 30,
   },
   container: {

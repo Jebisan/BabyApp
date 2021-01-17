@@ -125,6 +125,7 @@ export const login = (email, password) => {
           }
 
           const resData = await response.json();
+          console.log(resData);
 
     dispatch(
       authenticate(
@@ -164,6 +165,9 @@ export const fetchUserData = (userId) => {
           return key
         });
       }
+
+      let childrenArray = []
+
 
       if(data.children){
         childrenArray = Object.keys(data.children).map(key => {
@@ -350,7 +354,6 @@ export const addPushTokenToUser = (pushToken) => {
 
 export const fetchEverything = (userId) => {
   return async (dispatch, getState) => {
-  console.log('Fetching everything..', userId);
   Promise.all(
       [
       dispatch(fetchUserData(userId)),
@@ -362,7 +365,9 @@ export const fetchEverything = (userId) => {
       ).then(() => {
           dispatch({'type': 'SET_EVERYTHING_FETCHED', value: true})
       }).catch(error => {
-          Alert.alert('An error occured when fetching data.')
+          Alert.alert('Error', 'An error occued when fetching data', [
+            { text: "OK", onPress: () => dispatch(logOut())}
+          ])
           console.log(error);
       }) 
   };

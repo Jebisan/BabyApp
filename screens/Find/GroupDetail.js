@@ -77,13 +77,24 @@ const GroupDetail = props => {
 			membersArray.forEach(member => {
 				Fire.firebase.database().ref('users/'+member).once('value').then((snapshot => {
 					const obj = snapshot.val()  
+
+					const childrenObj = snapshot.val().children
+					let childrenArray = []
+
+					if(childrenObj){
+					  childrenArray = Object.keys(childrenObj).map(key => {
+						return {id: key, ...childrenObj[key]};
+					  });
+					}
+
 					const user = {
 						id: snapshot.key,
 						name: obj.name, 
 						photoUrl: obj.photoUrl?obj.photoUrl:'http://criticare.isccm.org/assets/images/male_placeholder.png',
 						pushToken: obj.pushToken,
 						birthday: obj.birthday,
-						dueDate: obj.dueDate
+						dueDate: obj.dueDate,
+						children: childrenArray
 					}        
 					setMembers(previous => [...previous, user])
 				})
@@ -143,7 +154,8 @@ const GroupDetail = props => {
 					birthday: member.birthday,
 					photoUrl: member.photoUrl,
 					dueDate: member.dueDate,
-					pushToken: member.pushToken
+					pushToken: member.pushToken,
+					children: member.children
 					
 				})} > 
 				<Image source={{ uri: member.photoUrl }} style={styles.profilePicture}></Image>  
@@ -167,6 +179,12 @@ const GroupDetail = props => {
 		}
 			</View>
 	)
+}
+
+export const screenOptions = navigationData => {
+	return {
+		headerTitle: ''
+	}
 }
 
 const styles = StyleSheet.create({

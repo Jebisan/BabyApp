@@ -145,38 +145,40 @@ const Profile = props => {
 
 				</View>
 
+{ children.length > 0 &&
 
-				<View style={styles.childrenContainer} >
-				<Text style={styles.header} >Børn</Text>
-
-				<View style={styles.childrenList} >
-
-				{
-					children.map((item) =>
-					<View key={item.id} style={styles.child} >
-					<TouchableOpacity onPress={() => props.navigation.navigate('Child', {
-						id: item.id,
-						firstname: item.firstname,
-						lastname: item.lastname,
-						birthday: item.birthday,
-						gender: item.gender
-					})}
-					>
-						<Child
-							firstname = {item.firstname}
-							lastname = {item.lastname}
-							birthday = {item.birthday}
-							gender = {item.gender}
-						/>
-						</TouchableOpacity>
-						</View>
-				  )
-				}
-				</View>
-				</View>
-
-			</ScrollView>
-		</SafeAreaView>
+	<View style={styles.childrenContainer} >
+	<Text style={styles.header} >Børn</Text>
+	
+	<ScrollView contentContainerStyle={styles.childrenList} horizontal={true} >
+	
+	{
+		children.map((item) =>
+		<View key={item.id} style={styles.child} >
+		<TouchableOpacity onPress={() => props.navigation.navigate('Child', {
+			id: item.id,
+			firstname: item.firstname,
+			lastname: item.lastname,
+			birthday: item.birthday,
+			gender: item.gender
+		})}
+		>
+		<Child
+		firstname = {item.firstname}
+		lastname = {item.lastname}
+		birthday = {item.birthday}
+		gender = {item.gender}
+		/>
+		</TouchableOpacity>
+		</View>
+		)
+	}
+	</ScrollView>
+	</View>
+}
+	
+	</ScrollView>
+	</SafeAreaView>
 	)
 }
 
@@ -335,8 +337,8 @@ const styles = StyleSheet.create({
 		fontFamily: 'HelveticaNeue',
 		color: '#52575D',
 		fontWeight: '300',
-		fontSize: 10,
-		left: 8
+		fontSize: 9,
+		left: 4
 	},
 	weekNumber: {
 		fontSize: 28,
@@ -380,7 +382,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'space-evenly',
 		alignItems: 'flex-start',
-		width: '100%',
+		width: '100%'
 	},
 	childrenContainer: {
 		flexDirection: 'column',

@@ -7,7 +7,7 @@ import 'moment/locale/da'
 import ProgressCircle from 'react-native-progress-circle'
 import {useSelector} from 'react-redux'
 import {generateRandomId} from '../../Shared'
-import Fire from '../../Fire'
+import Child from '../../components/Child';
 
 
 
@@ -27,6 +27,7 @@ const UserDetail = props => {
 	const dueDate = props.route.params.dueDate;
 	const firstTimer = props.route.params.firstTimer;
 	const pushToken = props.route.params.pushToken;
+	const children = props.route.params.children;
 
 	const [chatId, setChatId] = useState(false)
 
@@ -125,10 +126,6 @@ const UserDetail = props => {
 							)} style={styles.dm}>
 								<MaterialIcons name="chat" size={15} color="#DFD8C8"></MaterialIcons>
 							</TouchableOpacity>
-              
-							<TouchableOpacity onPress={() => Alert.alert('Not yet supported')}  style={styles.add}>
-								<Ionicons name="ios-add" size={30} color="#DFD8C8" style={{ marginTop: 5, marginLeft: 1 }}></Ionicons>
-							</TouchableOpacity>
 						</View>
 					}
             
@@ -195,10 +192,50 @@ const UserDetail = props => {
 
 				</View>
 
+				{ children.length > 0 &&
+
+					<View style={styles.childrenContainer} >
+					<Text style={styles.header} >Børn</Text>
+					
+					<ScrollView contentContainerStyle={styles.childrenList} horizontal={true} >
+					
+					{
+						children.map((item) =>
+						<View key={item.id} style={styles.child} >
+						<TouchableOpacity onPress={() => props.navigation.navigate('Child', {
+							id: item.id,
+							firstname: item.firstname,
+							lastname: item.lastname,
+							birthday: item.birthday,
+							gender: item.gender
+						})}
+						>
+						<Child
+						firstname = {item.firstname}
+						lastname = {item.lastname}
+						birthday = {item.birthday}
+						gender = {item.gender}
+						/>
+						</TouchableOpacity>
+						</View>
+						)
+					}
+					</ScrollView>
+					</View>
+				}
+
+
 			</ScrollView>
 		</SafeAreaView>
 	)
 }
+
+export const screenOptions = navigationData => {
+	return {
+		headerTitle: ''
+	}
+}
+
 
 const styles = StyleSheet.create({
 	container: {
@@ -400,6 +437,27 @@ const styles = StyleSheet.create({
 	},
 	buttonsContainer: {
 		position: 'relative'
+	},
+	childrenList: {
+		flexDirection: 'row',
+		justifyContent: 'space-evenly',
+		alignItems: 'flex-start',
+		width: '100%'
+	},
+	childrenContainer: {
+		flexDirection: 'column',
+		justifyContent: 'center',
+		alignItems: 'center',
+		top: 20,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		borderColor: 'lightgrey'
+	},
+	header: {
+		fontSize: 20,
+		marginTop: 10,
+		fontFamily: 'HelveticaNeue',
+		marginBottom: 0,
 	}
 })
 
