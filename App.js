@@ -1,19 +1,38 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import AppNavigator from './navigation/AppNavigator';
 import {enableScreens} from 'react-native-screens';
 import { createStore , combineReducers, applyMiddleware} from 'redux';
-import {Provider} from 'react-redux';
+import {Provider, useSelector} from 'react-redux';
 import authReducer from './store/reducers/auth';
 import myGroupsReducer from './store/reducers/group';
 import allGroupsReducer from './store/reducers/allGroups';
 import allUsersReducer from './store/reducers/allUsers';
 import directMessageReducer from './store/reducers/directMessage';
 import ReduxThunk from 'redux-thunk';
+import * as Font from 'expo-font'
+import { AppLoading } from 'expo'
 
+const fetchFonts = () => {
+return Font.loadAsync({
+  'roboto-light': require('./assets/fonts/Roboto-Light.ttf'),
+  'roboto-medium': require('./assets/fonts/Roboto-Medium.ttf'),
+  'roboto-regular': require('./assets/fonts/Roboto-Regular.ttf'),
+  'roboto-bold': require('./assets/fonts/Roboto-Bold.ttf'),
+});
+};
 
 export default function App() {
-  
+  const [dataLoaded, setDataLoaded] = useState(false);
+
+  if(!dataLoaded) {
+    return <AppLoading 
+    startAsync={fetchFonts} 
+    onFinish={() => setDataLoaded(true)} 
+    onError={error => console.log(error)}
+    />;
+  }
+
   enableScreens();
 
   const rootReducer = combineReducers({

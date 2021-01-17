@@ -70,7 +70,7 @@ export const GroupsNaviagator = () => {
 const FindStackNavigator = createStackNavigator();
 
 export const FindNaviagator = () => {
-	return <FindStackNavigator.Navigator>
+	return <FindStackNavigator.Navigator screenOptions={{headerShown: false}} >
 				<FindStackNavigator.Screen name = 'Find' component = {Find} />
 				<FindStackNavigator.Screen name = 'UserDetail' component = {UserDetail} options = {userDetailScreenOptions} />
 				<FindStackNavigator.Screen name = 'GroupDetail' component = {GroupDetail} options = {groupDetailScreenOptions} />

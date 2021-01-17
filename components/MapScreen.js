@@ -32,7 +32,7 @@ const MapScreen = props => {
   };
 
   return (
-      <MapView style={styles.map} region={location}>
+      <MapView style={styles.map} mapType={'mutedStandard'} region={location}>
     
    {allGroups.map((group, index) => (
        <Marker key={group.key} coordinate={group.location} onPress={() => props.navigation.navigate('GroupDetail', {
