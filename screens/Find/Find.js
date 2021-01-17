@@ -3,9 +3,7 @@ import { StyleSheet, View, Text, TouchableOpacity} from "react-native";
 import MapView from './MapView/MapView';
 import ListView from './ListView/ListView';
 import Colors from '../../constants/colors';
-import { MaterialIcons } from "@expo/vector-icons";
-
-
+import { MaterialIcons, FontAwesome } from "@expo/vector-icons";
 
 const Find = (props) => {
 
@@ -14,18 +12,20 @@ const [showMapView, setShowMapView] = useState(true);
 
   return (
     <View style= {styles.parentContainer} >
-    <View style={styles.front}>
-    <TouchableOpacity style={styles.buttonContainer} onPress={() => setShowMapView(() => !showMapView)} >
-      <MaterialIcons name="list" size={24} color={Colors.lightGrey} />
-      <Text style={styles.buttonTitleStyle} >Liste</Text>
-    </TouchableOpacity>
-    </View>
+      <View style={styles.front}>
+      <TouchableOpacity style={styles.buttonContainer} onPress={() => setShowMapView(() => !showMapView)} >
+      { showMapView? 
+        <MaterialIcons name="list" size={23} color={Colors.lightGrey} /> :
+        <FontAwesome name="map-o"  size={14} color={Colors.lightGrey} />
+        } 
+        <Text style={styles.buttonTitleStyle}>{showMapView?" Liste":"  Kort"}</Text>
+      </TouchableOpacity>
+      </View>
       <View style={styles.back} >
-      {showMapView ? <MapView/> : <ListView/>} 
+        {showMapView ? <MapView/> : <ListView/>} 
       </View>
     </View>
       )
-    
 }
 
 const styles = StyleSheet.create({
@@ -34,16 +34,16 @@ parentContainer: {
   },
 front: {
   position: 'absolute',
-  top: '90%',
-  left:'75%',
-  flex: 1,
   zIndex: 1,
 },
 back: {
-  flex: 1,
+  width: "100%",
+  height: "100%",  
   zIndex: 0
 },
 buttonContainer:{
+  top: 665,
+  left: 280,
   width: 70,
   height: 33,
   flexDirection: 'row',
@@ -51,15 +51,14 @@ buttonContainer:{
   alignItems: 'center',
   backgroundColor: Colors.primary,
   borderRadius: 16,
-  shadowRadius: 4,
-  shadowOpacity: 0.20,
-  shadowOffset: { width: 7, height: 7 },
+  shadowRadius: 6,
+  shadowOpacity: 0.25,
+  shadowOffset: { width: 5, height: 5 },
 },
 buttonTitleStyle: {
   fontSize: 12,
-  fontWeight: 'bold',
   color: Colors.lightGrey,
-  fontFamily: 'roboto-medium'
+  fontFamily: 'roboto-bold',
 }
 });
 
