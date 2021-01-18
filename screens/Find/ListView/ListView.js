@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, Button, Text, View, SafeAreaView, FlatList, TouchableOpacity} from "react-native";
 import User from '../../../components/User';
 import Group from '../../../components/Group';
-import {ButtonGroup} from 'react-native-elements';
 import {useSelector} from 'react-redux';
 import Autocomplete from 'react-native-autocomplete-input';
+import Colors from "../../../constants/colors";
+import { ButtonGroup } from "react-native-elements";
+
 
  const ListView = (props) => {
   const allGroups = useSelector(state => state.allGroups)
@@ -16,6 +18,8 @@ import Autocomplete from 'react-native-autocomplete-input';
   const [filteredGroups, setFilteredGroups] = useState([])
   const [cityData, setCityData] = useState([])
   const [hideResults, setHideResults] = useState(false);
+
+  const [selected, setSelected] = useState(false);
 
 
 useEffect(() => {
@@ -47,7 +51,16 @@ useEffect(() => {
 
 
 const renderResults = city => {
-    if(selectedIndex==0){
+  if(selectedIndex==0){
+    let tempGroupArray = [] 
+    allGroups.forEach(group => {
+      if(group.city.includes(city.navn.trim())){
+        tempGroupArray.push(group);
+      }
+    });
+    setFilteredGroups(tempGroupArray);
+  }
+    if(selectedIndex==1){
       let tempUserArray = [] 
       allUsers.forEach(user => {
         if(user.city.trim().includes(city.navn.trim())){
@@ -57,26 +70,6 @@ const renderResults = city => {
       });
       setFilteredUsers(tempUserArray)
     }
-    
-    if(selectedIndex==1){
-      let tempGroupArray = [] 
-      allGroups.forEach(group => {
-        if(group.city.includes(city.navn.trim())){
-          tempGroupArray.push(group);
-        }
-      });
-      setFilteredGroups(tempGroupArray);
-    }
-
-    if(selectedIndex==2){
-      const coordinates = {
-        latitude: city.visueltcenter_y,
-        longitude: city.visueltcenter_x,
-        latitudeDelta: 7.0922,
-        longitudeDelta: 7.0421
-      }
-      setCoordinates(coordinates);
-    }  
 }
   
   setSelectedCityHandler = (item) => {
@@ -88,31 +81,40 @@ const renderResults = city => {
 
     return (
 <SafeAreaView style= {styles.parentContainer} >
+<View style={styles.searchInputContainer} >
 <Autocomplete
+inputContainerStyle={styles.searchInputContainer}
+containerStyle={styles.containerStyle}
 style={styles.searchInput}
 keyExtractor={item => item.nr}
 data={cityData}
 hideResults={hideResults}
-placeholder="Søg efter by"
+placeholder="Søg"
 defaultValue={searchText}
 onChangeText={text => setSearchText(text)}
 renderItem={({ item, i }) => (
   <TouchableOpacity onPress={() => setSelectedCityHandler(item)}>
-    <Text>{item.navn}</Text>
-</TouchableOpacity>
-)}
-/>
+  <Text>{item.navn}</Text>
+  </TouchableOpacity>
+  )}
+  />
+  </View>
+
 <ButtonGroup
-onPress={index => setSelectedIndex(index)}
-selectedIndex={selectedIndex}
-buttons={['Personer', 'Grupper']}
-containerStyle={{height: 30}} 
+  onPress={index => setSelectedIndex(index)}
+  selectedIndex={selectedIndex}
+  buttons={['Grupper', 'Personer']}
+  containerStyle={styles.buttonContainer} 
+  selectedButtonStyle={styles.buttonSelected}
+  buttonStyle={styles.button}
+  textStyle={styles.textStyle}
+  selectedTextStyle={styles.textStyle}
 />
 
 
 <View style={styles.foundUsersContainer}>
 <SafeAreaView style={styles.listContainer}>
-{selectedIndex===0 &&
+{selectedIndex===1 &&
   <FlatList
   data={filteredUsers}
   renderItem={({ item }) => 
@@ -142,7 +144,7 @@ containerStyle={{height: 30}}
 keyExtractor={item => item.key}
 />}
 
-{selectedIndex===1 &&
+{selectedIndex===0 &&
   <FlatList
   data={filteredGroups}
   renderItem={({ item }) => 
@@ -178,10 +180,9 @@ const styles = StyleSheet.create({
   parentContainer: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'flex-start',
-  },
-  button: {
-    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
   },
   foundUsersContainer: {
     height: "87,5%",
@@ -189,17 +190,56 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flex: 1
+  },  
+  button: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 110,
+    height: 20,
+    borderRadius: 50,
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    shadowOffset: {width: 3, height: 3},
+  },
+  buttonSelected: {
+    left: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 110,
+    height: 20,
+    borderRadius: 50,
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    shadowOffset: {width: 3, height: 3},  
+    backgroundColor: Colors.lightGrey,
+  },
+  textStyle: {
+    color: 'black',
+    fontFamily: 'roboto-medium',
+    fontSize: 14
   },
   buttonContainer: {
-    flexDirection:'row',
-    justifyContent: 'space-evenly',
-    padding: 1,
+    top: 15,
+    width: 250, 
+    height: 45, 
+    backgroundColor: '#eff6fc',
+    borderRadius: 50,
+    borderWidth: 0,
+    paddingVertical: 5
+  },
+  searchInputContainer: {
+    borderWidth: 0,
+    top: 5
   },
   searchInput: {
     paddingLeft: 20,
-    height: 35,
-    backgroundColor: 'white'
-  }
+    height: 45,
+    width: 350,
+    backgroundColor: 'white',
+    borderRadius: 50,
+    borderWidth: 1,
+    borderColor: Colors.mediumGrey
+  },
 });
 
 export default ListView;

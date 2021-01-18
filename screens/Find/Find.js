@@ -15,8 +15,8 @@ const [showMapView, setShowMapView] = useState(true);
       <View style={styles.front}>
       <TouchableOpacity style={styles.buttonContainer} onPress={() => setShowMapView(() => !showMapView)} >
       { showMapView? 
-        <MaterialIcons name="list" size={23} color={Colors.lightGrey} /> :
-        <FontAwesome name="map-o"  size={14} color={Colors.lightGrey} />
+        <MaterialIcons name="list" size={25} color={Colors.lightGrey} /> :
+        <FontAwesome name="map-o"  size={16} color={Colors.lightGrey} />
         } 
         <Text style={styles.buttonTitleStyle}>{showMapView?" Liste":"  Kort"}</Text>
       </TouchableOpacity>
@@ -42,21 +42,21 @@ back: {
   zIndex: 0
 },
 buttonContainer:{
-  top: 665,
-  left: 280,
-  width: 70,
-  height: 33,
+  top: 645,
+  left: 255,
+  width: 90,
+  height: 45,
+  borderRadius: 30,
   flexDirection: 'row',
   justifyContent: 'center',
   alignItems: 'center',
   backgroundColor: Colors.primary,
-  borderRadius: 16,
   shadowRadius: 6,
-  shadowOpacity: 0.25,
-  shadowOffset: { width: 5, height: 5 },
+  shadowOpacity: 0.3,
+  shadowOffset: { width: 6, height: 6 },
 },
 buttonTitleStyle: {
-  fontSize: 12,
+  fontSize: 15,
   color: Colors.lightGrey,
   fontFamily: 'roboto-bold',
 }

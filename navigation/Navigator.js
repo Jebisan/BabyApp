@@ -5,7 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import { View, Button, SafeAreaView } from 'react-native'
 import {useDispatch} from 'react-redux'
-import { Ionicons, FontAwesome } from '@expo/vector-icons'
+import { Ionicons, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons'
 import {logOut} from '../store/actions/auth'
 
 //AUTH
@@ -39,6 +39,7 @@ import CreateGroup, {screenOptions as createGroupScreenOptions} from '../screens
 import GroupScreen, {screenOptions as groupScreenScreenOptions} from '../screens/Group/GroupScreen'
 import AddUsersToGroup, {screenOptions as addUsersToGroupScreenOptions} from '../screens/Group/AddUsersToGroup'
 import Request from '../screens/Group/Request' // SHOULD BE MOVED TO COMPONENTS. NOT A SCREEN.
+import Colors from '../constants/colors';
 
 
 const AuthStackNavigator = createStackNavigator();
@@ -141,17 +142,17 @@ export const SettingsNavigator = () => {
 const AppTabNavigator = createBottomTabNavigator();
 
 export const TabNavigator = () => {
-	return <AppTabNavigator.Navigator>
+	return <AppTabNavigator.Navigator tabBarOptions={{showLabel: false}}>
 	<AppTabNavigator.Screen 
 		name = 'Hjem' 
 		component = {HomeScreen} 
 		options = {{
-			tabBarIcon: tabInfo => {
+			tabBarIcon: ({focused}) => {
 				return (
 					<Ionicons 
 						name='md-home' 
 						size={25} 
-						color='black' 
+						color={focused?'black':Colors.darkGrey} 
 					/>
 				)
 			}
@@ -161,12 +162,12 @@ export const TabNavigator = () => {
 		name = 'Find' 
 		component = {FindNaviagator} 
 		options = {{
-			tabBarIcon: tabInfo => {
+			tabBarIcon: ({focused}) => {
 				return (
 					<Ionicons 
 						name='md-search' 
 						size={25} 
-						color='black' 
+						color={focused?'black':Colors.darkGrey} 
 					/>
 				)
 			}
@@ -176,12 +177,12 @@ export const TabNavigator = () => {
 		name = 'Grupper' 
 		component = {GroupsNaviagator} 
 		options = {{
-			tabBarIcon: tabInfo => {
+			tabBarIcon: ({focused}) => {
 				return (
 					<FontAwesome 
 						name='group' 
 						size={25} 
-						color='black' 
+						color={focused?'black':Colors.darkGrey} 
 					/>
 				)
 			}
@@ -191,13 +192,13 @@ export const TabNavigator = () => {
 		name = 'Beskeder' 
 		component = {DirectMessagesNavigator} 
 		options = {{
-			tabBarIcon: tabInfo => {
+			tabBarIcon: ({focused}) => {
 				return (
-					<Ionicons 
-						name='md-mail' 
-						size={25} 
-						color='black' 
-					/>
+					<MaterialCommunityIcons
+					 name="chat-processing" 
+					 size={24} 
+					 color={focused?'black':Colors.darkGrey} 
+					 />
 				)
 			}
 		}}
@@ -206,12 +207,12 @@ export const TabNavigator = () => {
 		name = 'Dig' 
 		component = {DrawerNavigator} 
 		options = {{
-			tabBarIcon: tabInfo => {
+			tabBarIcon: ({focused}) => {
 				return (
 					<Ionicons 
 						name='md-person' 
 						size={27} 
-						color='black' 
+						color={focused?'black':Colors.darkGrey} 
 					/>
 				)
 			}

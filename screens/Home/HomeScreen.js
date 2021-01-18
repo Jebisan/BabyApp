@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import {View, StyleSheet, Text } from 'react-native';
 import Constants from 'expo-constants';
-
+import * as Permissions from 'expo-permissions';
 
 const HomeScreen = props => {
 
