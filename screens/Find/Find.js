@@ -45,7 +45,7 @@ buttonContainer:{
   top: 645,
   left: 255,
   width: 90,
-  height: 45,
+  height: 40,
   borderRadius: 30,
   flexDirection: 'row',
   justifyContent: 'center',
@@ -63,4 +63,3 @@ buttonTitleStyle: {
 });
 
 export default Find;
-

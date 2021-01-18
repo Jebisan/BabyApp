@@ -111,6 +111,10 @@ renderItem={({ item, i }) => (
   selectedTextStyle={styles.textStyle}
 />
 
+{
+  // Border under ButtonGroup
+<View style={{top: 20, borderWidth: 0.5, width: '100%', borderColor: Colors.mediumGrey}} ></View>
+}
 
 <View style={styles.foundUsersContainer}>
 <SafeAreaView style={styles.listContainer}>
@@ -185,6 +189,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   foundUsersContainer: {
+    top: 25,
     height: "87,5%",
     marginTop: '-1%',
   },
@@ -229,7 +234,8 @@ const styles = StyleSheet.create({
   },
   searchInputContainer: {
     borderWidth: 0,
-    top: 5
+    top: 5,
+    zIndex: 10
   },
   searchInput: {
     paddingLeft: 20,
