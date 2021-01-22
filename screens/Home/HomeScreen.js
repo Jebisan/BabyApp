@@ -2,11 +2,17 @@ import React, { useEffect } from 'react';
 import {View, StyleSheet, Text } from 'react-native';
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
+import {useSelector} from 'react-redux';
 
 const HomeScreen = props => {
 
+  const allGroups = useSelector(state => state.allGroups)
+  useEffect(() => {
+  }, [allGroups])
+
 useEffect(() => {
   registerForPushNotificationsAsync()
+  
 }, [])
 
   const registerForPushNotificationsAsync = async () => {

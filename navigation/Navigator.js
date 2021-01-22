@@ -80,11 +80,11 @@ export const FindNaviagator = () => {
 				<FindStackNavigator.Screen name = 'GroupScreen' component = {GroupScreen} options = {groupScreenScreenOptions} />
 				<FindStackNavigator.Screen name = 'MapScreen' component = {MapScreen} />
 				<FindStackNavigator.Screen name = 'Child' component = {ChildScreen} options = {childScreenScreenOptions} />
-
 	</FindStackNavigator.Navigator>
 }
 
 const DirectMessagesStackNavigator = createStackNavigator();
+
 
 export const DirectMessagesNavigator = () => {
 	return <DirectMessagesStackNavigator.Navigator>

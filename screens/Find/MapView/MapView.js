@@ -16,6 +16,7 @@ import MapContainer from '../../../components/MapContainer';
   const [coordinates, setCoordinates] = useState(undefined);
 
 
+
 useEffect(() => {
   setHideResults(false);
   if(searchText) {
@@ -87,7 +88,6 @@ const renderResults = city => {
     return (
 <View style= {styles.parentContainer} >
   <MapContainer coordinates = {coordinates} navigation = {props.navigation} />
-
 </View>
 )}
 
