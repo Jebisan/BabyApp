@@ -1,26 +1,32 @@
 
-const INITIAL_STATE = [];
+const INITIAL_STATE = {
+  allGroups: [],
+  selectedGroup: undefined
+};
 
 export default allGroupsReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     
         case 'FETCH_ALL_GROUPS':
-          return action.groups;
+          return { ...state, allGroups: action.groups };
 
         case 'SET_SELECTED_GROUP':
           // If already selected, deselect
-          const found = state.find(group => group.key === action.key) 
+          const found = state.allGroups.find(group => group.key === action.key) 
           if (found.selected === true) {
-            return state.map((group) => {
+            const mappedList = state.allGroups.map((group) => {
                 return {
                   ...group,
                   selected: false
                 };
             });
+            return {...state, allGroups: mappedList, selectedGroup: undefined}
           } else {
           // Else toggle
-            return state.map((group) => {
+          let found;
+            const newList = state.allGroups.map((group) => {
               if (group.key === action.key) {
+                found = group;
                 return {
                   ...group,
                   selected: true
@@ -32,6 +38,7 @@ export default allGroupsReducer = (state = INITIAL_STATE, action) => {
                 };
               };
             }); 
+            return {...state, allGroups: newList, selectedGroup: found}
           }
         case 'LOGOUT':
           return INITIAL_STATE;
