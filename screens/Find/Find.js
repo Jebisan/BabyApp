@@ -4,8 +4,10 @@ import MapView from './MapView/MapView';
 import ListView from './ListView/ListView';
 import Colors from '../../constants/colors';
 import { MaterialIcons, FontAwesome } from "@expo/vector-icons";
+import { useSelector } from "react-redux";
 
 const Find = (props) => {
+  const selectedGroup = useSelector(state => state.allGroups.selectedGroup)
 
 const [showMapView, setShowMapView] = useState(true);
 
@@ -13,13 +15,17 @@ const [showMapView, setShowMapView] = useState(true);
   return (
     <View style= {styles.parentContainer} >
       <View style={styles.front}>
-      <TouchableOpacity style={styles.buttonContainer} onPress={() => setShowMapView(() => !showMapView)} >
-      { showMapView? 
-        <MaterialIcons name="list" size={25} color={Colors.lightGrey} /> :
-        <FontAwesome name="map-o"  size={16} color={Colors.lightGrey} />
-        } 
-        <Text style={styles.buttonTitleStyle}>{showMapView?" Liste":"  Kort"}</Text>
-      </TouchableOpacity>
+        {!selectedGroup &&
+          <TouchableOpacity style={styles.buttonContainer} onPress={() => setShowMapView(() => !showMapView)} >
+          { showMapView
+            ? 
+            <MaterialIcons name="list" size={25} color={Colors.lightGrey} /> 
+            :
+            <FontAwesome name="map-o"  size={16} color={Colors.lightGrey} />
+          } 
+          <Text style={styles.buttonTitleStyle}>{showMapView?" Liste":"  Kort"}</Text>
+          </TouchableOpacity>
+        }
       </View>
       <View style={styles.back} >
         {showMapView ? <MapView/> : <ListView/>} 

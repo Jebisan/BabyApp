@@ -11,10 +11,6 @@ const MapScreen = props => {
   const selectedGroup = useSelector(state => state.allGroups.selectedGroup)
 
   useEffect(() => {
-    const found = props.allGroups.allGroups.find(group => group.selected);
-  }, props.allGroups.allGroups)
-
-  useEffect(() => {
     if(props.location) {
       setLocation({
         latitude: props.location.latitude,
@@ -22,14 +18,9 @@ const MapScreen = props => {
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421
       }
-        )
+      )
     }
   }, [props.location])
-
-  useEffect(() => {
-    console.log('Group selected:', selectedGroup)
-    console.log('All Groups:', props.allGroups.allGroups)
-  }, [selectedGroup])
 
   return (
       <MapView style={styles.map} mapType={'mutedStandard'} region={location} >
@@ -49,11 +40,12 @@ const MapScreen = props => {
           </Marker>
         ))}
         {
-          <View style={{position: 'absolute', bottom: 50}}>
-           {selectedGroup &&
-             <SelectedGroup name={'Den seje mødregruppe'}/>
-           }
-          </View>
+          <View style={styles.selectedGroupContainer} > 
+            {selectedGroup 
+              && 
+                <SelectedGroup name={selectedGroup.name}/>
+            }
+            </View>
         }
 
       </MapView>
@@ -84,10 +76,9 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     backgroundColor: Colors.primary,
   },
-  selectedGroupPopup: {
-    position: 'absolute', 
-    width: '90%',
-    top: '84%',
+  selectedGroupContainer: {
+    position: 'absolute',
+    bottom: 30
   }
 });
 
