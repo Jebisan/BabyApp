@@ -12,7 +12,6 @@ const Find = (props) => {
 
 const [showMapView, setShowMapView] = useState(true);
 
-
   return (
     <View style= {styles.parentContainer} >
       <View style={styles.front}>
@@ -29,7 +28,7 @@ const [showMapView, setShowMapView] = useState(true);
         }
       </View>
       <View style={styles.back} >
-        {showMapView ? <MapView/> : <ListView/>} 
+        {showMapView ? <MapView navigation= {props.navigation} /> : <ListView/>} 
       </View>
     </View>
       )

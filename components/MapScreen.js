@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import MapView, {Marker}  from 'react-native-maps';
 import { FontAwesome } from '@expo/vector-icons'
 import Colors from '../constants/colors';
@@ -45,8 +45,10 @@ const MapScreen = props => {
         {
           <View style={styles.selectedGroupContainer} > 
             {selectedGroup 
-              && 
+              &&
+              <TouchableOpacity onPress={() => props.navigation.navigate('GroupDetail', {})}>
                 <SelectedGroup group={selectedGroup}/>
+              </TouchableOpacity> 
             }
             </View>
         }
