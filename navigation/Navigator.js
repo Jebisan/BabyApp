@@ -151,7 +151,7 @@ export const TabNavigator = () => {
 				return (
 					<Ionicons 
 						name='md-home' 
-						size={25} 
+						size={23} 
 						color={focused?'black':Colors.darkGrey} 
 					/>
 				)
@@ -166,7 +166,7 @@ export const TabNavigator = () => {
 				return (
 					<Ionicons 
 						name='md-search' 
-						size={25} 
+						size={24} 
 						color={focused?'black':Colors.darkGrey} 
 					/>
 				)
@@ -181,7 +181,7 @@ export const TabNavigator = () => {
 				return (
 					<FontAwesome 
 						name='group' 
-						size={25} 
+						size={19} 
 						color={focused?'black':Colors.darkGrey} 
 					/>
 				)
@@ -196,7 +196,7 @@ export const TabNavigator = () => {
 				return (
 					<MaterialCommunityIcons
 					 name="chat-processing" 
-					 size={24} 
+					 size={23} 
 					 color={focused?'black':Colors.darkGrey} 
 					 />
 				)
@@ -211,7 +211,7 @@ export const TabNavigator = () => {
 				return (
 					<Ionicons 
 						name='md-person' 
-						size={27} 
+						size={24} 
 						color={focused?'black':Colors.darkGrey} 
 					/>
 				)

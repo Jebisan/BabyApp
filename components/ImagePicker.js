@@ -70,8 +70,7 @@ const uploadImage = async(uri) => {
     dispatch(setPhotoUrl(url))
   })
   return uploadTask;
-  
-  ;  
+;  
 }
 
     return (

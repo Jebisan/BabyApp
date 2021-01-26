@@ -8,7 +8,10 @@ import { useSelector } from 'react-redux';
 
 const MapScreen = props => {
   const [location, setLocation] = useState(props.location);
-  const selectedGroup = useSelector(state => state.allGroups.selectedGroup)
+  const allGroups = useSelector(state => state.allGroups.allGroups)
+  const selectedGroup = allGroups.find(group => group.selected === true); 
+
+
 
   useEffect(() => {
     if(props.location) {
@@ -43,11 +46,10 @@ const MapScreen = props => {
           <View style={styles.selectedGroupContainer} > 
             {selectedGroup 
               && 
-                <SelectedGroup name={selectedGroup.name}/>
+                <SelectedGroup group={selectedGroup}/>
             }
             </View>
         }
-
       </MapView>
   )
 };
@@ -71,7 +73,7 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 0}
   },
   selectedGroupIcon: {
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: 'white',
     borderStyle: 'solid',
     backgroundColor: Colors.primary,

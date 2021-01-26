@@ -7,7 +7,8 @@ import { MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
 
 const Find = (props) => {
-  const selectedGroup = useSelector(state => state.allGroups.selectedGroup)
+  const allGroups = useSelector(state => state.allGroups.allGroups)
+  const selectedGroup = allGroups.find(group => group.selected === true); 
 
 const [showMapView, setShowMapView] = useState(true);
 
