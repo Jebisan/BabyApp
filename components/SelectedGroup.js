@@ -24,8 +24,9 @@ const SelectedGroup = props => {
 
   return (
     <View style={styles.parentContainer}>
+    <View style={styles.contentContainer}>
       <View style={styles.leftContainer}>
-        <Image source={require('../assets/mother.jpg')} style={styles.groupImage} resizeMode="cover"></Image>
+        <Image source={{uri: props.group.photoUrl}} style={styles.groupImage} resizeMode="cover"></Image>
       </View>
       <View style={styles.centerContainer}>
       <View style={styles.verticalContainer}>
@@ -33,10 +34,10 @@ const SelectedGroup = props => {
         <View style={styles.factsContainer}>
           <FontAwesome style={{right: 2}} name='group' size={10} color={colors.darkGrey} />
           <Text style={styles.smallText}>{props.group.groupType === 1 ?'Fædre' : 'Mødre'}</Text>
-          <Entypo style={{left: 1}} name="location-pin" size={12} color={colors.darkGrey} />
-          <Text style={styles.smallText}>5,5km</Text>
-          <FontAwesome style={{right: 3, top: 1}}  name="calendar-o" size={10} color={colors.darkGrey} />
-          <Text style={styles.smallText}>{convertDate2(props.group.dueDate)}</Text>
+          <Entypo style={{left: 6, bottom: 1}} name="location-pin" size={12} color={colors.darkGrey} />
+          <Text style={{...styles.smallText, left: 5, bottom: 1}}>5,5km</Text>
+          <FontAwesome style={{left: 16, bottom: 0}}  name="calendar-o" size={10} color={colors.darkGrey} />
+          <Text style={{...styles.smallText, left: 18, bottom: 0}}>{convertDate2(props.group.dueDate)}</Text>
         </View>
 
         {props.group.members && 
@@ -58,14 +59,12 @@ const SelectedGroup = props => {
       </View>
       </View>
     </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   parentContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignContent: 'center',
     backgroundColor: 'white',
     width: 350,
     height: 85,
@@ -77,6 +76,11 @@ const styles = StyleSheet.create({
       height: 1,
       width: 1
     }
+  },
+  contentContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignContent: 'center',
   },
   leftContainer: {
     flexDirection: 'column',
@@ -98,11 +102,14 @@ const styles = StyleSheet.create({
     height: 72,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10
+    borderRadius: 10,
+    borderWidth: 0.5,
+    borderColor: colors.mediumGrey,
+    top: 1
   },  
   title: {
-    fontFamily: 'roboto-regular',
-    fontSize: 16
+    fontFamily: 'roboto-bold',
+    fontSize: 15
   },
   verticalContainer: {
     flexDirection: 'column',
@@ -112,7 +119,6 @@ const styles = StyleSheet.create({
     fontFamily: 'roboto-regular',
     fontSize: 10,
     color: colors.darkGrey,
-    width: 45,
   }, 
   factsContainer: {
     flexDirection: 'row',
