@@ -11,7 +11,7 @@ const StaticMap = props => {
       props.location.latitude
     },${
       props.location.longitude
-    }&zoom=14&size=1600x800&maptype=roadmap&markers=icon:http://www.dj-resound.com/icon2.png%7C${
+    }&zoom=14&size=1600x800&maptype=terrain&markers=icon:http://www.dj-resound.com/icon2.png%7C${
       props.location.latitude
     },${props.location.longitude}&key=${ENV.googleApiKey}`;
   }

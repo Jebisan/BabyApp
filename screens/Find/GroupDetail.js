@@ -59,7 +59,7 @@ const GroupDetail = props => {
 					<View style={styles.memberImage}>
 						<Text style={styles.availableSpotsText}>{group.maxSize-group.members.length}</Text>
 					</View>
-					<SimpleLineIcons style={{left: 90}} name="arrow-right" size={16} color={colors.darkGrey} />
+					<SimpleLineIcons style={{position: 'absolute', left: 310}} name="arrow-right" size={16} color={colors.darkGrey} />
 				</View>
 			</TouchableOpacity>
 		<StaticMap style={styles.mapPreview} location={group.location}></StaticMap>	
