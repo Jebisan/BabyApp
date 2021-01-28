@@ -21,48 +21,54 @@ const GroupDetail = props => {
 
 	return (
 	<View style={styles.parent}>
-		<AntDesign onPress={() => props.navigation.goBack()} style={styles.backIcon} name="arrowleft" size={24} color="white" />
-		<LinearGradient  colors={['#f6c88b', '#d7893f']} style={styles.linearGradient}>
+		<View style={styles.topContainer}>
+			<AntDesign onPress={() => props.navigation.goBack()} style={styles.backIcon} name="arrowleft" size={24} color="white" />
+			<LinearGradient  colors={['#f6c88b', '#d7893f']} style={styles.linearGradient}>
 			<View style={styles.header}></View>
-		</LinearGradient>
-		<View style={styles.groupFactsContainer}>
-			<View style={styles.imageContainer} >
+			</LinearGradient>
+			<View style={styles.groupFactsContainer}>
+				<View style={styles.imageContainer} >
 				<Image source={{ uri: group.photoUrl }} style={styles.image} resizeMode="cover"></Image>
-			</View>
-			<Text style={styles.title}>{group.name}</Text>
-			<Text style={styles.subTitle}>{group.groupType === 1 ?'Fædregruppe' : 'Mødregruppe'}</Text>
-			<View style={styles.horizontalContainer} >
-				<Entypo style={{left: -10, bottom: 1}} name="location-pin" size={16} color={colors.darkGrey} />
-				<Text style={{...styles.smallText, left: -9, bottom: 1}}>{group.city}</Text>
-				<FontAwesome style={{left: 13, bottom: 1}}  name="calendar-o" size={13} color={colors.darkGrey} />
-				<Text style={{...styles.smallText, left: 16, bottom: 1}}>{convertDate2(group.dueDate)}</Text>
-			</View>
-			<View style={styles.buttonContainer} >
-				<TouchableOpacity style = {styles.directMessageButtonContainer} onPress={() => Alert.alert('Not supported yet')} >
-					<MaterialCommunityIcons name="chat-outline" size={24} color={'black'} />				
-				</TouchableOpacity>
-				<TouchableOpacity style={styles.requestButton} onPress={() => Alert.alert('Not supported yet')} > 
-					<Text style={styles.buttonText} >Anmod</Text>
-				</TouchableOpacity>
+				</View>
+				<Text style={styles.title}>{group.name}</Text>
+				<Text style={styles.subTitle}>{group.groupType === 1 ?'Fædregruppe' : 'Mødregruppe'}</Text>
+				<View style={styles.horizontalContainer} >
+					<Entypo style={{left: -10, bottom: 1}} name="location-pin" size={16} color={colors.darkGrey} />
+					<Text style={{...styles.smallText, left: -9, bottom: 1}}>{group.city}</Text>
+					<FontAwesome style={{left: 13, bottom: 1}}  name="calendar-o" size={13} color={colors.darkGrey} />
+					<Text style={{...styles.smallText, left: 16, bottom: 1}}>{convertDate2(group.dueDate)}</Text>
+				</View>
+				<View style={styles.buttonContainer} >
+					<TouchableOpacity style = {styles.directMessageButtonContainer} onPress={() => Alert.alert('Not supported yet')} >
+						<MaterialCommunityIcons name="chat-outline" size={24} color={'black'} />				
+					</TouchableOpacity>
+					<TouchableOpacity style={styles.requestButton} onPress={() => Alert.alert('Not supported yet')} > 
+						<Text style={styles.buttonText} >Anmod</Text>
+					</TouchableOpacity>
+				</View>
 			</View>
 		</View>
-		<View style={styles.descriptionContainer}>
-			<Text style={styles.smallTitle}>Om gruppen</Text>
-			<Text style={styles.descriptionText}>{group.description}</Text>
-		</View>
+		<View style={styles.middleContainer} >
+			<View style={styles.descriptionContainer}>
+				<Text style={styles.smallTitle}>Om gruppen</Text>
+				<Text style={styles.descriptionText}>{group.description}</Text>
+			</View>
 			<TouchableOpacity style={styles.membersContainer} onPress={() => Alert.alert('Not sypported yet')} >
 				<Text style={styles.smallTitle}>Medlemmer</Text>
 				<View style={styles.memberPicturesContainer} >
-					{group.members.map((member, index) => (
-						<Image key={index} source={{uri: member.photoUrl}} style={styles.memberImage} resizeMode="cover"></Image>
-						))}
+				{group.members.map((member, index) => (
+					<Image key={index} source={{uri: member.photoUrl}} style={styles.memberImage} resizeMode="cover"></Image>
+					))}
 					<View style={styles.memberImage}>
 						<Text style={styles.availableSpotsText}>{group.maxSize-group.members.length}</Text>
 					</View>
 					<SimpleLineIcons style={{position: 'absolute', left: 310}} name="arrow-right" size={16} color={colors.darkGrey} />
 				</View>
 			</TouchableOpacity>
-		<StaticMap style={styles.mapPreview} location={group.location}></StaticMap>	
+		</View>
+		<View style={styles.bottomContainer} >
+			<StaticMap style={styles.mapPreview} location={group.location}></StaticMap>	
+		</View>
 	</View>
 	)
 }
@@ -75,22 +81,25 @@ export const screenOptions = navigationData => {
 
 const styles = StyleSheet.create({
 	parent: {
-		flex: 1,
+		width: '100%',
+		height: '100%',
 		flexDirection: 'column',
 		justifyContent: 'space-between',
 		alignItems: 'center',
 		backgroundColor: colors.lightGrey,
+		position: 'relative'
 	},
+
 	linearGradient: {
 		position: 'absolute',
 		borderRadius: 25,
 		overflow: 'hidden',
 		transform: [{rotateZ: "270deg" }],
-		bottom: 480
-		
+		left: 70,
+		bottom: 70
 	},
 	header: {
-		width: 230,
+		width: 235,
 		height: 375,
 	},
 	groupFactsContainer: {
@@ -98,7 +107,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'flex-start',
 		alignItems: 'center',
 		width: 330,
-		height: 230,
+		height: 210,
 		backgroundColor: 'white',
 		borderRadius: 25,
 		shadowRadius: 10,
@@ -107,7 +116,7 @@ const styles = StyleSheet.create({
 			height: 2, 
 			width: 0
 		},
-		bottom: 50
+		top: 80
 		},
 	imageContainer: {
 		flexDirection: 'row',
@@ -137,12 +146,12 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'center',
 		alignItems: 'center',
-		bottom: 13
+		bottom: 20
 	},
 	title: {
 		fontFamily: 'roboto-regular',
 		fontSize: 20,
-		bottom: 38
+		bottom: 40
 	},
 	subTitle: {
 		fontFamily: 'roboto-regular',
@@ -166,7 +175,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		width: 300,
 		height: 50,
-		top: 6
+		bottom: 10
 	},
 	directMessageButtonContainer: {
 		flexDirection: 'row',
@@ -206,29 +215,35 @@ const styles = StyleSheet.create({
 		fontFamily: 'roboto-medium'
 	},
 	descriptionContainer: {
-		width: 325,
+		width: 340,
 		minHeight: 50,
 		flexDirection: 'column',
 		justifyContent: 'flex-start',
 		alignItems: 'flex-start',
-		bottom: 150
 	},
 	smallTitle: {
 		fontFamily: 'roboto-bold',
-		fontSize: 13
+		fontSize: 13,
+		bottom: 10,
+		paddingLeft: 7,
+		paddingRight: 7
 	},
 	descriptionText: {
 		fontFamily: 'roboto-regular',
-		top: 12,
-		fontSize: 12
+		fontSize: 12,
+		lineHeight: 16,
+		paddingLeft: 7,
+		paddingRight: 7
+
 	},
 	membersContainer: {
-		width: 325,
+		width: 340,
 		minHeight: 50,
 		flexDirection: 'column',
 		justifyContent: 'flex-start',
 		alignItems: 'flex-start',
-		bottom: 210,
+		top: 10
+
 	},
 	memberPicturesContainer: {
 		flexDirection: 'row',
@@ -244,8 +259,6 @@ const styles = StyleSheet.create({
 			height: 2, 
 			width: 2
 		},
-		top: 10,
-		right: 8,
 		paddingLeft: 10
 	},
 	memberImage: {
@@ -270,10 +283,32 @@ const styles = StyleSheet.create({
 	},
 	mapPreview: {
 		width: '100%',
-		height: 180,
+		height: '100%',
 		bottom: 0,
 		position: 'absolute'
-	  }
+	  },
+	topContainer: {
+		flexDirection: 'column',
+		justifyContent: 'flex-start',
+		alignItems: 'center',
+		position: 'relative',
+		width: '100%',
+		height: 320,
+	  },
+	middleContainer: {
+		position: 'relative',
+		flexDirection: 'column',
+		justifyContent: 'space-around',
+		alignItems: 'center',
+		height: 250,
+		width: '100%',
+	},
+	bottomContainer: {
+		position: 'relative',
+		bottom: 0,
+		height: 170,
+		width: "100%",
+	}
 })
 
 export default GroupDetail
