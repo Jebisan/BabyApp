@@ -23,7 +23,7 @@ const GroupDetail = props => {
 	<View style={styles.parent}>
 		<View style={styles.topContainer}>
 			<AntDesign onPress={() => props.navigation.goBack()} style={styles.backIcon} name="arrowleft" size={24} color="white" />
-			<LinearGradient  colors={['#f6c88b', '#d7893f']} style={styles.linearGradient}>
+			<LinearGradient  colors={[colors.secondaryShade1, colors.secondaryShade2]} style={styles.linearGradient}>
 			<View style={styles.header}></View>
 			</LinearGradient>
 			<View style={styles.groupFactsContainer}>
@@ -53,20 +53,21 @@ const GroupDetail = props => {
 				<Text style={styles.smallTitle}>Om gruppen</Text>
 				<Text style={styles.descriptionText}>{group.description}</Text>
 			</View>
-			<TouchableOpacity style={styles.membersContainer} onPress={() => Alert.alert('Not sypported yet')} >
-				<Text style={styles.smallTitle}>Medlemmer</Text>
-				<View style={styles.memberPicturesContainer} >
-				{group.members.map((member, index) => (
-					<Image key={index} source={{uri: member.photoUrl}} style={styles.memberImage} resizeMode="cover"></Image>
-					))}
-					<View style={styles.memberImage}>
-						<Text style={styles.availableSpotsText}>{group.maxSize-group.members.length}</Text>
-					</View>
-					<SimpleLineIcons style={{position: 'absolute', left: 310}} name="arrow-right" size={16} color={colors.darkGrey} />
-				</View>
-			</TouchableOpacity>
+
 		</View>
 		<View style={styles.bottomContainer} >
+		<TouchableOpacity style={styles.membersContainer} onPress={() => Alert.alert('Not sypported yet')} >
+		<Text style={styles.smallTitle}>Medlemmer</Text>
+		<View style={styles.memberPicturesContainer} >
+		{group.members.map((member, index) => (
+			<Image key={index} source={{uri: member.photoUrl}} style={styles.memberImage} resizeMode="cover"></Image>
+			))}
+			<View style={styles.memberImage}>
+			<Text style={styles.availableSpotsText}>{group.maxSize-group.members.length}</Text>
+			</View>
+			<SimpleLineIcons style={{position: 'absolute', left: 310}} name="arrow-right" size={16} color={colors.darkGrey} />
+			</View>
+			</TouchableOpacity>
 			<StaticMap style={styles.mapPreview} location={group.location}></StaticMap>	
 		</View>
 	</View>
@@ -84,7 +85,7 @@ const styles = StyleSheet.create({
 		width: '100%',
 		height: '100%',
 		flexDirection: 'column',
-		justifyContent: 'space-between',
+		justifyContent: 'flex-start',
 		alignItems: 'center',
 		backgroundColor: colors.lightGrey,
 		position: 'relative'
@@ -161,7 +162,7 @@ const styles = StyleSheet.create({
 	},
 	smallText: {
 		fontFamily: 'roboto-regular',
-		fontSize: 14,
+		fontSize: 12,
 		color: colors.darkGrey,
 	  }, 
 	backIcon: {
@@ -224,9 +225,7 @@ const styles = StyleSheet.create({
 	smallTitle: {
 		fontFamily: 'roboto-bold',
 		fontSize: 13,
-		bottom: 10,
-		paddingLeft: 7,
-		paddingRight: 7
+		padding: 7,
 	},
 	descriptionText: {
 		fontFamily: 'roboto-regular',
@@ -238,12 +237,10 @@ const styles = StyleSheet.create({
 	},
 	membersContainer: {
 		width: 340,
-		minHeight: 50,
+		height: 80,
 		flexDirection: 'column',
 		justifyContent: 'flex-start',
 		alignItems: 'flex-start',
-		top: 10
-
 	},
 	memberPicturesContainer: {
 		flexDirection: 'row',
@@ -259,7 +256,7 @@ const styles = StyleSheet.create({
 			height: 2, 
 			width: 2
 		},
-		paddingLeft: 10
+		paddingLeft: 10,
 	},
 	memberImage: {
 		flexDirection: 'row',
@@ -272,7 +269,7 @@ const styles = StyleSheet.create({
 		borderRadius: 50,
 		borderWidth: 1,
 		borderColor: colors.mediumGrey,
-		margin: 3
+		margin: 3,
 	  },
 	availableSpotsText: {
 		fontFamily: 'roboto-light',
@@ -282,10 +279,9 @@ const styles = StyleSheet.create({
 		flexDirection: 'column'
 	},
 	mapPreview: {
-		width: '100%',
-		height: '100%',
-		bottom: 0,
-		position: 'absolute'
+		paddingTop: 15,
+		width: "100%",
+		height: "100%",
 	  },
 	topContainer: {
 		flexDirection: 'column',
@@ -293,21 +289,24 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		position: 'relative',
 		width: '100%',
-		height: 320,
+		height: 330
 	  },
 	middleContainer: {
 		position: 'relative',
 		flexDirection: 'column',
-		justifyContent: 'space-around',
+		justifyContent: 'flex-start',
 		alignItems: 'center',
-		height: 250,
 		width: '100%',
+		minHeight: 100,
 	},
 	bottomContainer: {
-		position: 'relative',
-		bottom: 0,
-		height: 170,
+		flexDirection: 'column',
+		justifyContent: 'center',
+		alignItems: 'center',
 		width: "100%",
+		minHeight: 100,
+		maxHeight: 300,
+		paddingTop: 40
 	}
 })
 
