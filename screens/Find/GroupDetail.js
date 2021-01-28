@@ -1,10 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'react-native';
 import colors from '../../constants/colors'
-import {Entypo, FontAwesome, AntDesign, MaterialCommunityIcons, Ionicons} from '@expo/vector-icons';
+import {Entypo, FontAwesome, AntDesign, MaterialCommunityIcons, SimpleLineIcons} from '@expo/vector-icons';
 import { convertDate2 } from '../../Shared';
+import { Alert } from 'react-native';
+import StaticMap from '../../components/StaticMap'
+
 
 
 
@@ -13,7 +16,7 @@ const GroupDetail = props => {
 
 	useEffect(() => {
 		const group2 = props.route.params.group;
-console.log(group2)
+		console.log(group2)
 	}, [])
 
 	return (
@@ -35,14 +38,31 @@ console.log(group2)
 				<Text style={{...styles.smallText, left: 16, bottom: 1}}>{convertDate2(group.dueDate)}</Text>
 			</View>
 			<View style={styles.buttonContainer} >
-				<View style = {styles.directMessageButtonContainer}>
+				<TouchableOpacity style = {styles.directMessageButtonContainer} onPress={() => Alert.alert('Not supported yet')} >
 					<MaterialCommunityIcons name="chat-outline" size={24} color={'black'} />				
-				</View>
-				<TouchableOpacity style={styles.requestButton}> 
+				</TouchableOpacity>
+				<TouchableOpacity style={styles.requestButton} onPress={() => Alert.alert('Not supported yet')} > 
 					<Text style={styles.buttonText} >Anmod</Text>
 				</TouchableOpacity>
 			</View>
 		</View>
+		<View style={styles.descriptionContainer}>
+			<Text style={styles.smallTitle}>Om gruppen</Text>
+			<Text style={styles.descriptionText}>{group.description}</Text>
+		</View>
+			<TouchableOpacity style={styles.membersContainer} onPress={() => Alert.alert('Not sypported yet')} >
+				<Text style={styles.smallTitle}>Medlemmer</Text>
+				<View style={styles.memberPicturesContainer} >
+					{group.members.map((member, index) => (
+						<Image key={index} source={{uri: member.photoUrl}} style={styles.memberImage} resizeMode="cover"></Image>
+						))}
+					<View style={styles.memberImage}>
+						<Text style={styles.availableSpotsText}>{group.maxSize-group.members.length}</Text>
+					</View>
+					<SimpleLineIcons style={{left: 90}} name="arrow-right" size={16} color={colors.darkGrey} />
+				</View>
+			</TouchableOpacity>
+		<StaticMap style={styles.mapPreview} location={group.location}></StaticMap>	
 	</View>
 	)
 }
@@ -57,8 +77,9 @@ const styles = StyleSheet.create({
 	parent: {
 		flex: 1,
 		flexDirection: 'column',
-		justifyContent: 'center',
+		justifyContent: 'space-between',
 		alignItems: 'center',
+		backgroundColor: colors.lightGrey,
 	},
 	linearGradient: {
 		position: 'absolute',
@@ -86,7 +107,7 @@ const styles = StyleSheet.create({
 			height: 2, 
 			width: 0
 		},
-		bottom: 150
+		bottom: 50
 		},
 	imageContainer: {
 		flexDirection: 'row',
@@ -135,8 +156,8 @@ const styles = StyleSheet.create({
 		color: colors.darkGrey,
 	  }, 
 	backIcon: {
-		bottom: 200, 
-		right: 165, 
+		top: 50, 
+		right: 160, 
 		zIndex: 1
 	},
 	buttonContainer: {
@@ -183,7 +204,76 @@ const styles = StyleSheet.create({
 	buttonText: {
 		color: 'white',
 		fontFamily: 'roboto-medium'
-	}
+	},
+	descriptionContainer: {
+		width: 325,
+		minHeight: 50,
+		flexDirection: 'column',
+		justifyContent: 'flex-start',
+		alignItems: 'flex-start',
+		bottom: 150
+	},
+	smallTitle: {
+		fontFamily: 'roboto-bold',
+		fontSize: 13
+	},
+	descriptionText: {
+		fontFamily: 'roboto-regular',
+		top: 12,
+		fontSize: 12
+	},
+	membersContainer: {
+		width: 325,
+		minHeight: 50,
+		flexDirection: 'column',
+		justifyContent: 'flex-start',
+		alignItems: 'flex-start',
+		bottom: 210,
+	},
+	memberPicturesContainer: {
+		flexDirection: 'row',
+		justifyContent: 'flex-start',
+		alignItems: 'center',
+		width: 340,
+		height: 50,
+		backgroundColor: 'white',
+		borderRadius: 10,
+		shadowRadius: 5,
+		shadowOpacity: 0.07,
+		shadowOffset: {
+			height: 2, 
+			width: 2
+		},
+		top: 10,
+		right: 8,
+		paddingLeft: 10
+	},
+	memberImage: {
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		width: 35,
+		height: 35,
+		justifyContent: 'center',
+		alignItems: 'center',
+		borderRadius: 50,
+		borderWidth: 1,
+		borderColor: colors.mediumGrey,
+		margin: 3
+	  },
+	availableSpotsText: {
+		fontFamily: 'roboto-light',
+		color: colors.darkGrey,
+	},
+	verticalContainer: {
+		flexDirection: 'column'
+	},
+	mapPreview: {
+		width: '100%',
+		height: 180,
+		bottom: 0,
+		position: 'absolute'
+	  }
 })
 
 export default GroupDetail
