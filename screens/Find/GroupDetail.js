@@ -1,18 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import { Overlay } from 'react-native-elements';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'react-native';
 import colors from '../../constants/colors'
 import {Entypo, FontAwesome, AntDesign, MaterialCommunityIcons, SimpleLineIcons} from '@expo/vector-icons';
 import { convertDate2 } from '../../Shared';
 import { Alert } from 'react-native';
-import StaticMap from '../../components/StaticMap'
-
-
+import StaticMap from '../../components/StaticMap';
+import { TextInput } from 'react-native-gesture-handler';
 
 
 const GroupDetail = props => {
 	const group = props.route.params.group;
+	const [visible, setVisible] = useState(false);
+	const [requestText, setRequestText] = useState('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tincidunt arcu et mollis aliquam. Phasellus faucibus tortor sed eros dignissim congue nec id est. Pellentesque vitae ligula id metus sagittis luctus. ');
+
+
+	const toggleOverlay = () => {
+		setVisible(!visible);
+	  };
 
 	useEffect(() => {
 		const group2 = props.route.params.group;
@@ -42,8 +49,8 @@ const GroupDetail = props => {
 					<TouchableOpacity style = {styles.directMessageButtonContainer} onPress={() => Alert.alert('Not supported yet')} >
 						<MaterialCommunityIcons name="chat-outline" size={24} color={'black'} />				
 					</TouchableOpacity>
-					<TouchableOpacity style={styles.requestButton} onPress={() => Alert.alert('Not supported yet')} > 
-						<Text style={styles.buttonText} >Anmod</Text>
+					<TouchableOpacity style={styles.requestButton} onPress={toggleOverlay} > 
+						<Text style={styles.buttonText}>Anmod</Text>
 					</TouchableOpacity>
 				</View>
 			</View>
@@ -70,6 +77,27 @@ const GroupDetail = props => {
 			</TouchableOpacity>
 			<StaticMap style={styles.mapPreview} location={group.location}></StaticMap>	
 		</View>
+		<View>
+		</View>
+		<Overlay overlayStyle={styles.modalContainer} isVisible={visible} onBackdropPress={toggleOverlay}>
+			<TouchableOpacity style={styles.cancelButton} onPress={toggleOverlay} >
+				<Entypo onPress={toggleOverlay}  name="cross" size={24} color="black" />
+			</TouchableOpacity>
+			<Text style={styles.modalTitle}>Anmod</Text>
+			<Text style={styles.modalSubTitle}>Besked</Text>
+			<TextInput
+				multiline={true}
+				numberOfLines={4}
+				onChangeText={text => setRequestText(text)}
+				value={requestText}
+				style={styles.textInputStyle}
+				/>
+			<View style={styles.buttonContainer} >
+					<TouchableOpacity style={styles.modalRequestButton} onPress={toggleOverlay} > 
+						<Text style={styles.buttonText}>Send anmodning</Text>
+					</TouchableOpacity>
+			</View>
+      	</Overlay>
 	</View>
 	)
 }
@@ -211,6 +239,24 @@ const styles = StyleSheet.create({
 			width: 0
 		},
 	},
+	modalRequestButton: {
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		color: 'white',
+		backgroundColor: 'white',
+		width: 340,
+		height: 40,
+		backgroundColor: colors.primary,
+		borderRadius: 6,
+		shadowRadius: 8,
+		shadowColor: 'black',
+		shadowOpacity: 0.16,
+		shadowOffset: {
+			height: 8, 
+			width: 0
+		},
+	},
 	buttonText: {
 		color: 'white',
 		fontFamily: 'roboto-medium'
@@ -305,8 +351,51 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		width: "100%",
 		minHeight: 100,
-		maxHeight: 300,
+		maxHeight: 265,
 		paddingTop: 40
+	},
+	modalContainer: {
+		width: "100%", 
+		height: "92%",
+		bottom: 0,
+		position: 'absolute',
+		borderRadius: 20,
+		flexDirection: 'column',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+		paddingTop: 30
+	}, 
+	modalTitle: {
+		fontFamily: 'roboto-bold',
+		fontSize: 18
+	},
+	cancelButton: {
+		position: 'absolute',
+		left: 10,
+		top: 30,
+	},
+	textInputStyle: {
+		borderWidth: 1,
+		width: '95%',
+		height: '30%',
+		backgroundColor: 'white',
+		borderColor: colors.mediumGrey,
+		borderRadius: 10,
+		shadowRadius: 5,
+		shadowOpacity: 0.10,
+		shadowOffset: {
+			height: 2, 
+			width: 2
+		},
+		bottom: 140,
+		paddingLeft: 15,
+		paddingTop: 15
+	},
+	modalSubTitle: {
+		position: 'absolute',
+		fontFamily: 'roboto-medium',
+		left: 20,
+		top: 95
 	}
 })
 
