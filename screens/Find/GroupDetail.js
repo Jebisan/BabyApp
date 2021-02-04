@@ -1,25 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
-import { Overlay } from 'react-native-elements';
+import {View, StyleSheet, Text, TouchableOpacity, Image, Alert} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Image } from 'react-native';
 import colors from '../../constants/colors'
 import {Entypo, FontAwesome, AntDesign, MaterialCommunityIcons, SimpleLineIcons} from '@expo/vector-icons';
 import { convertDate2 } from '../../Shared';
-import { Alert } from 'react-native';
 import StaticMap from '../../components/StaticMap';
-import { TextInput } from 'react-native-gesture-handler';
-
 
 const GroupDetail = props => {
 	const group = props.route.params.group;
-	const [visible, setVisible] = useState(false);
-	const [requestText, setRequestText] = useState('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tincidunt arcu et mollis aliquam. Phasellus faucibus tortor sed eros dignissim congue nec id est. Pellentesque vitae ligula id metus sagittis luctus. ');
-
+    const [visible, setVisible] = useState(false); // Pass 'visible' to the Modal component, to conditionally render it
 
 	const toggleOverlay = () => {
 		setVisible(!visible);
 	  };
+
 
 	useEffect(() => {
 		const group2 = props.route.params.group;
@@ -60,7 +54,6 @@ const GroupDetail = props => {
 				<Text style={styles.smallTitle}>Om gruppen</Text>
 				<Text style={styles.descriptionText}>{group.description}</Text>
 			</View>
-
 		</View>
 		<View style={styles.bottomContainer} >
 		<TouchableOpacity style={styles.membersContainer} onPress={() => Alert.alert('Not sypported yet')} >
@@ -79,25 +72,6 @@ const GroupDetail = props => {
 		</View>
 		<View>
 		</View>
-		<Overlay overlayStyle={styles.modalContainer} isVisible={visible} onBackdropPress={toggleOverlay}>
-			<TouchableOpacity style={styles.cancelButton} onPress={toggleOverlay} >
-				<Entypo onPress={toggleOverlay}  name="cross" size={24} color="black" />
-			</TouchableOpacity>
-			<Text style={styles.modalTitle}>Anmod</Text>
-			<Text style={styles.modalSubTitle}>Besked</Text>
-			<TextInput
-				multiline={true}
-				numberOfLines={4}
-				onChangeText={text => setRequestText(text)}
-				value={requestText}
-				style={styles.textInputStyle}
-				/>
-			<View style={styles.buttonContainer} >
-					<TouchableOpacity style={styles.modalRequestButton} onPress={toggleOverlay} > 
-						<Text style={styles.buttonText}>Send anmodning</Text>
-					</TouchableOpacity>
-			</View>
-      	</Overlay>
 	</View>
 	)
 }
@@ -110,13 +84,11 @@ export const screenOptions = navigationData => {
 
 const styles = StyleSheet.create({
 	parent: {
-		width: '100%',
-		height: '100%',
 		flexDirection: 'column',
 		justifyContent: 'flex-start',
 		alignItems: 'center',
 		backgroundColor: colors.lightGrey,
-		position: 'relative'
+		position: 'relative',
 	},
 
 	linearGradient: {
@@ -355,16 +327,14 @@ const styles = StyleSheet.create({
 		paddingTop: 40
 	},
 	modalContainer: {
-		width: "100%", 
-		height: "92%",
-		bottom: 0,
-		position: 'absolute',
-		borderRadius: 20,
 		flexDirection: 'column',
-		justifyContent: 'space-between',
+		justifyContent: 'center',
 		alignItems: 'center',
-		paddingTop: 30
-	}, 
+		backgroundColor: 'white',
+		borderRadius: 20,
+		width: '100%',
+		height: '90%',
+	},
 	modalTitle: {
 		fontFamily: 'roboto-bold',
 		fontSize: 18
