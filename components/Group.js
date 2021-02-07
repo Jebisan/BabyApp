@@ -13,6 +13,7 @@ const Group = props => {
   const membersDetails = useSelector(state => state.allGroups.allGroups).find(group => group.key === props.id).membersDetails
 
   useEffect(() => {
+    console.log(props)
     if (!props.membersDetails) {
       dispatch(setMembers(props.id))
     }

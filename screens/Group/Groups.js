@@ -4,6 +4,7 @@ import {useSelector} from 'react-redux'
 import Group from '../../components/Group'
 import HeaderButton from '../../components/HeaderButton'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
+import { Text } from 'react-native'
 
 const Groups = props => {
 	const myGroups = useSelector(state => state.myGroups)
@@ -17,30 +18,13 @@ const Groups = props => {
 		<View style={styles.parent}>
     
 
-			<FlatList
-				data={myGroups}
-				keyExtractor={item => item.id}
-				renderItem={({item}) =>
-					<TouchableOpacity onPress={() => props.navigation.navigate('GroupScreen', {
-						id: item.id,
-						members: item.members,
-						groupName: item.name,
-						admin: item.admin,
-						description: item.description,
-						location: item.location
-					})}
-					>
-						<Group
-							name = {item.name}
-							description = {item.description}
-							city = {item.city}
-							postalCode = {item.postalCode}
-							photoUrl = {item.photoUrl}
-							dueDate = {item.dueDate}
-						/>
-					</TouchableOpacity>
-				}
-			/>
+		<FlatList
+		data={myGroups}
+		renderItem={({ item }) => 
+		<Text>{item.name}</Text>
+	  }
+	  keyExtractor={item => item.key}
+	  />
 		</View>
 
 	)

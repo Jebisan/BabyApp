@@ -6,6 +6,7 @@ import {Entypo, FontAwesome, AntDesign, MaterialCommunityIcons, SimpleLineIcons}
 import { convertDate2 } from '../../Shared';
 import StaticMap from '../../components/StaticMap';
 import { useSelector } from 'react-redux';
+import MapView, { Marker } from 'react-native-maps';
 
 const GroupDetail = props => {
     const [visible, setVisible] = useState(false); // Pass 'visible' to the Modal component, to conditionally render it
@@ -70,7 +71,16 @@ const GroupDetail = props => {
             <SimpleLineIcons style={{position: 'absolute', left: 310}} name="arrow-right" size={16} color={colors.darkGrey} />
             </View>
             </TouchableOpacity>
-            <StaticMap style={styles.mapPreview} location={group.location}></StaticMap> 
+			
+			<MapView style={styles.mapPreview} mapType={'mutedStandard'} region={{...group.location, latitudeDelta: 0.0122, longitudeDelta: 0.0121}} >
+				<Marker key={group.key} coordinate={group.location}>
+					<View style={styles.group}>
+					<FontAwesome name='group' size={14} color={colors.primary} 
+					/>
+					</View>
+				</Marker>
+			</MapView>
+
             </View>
             <View>
             </View>
@@ -262,6 +272,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		justifyContent: 'flex-start',
 		alignItems: 'flex-start',
+		marginBottom: 14
 	},
 	memberPicturesContainer: {
 		flexDirection: 'row',
@@ -327,49 +338,19 @@ const styles = StyleSheet.create({
 		width: "100%",
 		minHeight: 100,
 		maxHeight: 265,
-		paddingTop: 40
+		paddingTop: 40,
 	},
-	modalContainer: {
-		flexDirection: 'column',
+	group: {
 		justifyContent: 'center',
 		alignItems: 'center',
+		width: 25, 
+		height: 25, 
+		borderRadius: 50, 
 		backgroundColor: 'white',
-		borderRadius: 20,
-		width: '100%',
-		height: '90%',
-	},
-	modalTitle: {
-		fontFamily: 'roboto-bold',
-		fontSize: 18
-	},
-	cancelButton: {
-		position: 'absolute',
-		left: 10,
-		top: 30,
-	},
-	textInputStyle: {
-		borderWidth: 1,
-		width: '95%',
-		height: '30%',
-		backgroundColor: 'white',
-		borderColor: colors.mediumGrey,
-		borderRadius: 10,
-		shadowRadius: 5,
-		shadowOpacity: 0.10,
-		shadowOffset: {
-			height: 2, 
-			width: 2
-		},
-		bottom: 140,
-		paddingLeft: 15,
-		paddingTop: 15
-	},
-	modalSubTitle: {
-		position: 'absolute',
-		fontFamily: 'roboto-medium',
-		left: 20,
-		top: 95
-	}
+		shadowOpacity: 0.4,
+		shadowRadius: 2,
+		shadowOffset: {width: 0, height: 0}
+	  },
 })
 
 export default GroupDetail

@@ -165,6 +165,7 @@ keyExtractor={item => item.key}
   admin = {item.admin}
   dueDate = {item.dueDate}
   members = {item.members}
+  membersDetails = {item.membersDetails}
   maxSize = {item.maxSize}
   />
   </TouchableOpacity>
