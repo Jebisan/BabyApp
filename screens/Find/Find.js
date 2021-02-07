@@ -28,7 +28,7 @@ const [showMapView, setShowMapView] = useState(true);
         }
       </View>
       <View style={styles.back} >
-        {showMapView ? <MapView navigation= {props.navigation} /> : <ListView/>} 
+        {showMapView ? <MapView navigation= {props.navigation} /> : <ListView navigation= {props.navigation} />} 
       </View>
     </View>
       )

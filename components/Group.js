@@ -1,14 +1,27 @@
-import React from 'react';
-import {View, StyleSheet, Text, Image } from 'react-native';
-import {Ionicons} from '@expo/vector-icons';
-import {convertDate} from '../Shared'
+import React, {useEffect} from 'react';
 
+import {View, StyleSheet, Text, Image } from 'react-native';
+import {Entypo, FontAwesome, Ionicons} from '@expo/vector-icons';
+import {convertDate2} from '../Shared'
+import colors from '../constants/colors';
+import {setMembers} from '../store/actions/allGroups'
+import { useDispatch, useSelector } from 'react-redux';
 
 
 const Group = props => {
+  const dispatch = useDispatch();
+  const membersDetails = useSelector(state => state.allGroups.allGroups).find(group => group.key === props.id).membersDetails
+
+  useEffect(() => {
+    if (!props.membersDetails) {
+      dispatch(setMembers(props.id))
+    }
+  }, [props.key])
+
+useEffect(() => {
+}, [props])
 
 
-  
   return (
     <View style = {styles.parent}>
       <View style = {styles.wishContainer}>
@@ -16,7 +29,7 @@ const Group = props => {
       <View style={styles.horizontalContainer}>
       <View style={styles.verticalContainer}>
         <View style={styles.imageContainer}>
-          <Image style={{width: 50, height: 50, borderRadius: 400/ 2}} source={{uri: props.photoUrl }} />
+          <Image style={styles.image} source={{uri: props.photoUrl }} />
       </View>
     <View style={styles.icon}>
     <Ionicons name="ios-arrow-forward" size={20} color="lightgrey" />
@@ -25,8 +38,24 @@ const Group = props => {
 
       <View style={styles.verticalContainer}>
         <Text style= {styles.titleText}>{props.name}</Text>
-        <Text style= {styles.descriptionText}>{convertDate(props.dueDate)}</Text>
-        <Text style= {styles.descriptionText2}>{props.postalCode} {props.city}</Text>
+        <View style={styles.factsContainer}>
+        <FontAwesome style={{right: 2}} name='group' size={10} color={colors.darkGrey} />
+        <Text style={styles.smallText}>{props.groupType === 1 ?'Fædre' : 'Mødre'}</Text>
+        <Entypo style={{left: 6, bottom: 1}} name="location-pin" size={12} color={colors.darkGrey} />
+        <Text style={{...styles.smallText, left: 5, bottom: 1}}>5,5km</Text>
+        <FontAwesome style={{left: 16, bottom: 0}}  name="calendar-o" size={10} color={colors.darkGrey} />
+        <Text style={{...styles.smallText, left: 18, bottom: 0}}>{convertDate2(props.dueDate)}</Text>
+      </View>
+      {membersDetails && 
+        <View style={styles.membersContainer}>
+        {membersDetails.map((member, index) => (
+          <Image key={index} source={{uri: member.photoUrl}} style={styles.memberImage} resizeMode="cover"></Image>
+          ))}
+          <View style={styles.memberImage}>
+            <Text style={styles.availableSpotsText}>{props.maxSize-props.members.length}</Text>
+          </View>
+      </View>
+      }
       </View>
       </View>
       </View>
@@ -81,9 +110,44 @@ const styles = StyleSheet.create({
 
   },
   imageContainer: {
-    borderRadius: 400/ 2,
+  },
+  image: {
+    width: 70, 
+    height: 70, 
+    borderRadius: 12
+  },
+  smallText: {
+    fontFamily: 'roboto-regular',
+    fontSize: 10,
+    color: colors.darkGrey,
+  }, 
+  factsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    top: 4,
+    left: 4
+  },
+  membersContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    marginTop: 7,
+  },
+  memberImage: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 50,
     borderWidth: 1,
-    borderColor: 'lightgrey'
+    borderColor: colors.mediumGrey,
+    margin: 3
+  },
+  availableSpotsText: {
+    fontFamily: 'roboto-light',
+    color: colors.darkGrey,
   }
 });
 

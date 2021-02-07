@@ -9,7 +9,7 @@ import { ButtonGroup } from "react-native-elements";
 
 
  const ListView = (props) => {
-  const allGroups = useSelector(state => state.allGroups)
+  const allGroups = useSelector(state => state.allGroups.allGroups)
   const allUsers = useSelector(state => state.allUsers)
 
   const [searchText, setSearchText] = useState('');
@@ -18,8 +18,6 @@ import { ButtonGroup } from "react-native-elements";
   const [filteredGroups, setFilteredGroups] = useState([])
   const [cityData, setCityData] = useState([])
   const [hideResults, setHideResults] = useState(false);
-
-  const [selected, setSelected] = useState(false);
 
 
 useEffect(() => {
@@ -85,6 +83,8 @@ const renderResults = city => {
 <Autocomplete
 inputContainerStyle={styles.searchInputContainer}
 containerStyle={styles.containerStyle}
+listContainerStyle = {styles.listContainerStyle}
+listStyle	= {styles.listStyle}
 style={styles.searchInput}
 keyExtractor={item => item.nr}
 data={cityData}
@@ -117,7 +117,7 @@ renderItem={({ item, i }) => (
 }
 
 <View style={styles.foundUsersContainer}>
-<SafeAreaView style={styles.listContainer}>
+<SafeAreaView>
 {selectedIndex===1 &&
   <FlatList
   data={filteredUsers}
@@ -153,12 +153,7 @@ keyExtractor={item => item.key}
   data={filteredGroups}
   renderItem={({ item }) => 
   <TouchableOpacity onPress={() => props.navigation.navigate('GroupDetail', {
-    groupId: item.key,
-    name: item.name,
-    description: item.description,
-    admin: item.admin,
-    guestView: true,
-    dueDate: item.dueDate
+    group: item
   })}>
   <Group
   id={item.key}
@@ -169,6 +164,8 @@ keyExtractor={item => item.key}
   photoUrl={item.photoUrl}
   admin = {item.admin}
   dueDate = {item.dueDate}
+  members = {item.members}
+  maxSize = {item.maxSize}
   />
   </TouchableOpacity>
 }
@@ -192,9 +189,6 @@ const styles = StyleSheet.create({
     top: 25,
     height: "87,5%",
     marginTop: '-1%',
-  },
-  listContainer: {
-    flex: 1
   },  
   button: {
     justifyContent: 'center',
@@ -235,7 +229,11 @@ const styles = StyleSheet.create({
   searchInputContainer: {
     borderWidth: 0,
     top: 5,
-    zIndex: 10
+    zIndex: 10,
+  },
+  containerStyle: {
+  },
+  listStyle: {
   },
   searchInput: {
     paddingLeft: 20,
@@ -245,7 +243,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     borderWidth: 1,
     borderColor: Colors.mediumGrey
-  },
+  }
 });
 
 export default ListView;

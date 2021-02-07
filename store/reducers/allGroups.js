@@ -39,13 +39,12 @@ export default allGroupsReducer = (state = INITIAL_STATE, action) => {
             }); 
             return {...state, allGroups: newList}
           }
-        case 'SET_MEMBERS': 
-
+        case 'SET_MEMBERS_DETAILS': 
         const newAllGroups = state.allGroups.map((group) => {
           if (group.key === action.groupId) {
             return {
               ...group,
-              members: action.members
+              membersDetails: action.membersDetails
             };
           } else {
             return {

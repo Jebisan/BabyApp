@@ -3,10 +3,8 @@ import { View, StyleSheet, Text, Image } from 'react-native';
 import {Entypo, FontAwesome, SimpleLineIcons} from '@expo/vector-icons';
 import colors from '../constants/colors';
 import { convertDate2 } from '../Shared';
-import Fire from '../Fire'
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import {setMembers} from '../store/actions/allGroups'
-import { Button } from 'react-native';
 
 const SelectedGroup = props => {
 
@@ -14,12 +12,11 @@ const SelectedGroup = props => {
 
 
   useEffect(() => {
-    if (!props.group.members) {
-      console.log('Fetching members..')
+    if (!props.group.membersDetails) {
       dispatch(setMembers(props.group.key))
     } else {
     }
-  }, [props.group.key])
+  }, [props.group])
 
 
   return (
@@ -40,13 +37,13 @@ const SelectedGroup = props => {
           <Text style={{...styles.smallText, left: 18, bottom: 0}}>{convertDate2(props.group.dueDate)}</Text>
         </View>
 
-        {props.group.members && 
+        {props.group.membersDetails && 
           <View style={styles.membersContainer}>
-          {props.group.members.map((member, index) => (
+          {props.group.membersDetails.map((member, index) => (
             <Image key={index} source={{uri: member.photoUrl}} style={styles.memberImage} resizeMode="cover"></Image>
             ))}
             <View style={styles.memberImage}>
-              <Text style={styles.availableSpotsText}>{props.group.maxSize-props.group.members.length}</Text>
+              <Text style={styles.availableSpotsText}>{props.group.maxSize-props.group.membersDetails.length}</Text>
             </View>
         </View>
         }

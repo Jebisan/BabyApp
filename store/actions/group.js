@@ -97,8 +97,6 @@ export const removeRequestFromGroup = (groupId, personId ) => {
 
   export const removeRequestFromUser = (userId, requestKey ) => {
     return async (dispatch, getState) => {
-      console.log('User ID: ' + userId);
-      console.log('Request key: ' + requestKey);
       
       const token = getState().auth.token;    
   
@@ -157,9 +155,6 @@ export const removeRequestFromGroup = (groupId, personId ) => {
   export const createGroup = (name, description, postalCode, city, groupType, selectedUserIds, photoUrl, dueDate) => {
     return async (dispatch, getState) => {
   
-      console.log('Selected users:');
-      console.log(selectedUserIds);
-  
       const token = getState().auth.token;    
       const userId = getState().auth.userId;
   
@@ -208,7 +203,6 @@ export const removeRequestFromGroup = (groupId, personId ) => {
   export const addGroupToUser = (userId, groupId ) => {
     return async (dispatch, getState) => {
   
-      console.log('Putting to user: ' + userId)
       const token = getState().auth.token;    
   
         const response = await fetch(
@@ -241,7 +235,7 @@ export const removeRequestFromGroup = (groupId, personId ) => {
       const token = getState().auth.token;    
   
         const response = await fetch(
-          `https://babyapp-ed94d.firebaseio.com/groupMembers/${groupId}/${userId}.json?auth=${token}`,
+          `https://babyapp-ed94d.firebaseio.com/groups/${groupId}/${userId}.json?auth=${token}`,
           {
             method: 'PUT',
             headers: {

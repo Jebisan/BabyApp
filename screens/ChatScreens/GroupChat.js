@@ -26,7 +26,6 @@ class GroupChat extends React.Component {
 
   getMembers = () => {
     const members = this.props.route.params.groupData.members
-    console.log(members);
     
     members.forEach(member => {
 

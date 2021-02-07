@@ -5,10 +5,12 @@ import colors from '../../constants/colors'
 import {Entypo, FontAwesome, AntDesign, MaterialCommunityIcons, SimpleLineIcons} from '@expo/vector-icons';
 import { convertDate2 } from '../../Shared';
 import StaticMap from '../../components/StaticMap';
+import { useSelector } from 'react-redux';
 
 const GroupDetail = props => {
-	const group = props.route.params.group;
     const [visible, setVisible] = useState(false); // Pass 'visible' to the Modal component, to conditionally render it
+
+	const group = useSelector(state => state.allGroups.allGroups).find(group => group.key === props.route.params.group.key)
 
 	const toggleOverlay = () => {
 		setVisible(!visible);
@@ -16,67 +18,68 @@ const GroupDetail = props => {
 
 
 	useEffect(() => {
-		const group2 = props.route.params.group;
-		console.log(group2)
-	}, [])
+		console.log(group)
+	}, [group])
 
 	return (
 	<View style={styles.parent}>
-		<View style={styles.topContainer}>
-			<AntDesign onPress={() => props.navigation.goBack()} style={styles.backIcon} name="arrowleft" size={24} color="white" />
-			<LinearGradient  colors={[colors.secondaryShade1, colors.secondaryShade2]} style={styles.linearGradient}>
-			<View style={styles.header}></View>
-			</LinearGradient>
-			<View style={styles.groupFactsContainer}>
-				<View style={styles.imageContainer} >
-				<Image source={{ uri: group.photoUrl }} style={styles.image} resizeMode="cover"></Image>
-				</View>
-				<Text style={styles.title}>{group.name}</Text>
-				<Text style={styles.subTitle}>{group.groupType === 1 ?'Fædregruppe' : 'Mødregruppe'}</Text>
-				<View style={styles.horizontalContainer} >
-					<Entypo style={{left: -10, bottom: 1}} name="location-pin" size={16} color={colors.darkGrey} />
-					<Text style={{...styles.smallText, left: -9, bottom: 1}}>{group.city}</Text>
-					<FontAwesome style={{left: 13, bottom: 1}}  name="calendar-o" size={13} color={colors.darkGrey} />
-					<Text style={{...styles.smallText, left: 16, bottom: 1}}>{convertDate2(group.dueDate)}</Text>
-				</View>
-				<View style={styles.buttonContainer} >
-					<TouchableOpacity style = {styles.directMessageButtonContainer} onPress={() => Alert.alert('Not supported yet')} >
-						<MaterialCommunityIcons name="chat-outline" size={24} color={'black'} />				
-					</TouchableOpacity>
-					<TouchableOpacity style={styles.requestButton} onPress={toggleOverlay} > 
-						<Text style={styles.buttonText}>Anmod</Text>
-					</TouchableOpacity>
-				</View>
-			</View>
-		</View>
-		<View style={styles.middleContainer} >
-			<View style={styles.descriptionContainer}>
-				<Text style={styles.smallTitle}>Om gruppen</Text>
-				<Text style={styles.descriptionText}>{group.description}</Text>
-			</View>
-		</View>
-		<View style={styles.bottomContainer} >
-		<TouchableOpacity style={styles.membersContainer} onPress={() => Alert.alert('Not sypported yet')} >
-		<Text style={styles.smallTitle}>Medlemmer</Text>
-		<View style={styles.memberPicturesContainer} >
-		{group.members.map((member, index) => (
-			<Image key={index} source={{uri: member.photoUrl}} style={styles.memberImage} resizeMode="cover"></Image>
-			))}
-			<View style={styles.memberImage}>
-			<Text style={styles.availableSpotsText}>{group.maxSize-group.members.length}</Text>
-			</View>
-			<SimpleLineIcons style={{position: 'absolute', left: 310}} name="arrow-right" size={16} color={colors.darkGrey} />
-			</View>
-			</TouchableOpacity>
-			<StaticMap style={styles.mapPreview} location={group.location}></StaticMap>	
-		</View>
-		<View>
-		</View>
-	</View>
-	)
-}
 
-export const screenOptions = navigationData => {
+    <View style={styles.topContainer}>
+        <AntDesign onPress={() => props.navigation.goBack()} style={styles.backIcon} name="arrowleft" size={24} color="white" />
+        <LinearGradient  colors={[colors.secondaryShade1, colors.secondaryShade2]} style={styles.linearGradient}>
+        <View style={styles.header}></View>
+        </LinearGradient>
+        <View style={styles.groupFactsContainer}>
+        <View style={styles.imageContainer} >
+        <Image source={{ uri: group.photoUrl }} style={styles.image} resizeMode="cover"></Image>
+        </View>
+        <Text style={styles.title}>{group.name}</Text>
+        <Text style={styles.subTitle}>{group.groupType === 1 ?'Fædregruppe' : 'Mødregruppe'}</Text>
+        <View style={styles.horizontalContainer} >
+        <Entypo style={{left: -10, bottom: 1}} name="location-pin" size={16} color={colors.darkGrey} />
+        <Text style={{...styles.smallText, left: -9, bottom: 1}}>{group.city}</Text>
+        <FontAwesome style={{left: 13, bottom: 1}}  name="calendar-o" size={13} color={colors.darkGrey} />
+        <Text style={{...styles.smallText, left: 16, bottom: 1}}>{convertDate2(group.dueDate)}</Text>
+        </View>
+        <View style={styles.buttonContainer} >
+        <TouchableOpacity style = {styles.directMessageButtonContainer} onPress={() => Alert.alert('Not supported yet')} >
+        <MaterialCommunityIcons name="chat-outline" size={24} color={'black'} />                
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.requestButton} onPress={toggleOverlay} > 
+        <Text style={styles.buttonText}>Anmod</Text>
+        </TouchableOpacity>
+        </View>
+        </View>
+        </View>
+        <View style={styles.middleContainer} >
+        <View style={styles.descriptionContainer}>
+        <Text style={styles.smallTitle}>Om gruppen</Text>
+        <Text style={styles.descriptionText}>{group.description}</Text>
+        </View>
+        </View>
+        <View style={styles.bottomContainer} >
+        <TouchableOpacity style={styles.membersContainer} onPress={() => Alert.alert('Not sypported yet')} >
+        <Text style={styles.smallTitle}>Medlemmer</Text>
+        <View style={styles.memberPicturesContainer} >
+        {group.membersDetails.map((member, index) => (
+            <Image key={index} source={{uri: member.photoUrl}} style={styles.memberImage} resizeMode="cover"></Image>
+            ))}
+            <View style={styles.memberImage}>
+            <Text style={styles.availableSpotsText}>{group.maxSize-group.members.length}</Text>
+            </View>
+            <SimpleLineIcons style={{position: 'absolute', left: 310}} name="arrow-right" size={16} color={colors.darkGrey} />
+            </View>
+            </TouchableOpacity>
+            <StaticMap style={styles.mapPreview} location={group.location}></StaticMap> 
+            </View>
+            <View>
+            </View>
+
+	</View>
+			)
+		}
+		
+		export const screenOptions = navigationData => {
 	return {
 		headerTitle: ''
 	}
