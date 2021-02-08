@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import {View, StyleSheet, Text, TextInput, TouchableOpacity, Animated } from 'react-native'
+import {View, StyleSheet, Text, TextInput, TouchableOpacity, Animated, Keyboard } from 'react-native'
 import { Entypo } from '@expo/vector-icons' 
 import colors from '../constants/colors'
 import {screenHeight} from '../constants/sizes'
@@ -9,9 +9,13 @@ import { useDispatch } from 'react-redux'
 
 const RequestModal = props => {
 	const dispatch = useDispatch()
+	const [keyboardActive, setKeyboardActive] = useState(false)
 	const [text, setText] = useState('')
 	const slideFromBottom = useRef(new Animated.Value(screenHeight)).current
 	const backgroundOpacity= useRef(new Animated.Value(0)).current
+
+	let keyboardDidShowListener = undefined;
+	let keyboardDidHideListener = undefined;
 
 
 	useEffect(() => {
@@ -41,6 +45,16 @@ const RequestModal = props => {
 		dispatch(setRequest(props.id, text))
 		props.toggleModal()
 	}
+
+	useEffect(() => {
+		keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => setKeyboardActive(true));
+		keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => setKeyboardActive(false));
+
+		return () => {
+			keyboardDidShowListener.remove();
+			keyboardDidHideListener.remove();
+		}
+	}, [])
   
 	return (
 		<View style = {styles.parent}>
@@ -50,24 +64,26 @@ const RequestModal = props => {
 					<Entypo name="cross" style={styles.cross} size={24} color="black" onPress={props.toggleModal} />
 					<Text style={styles.title}>Anmod</Text>
 				</View>
-				<View>
-					<Text style={styles.subTitle}>Besked</Text>
-					<View style={styles.textAreaContainer} >
-						<TextInput 
+				<View style={styles.contentContainer} >
+					<View>
+						<Text style={styles.subTitle}>Besked</Text>
+						<View style={styles.textAreaContainer} >
+							<TextInput 
 							placeholder='Lorem ipsum dolor sit amet..'
 							placeholderTextColor = {colors.mediumGrey}
 							style={styles.textArea} 
 							value={text} 
 							onChangeText={text => setText(text)}
 							multiline
-							numberOfLines={4}
+							numberOfLines={10}
 						/>
+						</View>
 					</View>
-				</View>
-				<View style={styles.buttonContainer} >
-					<TouchableOpacity style={styles.modalRequestButton} onPress={() => request()} > 
+						<View behavior='padding' style={ keyboardActive ? styles.buttonContainerWithKeyboard : styles.buttonContainer} >
+						<TouchableOpacity style={styles.modalRequestButton} onPress={() => request()} > 
 						<Text style={styles.buttonText}>Send anmodning</Text>
-					</TouchableOpacity>
+						</TouchableOpacity>
+						</View>
 				</View>
 			</Animated.View>
 		</View>
@@ -165,14 +181,27 @@ const styles = StyleSheet.create({
 		fontFamily: 'roboto-medium'
 	},
 	buttonContainer: {
-		position: 'absolute',
-		bottom: 20,
 		flexDirection: 'row',
 		justifyContent: 'space-evenly',
 		alignItems: 'center',
 		width: 300,
-		height: 50,  
+		height: 50,
+		position: 'absolute',
+		bottom: 80
 	},
+	buttonContainerWithKeyboard: {
+		flexDirection: 'row',
+		justifyContent: 'space-evenly',
+		alignItems: 'center',
+		width: 300,
+		height: 50,
+		top: 40
+	},
+	contentContainer: {
+		flexDirection: 'column',
+		alignItems: 'center',
+		height: '100%'
+	}
 
 })
 
