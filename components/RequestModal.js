@@ -2,29 +2,44 @@ import React, { useState, useRef, useEffect } from 'react';
 import {View, StyleSheet, Text, TextInput, TouchableOpacity, Animated } from 'react-native';
 import { Entypo } from '@expo/vector-icons'; 
 import colors from '../constants/colors'
-
+import {screenHeight} from '../constants/sizes'
 
 const RequestModal = props => {
 
-  const fadeAnim = useRef(new Animated.Value(0)).current  // Initial value for opacity: 0
+  const [text, setText] = useState('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vitae interdum arcu. Sed sed dignissim nulla, quis iaculis nisl. Mauris vel ex nisi. Sed porta erat nec ex euismod, eu commodo justo vestibulum. ')
+  const backgroundOpacity = useRef(new Animated.Value(screenHeight)).current
+  const slideFromBottom= useRef(new Animated.Value(0)).current
+
 
   useEffect(() => {
-    Animated.timing(
-      fadeAnim,
+    Animated.spring(
+      backgroundOpacity,
       {
-        toValue: 1,
-        duration: 500,
+        toValue: 0,
+        tension: 10,
         useNativeDriver: true
       }
     ).start();
-  }, [fadeAnim])
+  }, [backgroundOpacity])
 
-  const [text, setText] = useState('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vitae interdum arcu. Sed sed dignissim nulla, quis iaculis nisl. Mauris vel ex nisi. Sed porta erat nec ex euismod, eu commodo justo vestibulum. ')
+
+  useEffect(() => {
+    Animated.spring(
+      slideFromBottom,
+      {
+        toValue: 0.7,
+        tension: 10,
+        useNativeDriver: true
+      }
+    ).start();
+  }, [slideFromBottom])
+
+
   
   return (
-    <Animated.View style = {{...styles.parent, opacity: fadeAnim}}>
-      <View style={styles.background} ></View>
-      <View style={styles.modalContainer}>
+    <View style = {styles.parent}>
+      <Animated.View style={{...styles.background, opacity: slideFromBottom}}></Animated.View>
+      <Animated.View style={[styles.modalContainer, {transform: [{translateY: backgroundOpacity}]}]}>
         <View style={styles.topContainer}>
           <Entypo name="cross" style={styles.cross} size={24} color="black" onPress={props.toggleModal} />
           <Text style={styles.title}>Anmod</Text>
@@ -46,8 +61,8 @@ const RequestModal = props => {
             <Text style={styles.buttonText}>Send anmodning</Text>
           </TouchableOpacity>
           </View>
-      </View>
-    </Animated.View>
+      </Animated.View>
+    </View>
   );
 };
 
