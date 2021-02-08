@@ -4,16 +4,16 @@ import { LinearGradient } from 'expo-linear-gradient';
 import colors from '../../constants/colors'
 import {Entypo, FontAwesome, AntDesign, MaterialCommunityIcons, SimpleLineIcons} from '@expo/vector-icons';
 import { convertDate2 } from '../../Shared';
-import StaticMap from '../../components/StaticMap';
 import { useSelector } from 'react-redux';
 import MapView, { Marker } from 'react-native-maps';
+import RequestModal from '../../components/RequestModal';
 
 const GroupDetail = props => {
     const [visible, setVisible] = useState(false); // Pass 'visible' to the Modal component, to conditionally render it
 
 	const group = useSelector(state => state.allGroups.allGroups).find(group => group.key === props.route.params.group.key)
 
-	const toggleOverlay = () => {
+	const toggleModal = () => {
 		setVisible(!visible);
 	  };
 
@@ -24,7 +24,9 @@ const GroupDetail = props => {
 
 	return (
 	<View style={styles.parent}>
-
+	{visible &&
+		<RequestModal toggleModal={toggleModal}/>
+	}
     <View style={styles.topContainer}>
         <AntDesign onPress={() => props.navigation.goBack()} style={styles.backIcon} name="arrowleft" size={24} color="white" />
         <LinearGradient  colors={[colors.secondaryShade1, colors.secondaryShade2]} style={styles.linearGradient}>
@@ -46,7 +48,7 @@ const GroupDetail = props => {
         <TouchableOpacity style = {styles.directMessageButtonContainer} onPress={() => Alert.alert('Not supported yet')} >
         <MaterialCommunityIcons name="chat-outline" size={24} color={'black'} />                
         </TouchableOpacity>
-        <TouchableOpacity style={styles.requestButton} onPress={toggleOverlay} > 
+        <TouchableOpacity style={styles.requestButton} onPress={toggleModal} > 
         <Text style={styles.buttonText}>Anmod</Text>
         </TouchableOpacity>
         </View>
@@ -102,6 +104,8 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		backgroundColor: colors.lightGrey,
 		position: 'relative',
+		height: '100%',
+		width: '100%'
 	},
 
 	linearGradient: {
