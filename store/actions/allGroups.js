@@ -8,12 +8,24 @@ export const fetchAllGroups = () => {
 
 			let groups = Object.keys(groupObject.val()).map(key => {
 				const membersObject = groupObject.val()[key].members
+				const requestsObject = groupObject.val()[key].requests
 
-				let membersList = Object.keys(membersObject).map(key => {
-					return key
-				})
+				let membersList = [];
+				let requestsMap;
 
-				return {key, ...groupObject.val()[key], members: membersList}
+				if(membersObject) {
+					membersList = Object.keys(membersObject).map(key => {
+						return key
+					})
+				}
+
+				if(requestsObject) {
+					requestsMap = new Map(Object.entries(requestsObject))
+				} else {
+					requestsMap = new Map()
+				}
+
+				return {key, ...groupObject.val()[key], members: membersList, requests: requestsMap}
 			})
 			dispatch({type: 'FETCH_ALL_GROUPS', groups})
 		}))
@@ -44,5 +56,31 @@ export const setMembers = (groupId) => {
 			}))
 		  });
 		}))
+	}
 }
-}
+
+export const setRequest = (groupId, text) => {
+    return async (dispatch, getState) => {
+
+      const userId = getState().auth.userId;
+      const token = getState().auth.token;
+    
+      const response = await fetch(
+        `https://babyapp-ed94d.firebaseio.com/groups/${groupId}/requests/${userId}.json?auth=${token}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(text)
+        }
+      );
+  
+      if (!response.ok) {
+        throw new Error('Could not set request!');
+      }
+
+
+      dispatch({type: 'SET_REQUEST', groupId, userId, text});
+    }
+  }
