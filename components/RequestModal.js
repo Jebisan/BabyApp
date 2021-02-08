@@ -9,33 +9,33 @@ import { useDispatch } from 'react-redux'
 
 const RequestModal = props => {
 	const dispatch = useDispatch()
-	const [text, setText] = useState('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vitae interdum arcu. Sed sed dignissim nulla, quis iaculis nisl. Mauris vel ex nisi. Sed porta erat nec ex euismod, eu commodo justo vestibulum. ')
-	const backgroundOpacity = useRef(new Animated.Value(screenHeight)).current
-	const slideFromBottom= useRef(new Animated.Value(0)).current
-
-
-	useEffect(() => {
-		Animated.spring(
-			backgroundOpacity,
-			{
-				toValue: 0,
-				tension: 10,
-				useNativeDriver: true
-			}
-		).start()
-	}, [backgroundOpacity])
+	const [text, setText] = useState('')
+	const slideFromBottom = useRef(new Animated.Value(screenHeight)).current
+	const backgroundOpacity= useRef(new Animated.Value(0)).current
 
 
 	useEffect(() => {
 		Animated.spring(
 			slideFromBottom,
 			{
-				toValue: 0.7,
+				toValue: 0,
 				tension: 10,
 				useNativeDriver: true
 			}
 		).start()
 	}, [slideFromBottom])
+
+
+	useEffect(() => {
+		Animated.spring(
+			backgroundOpacity,
+			{
+				toValue: 0.7,
+				tension: 10,
+				useNativeDriver: true
+			}
+		).start()
+	}, [backgroundOpacity])
 
 	request = () => {
 		dispatch(setRequest(props.id, text))
@@ -44,8 +44,8 @@ const RequestModal = props => {
   
 	return (
 		<View style = {styles.parent}>
-			<Animated.View style={{...styles.background, opacity: slideFromBottom}}></Animated.View>
-			<Animated.View style={[styles.modalContainer, {transform: [{translateY: backgroundOpacity}]}]}>
+			<Animated.View style={{...styles.background, opacity: backgroundOpacity}}></Animated.View>
+			<Animated.View style={[styles.modalContainer, {transform: [{translateY: slideFromBottom }]}]}>
 				<View style={styles.topContainer}>
 					<Entypo name="cross" style={styles.cross} size={24} color="black" onPress={props.toggleModal} />
 					<Text style={styles.title}>Anmod</Text>
@@ -54,9 +54,11 @@ const RequestModal = props => {
 					<Text style={styles.subTitle}>Besked</Text>
 					<View style={styles.textAreaContainer} >
 						<TextInput 
+							placeholder='Lorem ipsum dolor sit amet..'
+							placeholderTextColor = {colors.mediumGrey}
 							style={styles.textArea} 
 							value={text} 
-							onChangeText={text => setText(text)} 
+							onChangeText={text => setText(text)}
 							multiline
 							numberOfLines={4}
 						/>
