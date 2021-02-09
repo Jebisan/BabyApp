@@ -7,7 +7,6 @@ import { convertDate2 } from '../../Shared'
 import { useSelector } from 'react-redux'
 import MapView, { Marker } from 'react-native-maps'
 import RequestModal from '../../components/RequestModal'
-import { setRequest } from '../../store/actions/allGroups'
 
 const GroupDetail = props => {
 	const [visible, setVisible] = useState(false) // Pass 'visible' to the Modal component, to conditionally render it
@@ -20,14 +19,10 @@ const GroupDetail = props => {
 		setVisible(!visible)
 	}
 
-	const checkIfRequested = () => {
+	useEffect(() => {
 		if(group.requests.has(userId)){
 			setRequested(true)
-		}
-	}
-
-	useEffect(() => {
-		checkIfRequested()
+		}	
 	}, [group.requests])
 
 	useEffect(() => {

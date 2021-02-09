@@ -153,7 +153,7 @@ keyExtractor={item => item.key}
   data={filteredGroups}
   renderItem={({ item }) => 
   <TouchableOpacity onPress={() => props.navigation.navigate('GroupDetail', {
-    group: item
+    id: item.key
   })}>
   <Group
   id={item.key}

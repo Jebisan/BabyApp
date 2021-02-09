@@ -11,7 +11,7 @@ export const fetchAllGroups = () => {
 				const requestsObject = groupObject.val()[key].requests
 
 				let membersList = [];
-				let requestsMap;
+				let requestsMap = new Map();
 
 				if(membersObject) {
 					membersList = Object.keys(membersObject).map(key => {
@@ -21,8 +21,6 @@ export const fetchAllGroups = () => {
 
 				if(requestsObject) {
 					requestsMap = new Map(Object.entries(requestsObject))
-				} else {
-					requestsMap = new Map()
 				}
 
 				return {key, ...groupObject.val()[key], members: membersList, requests: requestsMap}
