@@ -54,7 +54,7 @@ export const AuthNavigator = () => {
 const GroupsStackNavigator = createStackNavigator();
 
 export const GroupsNaviagator = () => {
-	return <GroupsStackNavigator.Navigator>
+	return <GroupsStackNavigator.Navigator screenOptions={{headerShown: false}} >
 				<GroupsStackNavigator.Screen name = 'Groups' component = {Groups} options = {groupsScreenOptions} />
 				<GroupsStackNavigator.Screen name = 'CreateGroup' component = {CreateGroup} options = {createGroupScreenOptions} />
 				<GroupsStackNavigator.Screen name = 'FindUsers' component = {FindUsers} options = {findUsersScreenOptions} />
