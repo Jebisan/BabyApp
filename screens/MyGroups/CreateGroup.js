@@ -1,76 +1,20 @@
-import React, {useState, useEffect, useCallback} from 'react'
-import {View, StyleSheet, Text, TextInput, Button } from 'react-native'
-import cityData from '../../cities'
+import React, {useState} from 'react'
+import {View, StyleSheet, Text, TextInput } from 'react-native'
 import {ButtonGroup} from 'react-native-elements'
-import {useDispatch, useSelector} from 'react-redux'
-import {convertDate} from '../../Shared'
-
 
 const CreateGroup = props => {
-	const { navigation } = props
 
 	const [selectedIndex, setSelectedIndex] = useState(0)
 	const [name, setName] = useState('')
 	const [description, setDescription] = useState('')
 	const [postalCode, setPostalCode] = useState('')
 	const [city, setCity] = useState('')
-	const [formattedDate, setFormattedDate] = useState('shit')
+	const [dueDate, setDueDate] = useState('December')
 
-	const myDueDate = useSelector(state => state.auth.dueDate)
-
-  
-
-	useEffect(() => {
-		setFormattedDate(convertDate(myDueDate))
-	}, [myDueDate])
-
-	const saveGroupData = useCallback(() => {
-		const groupData = {
-			name: name,
-			description: description,
-			postalCode: postalCode,
-			city: city,
-			photoUrl: 'https://firebasestorage.googleapis.com/v0/b/babyapp-ed94d.appspot.com/o/group.png?alt=media&token=5e41547b-be06-4bc0-a93b-47fdc659e00d',
-			type: selectedIndex,
-			dueDate: myDueDate
-		}
-
-		props.navigation.navigate('FindUsers', {
-			groupData: groupData
-		})
-
-	}, [name, description, postalCode, city, myDueDate, selectedIndex])
-
-	useEffect(() => {
-		navigation.setOptions({
-			headerRight: () => 
-			<Button title='Næste' 
-				onPress={saveGroupData} 
-			/>
-		})
-
-	}, [saveGroupData])
-
-
-	useEffect(() => {
-		if(postalCode.length===4){
-			cityData.forEach(city => {
-				if(city.id==postalCode){
-					setCity(city.name2)
-				} else if (postalCode===''){
-					setCity('')
-				}
-			})
-		} else {
-			setCity('')
-		}
-	}, [postalCode])
 
 	const updateIndex =(selectedIndex) => {
 		setSelectedIndex(selectedIndex)
 	}
-
-	const buttons = ['Mødregruppe', 'Fædregruppe']
 
 
 	return (
@@ -113,7 +57,7 @@ const CreateGroup = props => {
 
 			</View>
 			<View style={{ marginTop: 32 }}>
-				<Text style={styles.inputTitle}>Termin i {formattedDate}.</Text>
+				<Text style={styles.inputTitle}>Termin i {dueDate}.</Text>
 
 			</View>
 
@@ -121,13 +65,10 @@ const CreateGroup = props => {
 				<ButtonGroup
 					onPress={updateIndex}
 					selectedIndex={selectedIndex}
-					buttons={buttons}
+					buttons={['Mødregrupper', 'Fædregrupper']}
 					containerStyle={{height: 30}} 
 				/>
 			</View>
-
-
-
 		</View>
 	)
 }

@@ -8,6 +8,18 @@ import { HeaderButtons, Item } from 'react-navigation-header-buttons'
 const Groups = props => {
 	const myGroups = useSelector(state => state.myGroups)
 
+	useEffect(() => {
+		props.navigation.setOptions({		
+			headerRight: () => 
+			<HeaderButtons HeaderButtonComponent={HeaderButton}>
+				<Item
+					title="add"
+					iconName= 'ios-add'
+					onPress={() => props.navigation.navigate('CreateGroup')}
+				/>
+			</HeaderButtons>})
+	}, [])
+
 	return (
 		<View style={styles.parent}>    
 		<FlatList
@@ -40,15 +52,7 @@ export default Groups
 export const screenOptions = navigationData => {
 	return {
 		headerTitle: 'Mine grupper',
-		headerRight: () =>
-
-    <HeaderButtons HeaderButtonComponent={HeaderButton}>
-    	<Item
-    		title="add"
-    		iconName= 'ios-add'
-    		onPress={() => Alert.alert('Not supported at the moment.')/*navigationData.navigation.navigate('CreateGroup')*/}
-    	/>
-    </HeaderButtons>  }
+}
 }
 
 
