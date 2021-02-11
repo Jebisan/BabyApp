@@ -203,7 +203,7 @@ componentDidUpdate(){
                       }}
                       wrapperStyle={{
                         left: {
-                          backgroundColor: 'lightgrey',
+                          backgroundColor: '#e6e5eb',
                         },
                       }}
                     />
