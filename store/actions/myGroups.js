@@ -29,7 +29,7 @@ export const fetchUserGroups = () => {
             groupIdsArray.forEach(groupId => {
               Fire.firebase.database().ref("groups/"+groupId).once('value').then((snapshot => {
                 
-                const group = {id: snapshot.key, ...snapshot.val(), members: [], requests: []}
+                const group = {id: snapshot.key, ...snapshot.val(), members: [], requests: [], membersDetails: []}
                 dispatch({type: ADD_GROUP, group})
               }))
             }); 

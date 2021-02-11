@@ -13,14 +13,10 @@ const Group = props => {
   const membersDetails = useSelector(state => state.allGroups.allGroups).find(group => group.key === props.id).membersDetails
 
   useEffect(() => {
-    console.log(props)
-    if (!props.membersDetails) {
+    if (props.membersDetails.length === 0) {
       dispatch(setMembers(props.id))
     }
   }, [props.key])
-
-useEffect(() => {
-}, [props])
 
 
   return (
@@ -52,9 +48,6 @@ useEffect(() => {
         {membersDetails.map((member, index) => (
           <Image key={index} source={{uri: member.photoUrl}} style={styles.memberImage} resizeMode="cover"></Image>
           ))}
-          <View style={styles.memberImage}>
-            <Text style={styles.availableSpotsText}>{props.maxSize-props.members.length}</Text>
-          </View>
       </View>
       }
       </View>

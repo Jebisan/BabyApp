@@ -12,6 +12,8 @@ import directMessageReducer from './store/reducers/directMessage';
 import ReduxThunk from 'redux-thunk';
 import * as Font from 'expo-font'
 import { AppLoading } from 'expo'
+import { composeWithDevTools } from 'redux-devtools-extension';
+
 
 const fetchFonts = () => {
 return Font.loadAsync({
@@ -43,7 +45,14 @@ export default function App() {
     directMessages: directMessageReducer,
   });
 
-  const store = createStore(rootReducer, applyMiddleware(ReduxThunk)); 
+  const composeEnhancers = composeWithDevTools({
+    // Specify name here, actionsBlacklist, actionsCreators and other options if needed
+  });
+  // const store = createStore(rootReducer, applyMiddleware(ReduxThunk)); 
+  const store = createStore(rootReducer, /* preloadedState, */ composeEnhancers(
+    applyMiddleware(ReduxThunk),
+    // other store enhancers if any
+  ));
 
   return (
    <Provider store = {store}>

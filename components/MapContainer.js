@@ -6,12 +6,22 @@ import { useSelector, useDispatch } from 'react-redux';
 import {setSelectedGroup} from '../store/actions/allGroups'
 
 const MapContainer = props => {
-  const allGroups = useSelector(state => state.allGroups)
-
+  const reduxAllGroups = useSelector(state => state.allGroups.allGroups);
+  const myGroups = useSelector(state => state.myGroups);
   const [isFetching, setIsFetching] = useState(false);
   const [pickedLocation, setPickedLocation] = useState(defaultLocation);
+  const [allGroups, setAllGroups] = useState([]);
   const dispatch = useDispatch();
 
+  // Filter all my groups
+  useEffect(() => {
+    let matchedGroups = reduxAllGroups;
+    // Remove my groups from results
+    myGroups.forEach(myGroup => {
+      matchedGroups = matchedGroups.filter(group => group.key !== myGroup.id);
+    });
+    setAllGroups(matchedGroups)
+  }, [reduxAllGroups])
 
   //Denmark. Should be refactored to current location.
   const defaultLocation = {

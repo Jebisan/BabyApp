@@ -10,14 +10,10 @@ import {convertDate} from '../../Shared'
 
 const GroupScreen = props => {
   const { navigation } = props;
-  const groupData = useSelector(state => state.myGroups).find(group => group.id==props.route.params.id);
-  const myGroups = useSelector(state => state.myGroups);
-  const userId = useSelector(state => state.auth.userId)
+  const groupData = useSelector(state => state.myGroups).find(group => group.id === props.route.params.id);
 
   
   const dispatch = useDispatch();
-
-  const [requests, setRequests] = useState([])
 
   const saveGroupData = useCallback(() => {
     const data = {
@@ -56,8 +52,6 @@ useEffect(() => {
       dispatch(getRequests(groupData.id));
   }, [])
 
-
-  
 
   return (
     <View style={styles.parent}>

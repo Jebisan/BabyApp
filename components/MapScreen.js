@@ -8,8 +8,7 @@ import { useSelector } from 'react-redux';
 
 const MapScreen = props => {
   const [location, setLocation] = useState(props.location);
-  const allGroups = useSelector(state => state.allGroups.allGroups)
-  const selectedGroup = allGroups.find(group => group.selected === true); 
+  const selectedGroup = props.allGroups.find(group => group.selected === true); 
 
 
 
@@ -27,7 +26,7 @@ const MapScreen = props => {
 
   return (
       <MapView style={styles.map} mapType={'mutedStandard'} region={location} >
-      {props.allGroups.allGroups.map((group, index) => (
+      {props.allGroups && props.allGroups.map((group, index) => (
           <Marker key={group.key} coordinate={group.location} onPress={() => props.setSelectedGroupHandler(group.key)}>
           {group.selected?
             <View style={{...styles.group, ...styles.selectedGroupIcon}}>

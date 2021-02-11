@@ -23,7 +23,7 @@ export const fetchAllGroups = () => {
 					requestsMap = new Map(Object.entries(requestsObject))
 				}
 
-				return {key, ...groupObject.val()[key], members: membersList, requests: requestsMap}
+				return {key, ...groupObject.val()[key], members: membersList, requests: requestsMap, membersDetails: []}
 			})
 			dispatch({type: 'FETCH_ALL_GROUPS', groups})
 		}))

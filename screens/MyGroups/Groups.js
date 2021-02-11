@@ -1,29 +1,33 @@
 import React, {useEffect} from 'react'
-import {StyleSheet, FlatList, View, TouchableOpacity, Alert } from 'react-native'
+import {StyleSheet, FlatList, View, Alert } from 'react-native'
 import {useSelector} from 'react-redux'
 import Group from '../../components/Group'
 import HeaderButton from '../../components/HeaderButton'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
-import { Text } from 'react-native'
 
 const Groups = props => {
 	const myGroups = useSelector(state => state.myGroups)
-	const state = useSelector(state => state)
-
-	useEffect(() => {
-	}, [])
-
 
 	return (
-		<View style={styles.parent}>
-    
-
+		<View style={styles.parent}>    
 		<FlatList
 		data={myGroups}
 		renderItem={({ item }) => 
-		<Text>{item.name}</Text>
+		<Group
+		id={item.id}
+		name={item.name}
+		description={item.description}
+		city={item.city}
+		postalCode={item.postalCode}
+		photoUrl={item.photoUrl}
+		admin = {item.admin}
+		dueDate = {item.dueDate}
+		members = {item.members}
+		membersDetails = {item.membersDetails}
+		maxSize = {item.maxSize}
+		/>
 	  }
-	  keyExtractor={item => item.key}
+	  keyExtractor={item => item.id}
 	  />
 		</View>
 

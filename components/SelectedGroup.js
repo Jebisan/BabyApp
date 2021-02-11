@@ -12,7 +12,7 @@ const SelectedGroup = props => {
 
 
   useEffect(() => {
-    if (!props.group.membersDetails) {
+    if (props.group.membersDetails.length === 0) {
       dispatch(setMembers(props.group.key))
     } else {
     }
@@ -37,13 +37,13 @@ const SelectedGroup = props => {
           <Text style={{...styles.smallText, left: 18, bottom: 0}}>{convertDate2(props.group.dueDate)}</Text>
         </View>
 
-        {props.group.membersDetails && 
+        {props.group.membersDetails.length > 0 && 
           <View style={styles.membersContainer}>
           {props.group.membersDetails.map((member, index) => (
             <Image key={index} source={{uri: member.photoUrl}} style={styles.memberImage} resizeMode="cover"></Image>
             ))}
             <View style={styles.memberImage}>
-              <Text style={styles.availableSpotsText}>{props.group.maxSize-props.group.membersDetails.length}</Text>
+              <Text style={styles.availableSpotsText}>{props.group.maxSize-props.group.members.length}</Text>
             </View>
         </View>
         }
