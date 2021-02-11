@@ -9,7 +9,7 @@ export const SET_DID_TRY_AUTO_LOGIN = 'SET_DID_TRY_AUTO_LOGIN';
 import * as Facebook from 'expo-facebook';
 import firebase from 'firebase';
 import {fetchUserDms} from './directMessage';
-import {fetchUserGroups} from './group';
+import {fetchUserGroups} from './myGroups';
 import {fetchAllGroups} from './allGroups';
 import {fetchAllUsers} from './allUsers';
 

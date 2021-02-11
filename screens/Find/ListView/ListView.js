@@ -10,6 +10,7 @@ import { ButtonGroup } from "react-native-elements";
 
  const ListView = (props) => {
   const allGroups = useSelector(state => state.allGroups.allGroups)
+  const myGroups = useSelector(state => state.myGroups)
   const allUsers = useSelector(state => state.allUsers)
 
   const [searchText, setSearchText] = useState('');
@@ -50,13 +51,19 @@ useEffect(() => {
 
 const renderResults = city => {
   if(selectedIndex==0){
-    let tempGroupArray = [] 
+    let matchedGroups = [] 
     allGroups.forEach(group => {
       if(group.city.includes(city.navn.trim())){
-        tempGroupArray.push(group);
+        matchedGroups.push(group);
       }
     });
-    setFilteredGroups(tempGroupArray);
+
+    // Remove my groups from results
+    myGroups.forEach(myGroup => {
+      matchedGroups = matchedGroups.filter(group => group.key !== myGroup.id);
+    });
+
+    setFilteredGroups(matchedGroups);
   }
     if(selectedIndex==1){
       let tempUserArray = [] 

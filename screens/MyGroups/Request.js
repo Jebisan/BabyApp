@@ -7,7 +7,7 @@ import 'moment/locale/da';
 import ProgressCircle from 'react-native-progress-circle'
 import {useSelector, useDispatch} from 'react-redux';
 
-import {removeRequestFromGroup, removeRequestFromUser, addGroupToUser, addUserToGroup} from '../../store/actions/group';
+import {removeRequestFromGroup, removeRequestFromUser, addGroupToUser, addUserToGroup} from '../../store/actions/myGroups';
 
 import NotificationCenter from '../../NotificationCenter'
 

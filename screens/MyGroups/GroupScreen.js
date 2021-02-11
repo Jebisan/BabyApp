@@ -5,7 +5,7 @@ import Fire from '../../Fire';
 import { Ionicons} from '@expo/vector-icons';
 import HeaderButton from '../../components/HeaderButton';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
-import {getMembers, getRequests} from '../../store/actions/group'
+import {getMembers, getRequests} from '../../store/actions/myGroups'
 import {convertDate} from '../../Shared'
 
 const GroupScreen = props => {

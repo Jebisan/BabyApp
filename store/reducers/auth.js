@@ -1,5 +1,5 @@
 import { AUTHENTICATE, LOGOUT, SET_DID_TRY_AUTO_LOGIN, SET_FIREBASE_DATA, SET_PHOTO_URL, SET_PUSH_TOKEN} from '../actions/auth'
-import {ADD_REQUEST_TO_USER} from '../actions/group'
+import {ADD_REQUEST_TO_USER} from '../actions/myGroups'
 
 const INITIAL_STATE = {
   token: null,

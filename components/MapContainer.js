@@ -12,6 +12,7 @@ const MapContainer = props => {
   const [pickedLocation, setPickedLocation] = useState(defaultLocation);
   const dispatch = useDispatch();
 
+
   //Denmark. Should be refactored to current location.
   const defaultLocation = {
     latitude: 37.78,

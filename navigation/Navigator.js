@@ -32,13 +32,13 @@ import UserDetail, {screenOptions as userDetailScreenOptions} from '../screens/F
 import Find from '../screens/Find/Find'
 import MapScreen from '../components/MapScreen'
 
-//GROUPS
-import Groups, {screenOptions as groupsScreenOptions} from '../screens/Group/Groups'
-import FindUsers, {screenOptions as findUsersScreenOptions} from '../screens/Group/FindUsers'
-import CreateGroup, {screenOptions as createGroupScreenOptions} from '../screens/Group/CreateGroup'
-import GroupScreen, {screenOptions as groupScreenScreenOptions} from '../screens/Group/GroupScreen'
-import AddUsersToGroup, {screenOptions as addUsersToGroupScreenOptions} from '../screens/Group/AddUsersToGroup'
-import Request from '../screens/Group/Request' // SHOULD BE MOVED TO COMPONENTS. NOT A SCREEN.
+//MYGROUPS
+import Groups, {screenOptions as groupsScreenOptions} from '../screens/MyGroups/Groups'
+import FindUsers, {screenOptions as findUsersScreenOptions} from '../screens/MyGroups/FindUsers'
+import CreateGroup, {screenOptions as createGroupScreenOptions} from '../screens/MyGroups/CreateGroup'
+import GroupScreen, {screenOptions as groupScreenScreenOptions} from '../screens/MyGroups/GroupScreen'
+import AddUsersToGroup, {screenOptions as addUsersToGroupScreenOptions} from '../screens/MyGroups/AddUsersToGroup'
+import Request from '../screens/MyGroups/Request' // SHOULD BE MOVED TO COMPONENTS. NOT A SCREEN.
 import Colors from '../constants/colors';
 
 

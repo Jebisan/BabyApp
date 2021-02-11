@@ -1,9 +1,8 @@
 import React, {useState, useEffect, useCallback} from 'react'
 import {View, StyleSheet, Text, TextInput, Button, FlatList, TouchableOpacity } from 'react-native'
-import Fire from '../../Fire'
 import User from '../../components/User'
 import {Ionicons} from '@expo/vector-icons'
-import {createGroup} from '../../store/actions/group'
+import {createGroup} from '../../store/actions/myGroups'
 import {useDispatch, useSelector} from 'react-redux'
 
 
