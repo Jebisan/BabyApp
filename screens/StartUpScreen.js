@@ -8,8 +8,18 @@ const StartUpScreen = props => {
     const dispatch = useDispatch();
 
     const [loading, setLoading] = useState(false);
+    const [valid, setValid] = useState(true);
 
     useEffect(() => {   
+
+        const checkVersion = () => {
+            if (!valid) {
+                Alert.alert('Du bliver nødt til at opdatere bror..')
+                return;
+            } else {
+                tryLogin();
+            }
+        }
 
         const tryLogin = async () => {
             setLoading(true);
@@ -37,8 +47,8 @@ const StartUpScreen = props => {
                 console.log('Error fetch user data in StartUpScreen')
             }
         };
-
-        tryLogin();
+        
+        checkVersion()
     }, [dispatch])
 
     return <View style={styles.screen}>

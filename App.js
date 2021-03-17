@@ -8,6 +8,7 @@ import authReducer from './store/reducers/auth';
 import myGroupsReducer from './store/reducers/myGroups';
 import allGroupsReducer from './store/reducers/allGroups';
 import allUsersReducer from './store/reducers/allUsers';
+import findReducer from './store/reducers/find.js';
 import directMessageReducer from './store/reducers/directMessage';
 import ReduxThunk from 'redux-thunk';
 import * as Font from 'expo-font'
@@ -42,6 +43,7 @@ export default function App() {
     allGroups: allGroupsReducer,
     allUsers: allUsersReducer,
     myGroups: myGroupsReducer,
+    find: findReducer,
     directMessages: directMessageReducer,
   });
 

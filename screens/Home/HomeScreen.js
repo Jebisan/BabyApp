@@ -1,12 +1,20 @@
-import React, { useEffect } from 'react';
-import {View, StyleSheet, Text } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, Text, TextInput, ScrollView, TouchableOpacity, Keyboard } from "react-native";
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
 import {useSelector} from 'react-redux';
+import colors from '../../constants/colors';
+import { MaterialIcons } from '@expo/vector-icons'; 
+import { AntDesign } from '@expo/vector-icons'; 
+import SearchField from '../../components/SearchField';
 
 const HomeScreen = props => {
 
+  const [searchString, setSearchString] = useState('');
+  const [inFocus, setInFocus] = useState(false);
   const allGroups = useSelector(state => state.allGroups)
+  
+  
   useEffect(() => {
   }, [allGroups])
 
@@ -75,12 +83,33 @@ useEffect(() => {
           }
   };
 
+  const clear = () => {
+      setSearchString('')
+  }
+
+  const back = () => {
+    console.log('BACK');
+    setSearchString('');
+    setInFocus(false);
+    Keyboard.dismiss();
+  }
+
+  useEffect(() => {
+      if(inFocus){
+          console.log('In focus!')
+      } else {
+          console.log('Out of focus')
+      }
+  }, [inFocus])
+  
+
   return (
-    <View style = {styles.parent}>
-    <Text style = {styles.headerText}>Velkommen tilbage!</Text>
-    </View>
+          <View style={styles.parent}>
+            <SearchField />
+          </View>
+
   );
-};
+}
 
 HomeScreen.navigationOptions = navigationData => {
 
@@ -91,13 +120,12 @@ HomeScreen.navigationOptions = navigationData => {
 
 const styles = StyleSheet.create({
   parent: {
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    marginTop: 100
-  } ,
-  headerText: {
-    fontSize: 26,
-    fontWeight: "bold"
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: '100%',
+      height: '100%',
+      backgroundColor: colors.lightGrey,
   },
 });
 

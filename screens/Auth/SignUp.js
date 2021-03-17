@@ -24,9 +24,9 @@ const SignUp = props => {
 
     if(password===confirmedPassword){
       try {
-          Alert.alert('Not supported at this moment.');
-        //await dispatch(signUp(email, password))        
-        //props.navigation.navigate('CreateAdditionalInformation')
+          // Alert.alert('Not supported at this moment.');
+        await dispatch(signUp(email, password))        
+        props.navigation.navigate('CreateAdditionalInformation')
       } catch (err) {
         setError(err.message);
         setIsLoading(false);
