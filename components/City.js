@@ -1,44 +1,40 @@
+import { Entypo } from '@expo/vector-icons';
 import React from 'react';
 import {View, StyleSheet, Text, Image } from 'react-native';
+import colors from '../constants/colors';
 
 
 const City = props => {
 
 
   return (
-    <View style = {styles.parent}>
-      <Text style= {styles.titleText}>{name}</Text>
+    <View style = {styles.container}>
+      <Entypo name="location-pin" size={24} color={colors.darkGrey} />
+      <Text style= {styles.city}>{props.name}</Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  parent: {
-    paddingTop: 10,
+  container: {
+    flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
-  } ,
-  titleText: {
-    fontSize: 20,
-    fontWeight: "bold"
-  },
-  descriptionText: {
-    fontSize: 18,
-  },
-  wishContainer: {
-    borderStyle: 'solid',
+    padding: 10,
+    width: 330,
+    
+    /*
     borderWidth: 1,
-    borderColor: 'lightgrey',
-    height: 90,
-    width: 350,
+    borderColor: 'black',
+    borderStyle: 'solid'
+    */
+
   },
-  horizontalContainer: {
-    flexDirection: 'row'
+  city: {
+    fontSize: 14,
+    fontFamily: 'roboto-regular',
+    paddingLeft: 20,
   },
-  verticalContainer: {
-    flexDirection: 'column',
-    padding: 7, 
-  }
 });
 
 export default City;

@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, TextInput, ScrollView, TouchableOpacity, Keyboard } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
 import {useSelector} from 'react-redux';
 import colors from '../../constants/colors';
-import { MaterialIcons } from '@expo/vector-icons'; 
-import { AntDesign } from '@expo/vector-icons'; 
 import SearchField from '../../components/SearchField';
 
 const HomeScreen = props => {
 
-  const [searchString, setSearchString] = useState('');
-  const [inFocus, setInFocus] = useState(false);
   const allGroups = useSelector(state => state.allGroups)
   
   
@@ -82,26 +78,6 @@ useEffect(() => {
             }
           }
   };
-
-  const clear = () => {
-      setSearchString('')
-  }
-
-  const back = () => {
-    console.log('BACK');
-    setSearchString('');
-    setInFocus(false);
-    Keyboard.dismiss();
-  }
-
-  useEffect(() => {
-      if(inFocus){
-          console.log('In focus!')
-      } else {
-          console.log('Out of focus')
-      }
-  }, [inFocus])
-  
 
   return (
           <View style={styles.parent}>
