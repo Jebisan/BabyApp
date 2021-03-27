@@ -26,7 +26,7 @@ const SearchField = props => {
 	}
 
 	const back = () => {
-		if (!searchString) {
+		if (!searchString && selectedCity) {
 			setSearchString(selectedCity.navn);
 		}
 		setInFocus(false);
