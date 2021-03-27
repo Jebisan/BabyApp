@@ -43,7 +43,8 @@ const Group = props => {
         <FontAwesome style={{left: 16, bottom: 0}}  name="calendar-o" size={10} color={colors.darkGrey} />
         <Text style={{...styles.smallText, left: 18, bottom: 0}}>{convertDate2(props.dueDate)}</Text>
       </View>
-      {membersDetails && 
+      {
+        membersDetails && 
         <View style={styles.membersContainer}>
         {membersDetails.map((member, index) => (
           <Image key={index} source={{uri: member.photoUrl}} style={styles.memberImage} resizeMode="cover"></Image>

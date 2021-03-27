@@ -1,56 +1,72 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, Keyboard, FlatList } from 'react-native'
 import colors from '../constants/colors'
-import { MaterialIcons } from '@expo/vector-icons' 
-import { AntDesign } from '@expo/vector-icons' 
+import { AntDesign, MaterialIcons } from '@expo/vector-icons' 
 import SwitchSelector from 'react-native-switch-selector'
-import { SafeAreaView } from 'react-native'
 import City from './City'
+import { useSelector } from 'react-redux'
+import User from '../components/User'
+import Group from '../components/Group'
 
 
 const SearchField = props => {
+	const allUsers = useSelector(state => state.allUsers)
+	const allGroups = useSelector(state => state.allGroups.allGroups)
 
 	const [searchString, setSearchString] = useState('')
-	const [results, setResults] = useState([])
-	const [selectedIndex, setSelectedIndex] = useState(0)
+	const [cityResults, setCityResults] = useState([])
+	const [usersResults, setUsersResults] = useState([])
+	const [groupsResults, setGroupsResults] = useState([])
+	const [selectedCity, setSelectedCity] = useState(undefined)
 	const [inFocus, setInFocus] = useState(false)
+	const [selectedSearchType, setSelectedSearchType] = useState(0)
 
 	const clear = () => {
 		setSearchString('')
 	}
 
 	const back = () => {
-		console.log('BACK')
-		setSearchString('')
-		setInFocus(false)
+		if (!searchString) {
+			setSearchString(selectedCity.navn);
+		}
+		setInFocus(false);
 		Keyboard.dismiss()
 	}
 
 	useEffect(() => {
-		console.log(results)
-	}, [results])
-
-	useEffect(() => {
 		if (!searchString) {
-			setResults([])
 			return
 		}
-		setResults([])
-		fetch(`https://api.dataforsyningen.dk/kommuner/autocomplete?q=${searchString}`)
+		setCityResults([])
+		if(inFocus){
+			fetch(`https://api.dataforsyningen.dk/postnumre/autocomplete?q=${searchString}`)
 			.then(response => response.json())
 			.then(data => {
-				setResults(data)
+				  const filteredArr = [...new Map(data.map(item => [item.postnummer.navn, item])).values()]
+				setCityResults(filteredArr)
 			}
 			)
+		}
+
 	}, [searchString])
 
 	useEffect(() => {
-		if(inFocus){
-			console.log('In focus!')
-		} else {
-			console.log('Out of focus')
+		if(!selectedCity){
+			return;
 		}
-	}, [inFocus])
+		setSearchString(selectedCity.navn)
+		setInFocus(false)
+		setCityResults([]);
+		Keyboard.dismiss()
+
+		if (selectedSearchType === 0){
+			const groups = allGroups.filter(group => group.city === selectedCity.navn)
+			setGroupsResults(groups);
+		} else if (selectedSearchType === 1) {
+			const users = allUsers.filter(user => user.city ===selectedCity.navn)
+			setUsersResults(users);
+		}
+	}, [selectedCity, selectedSearchType])
   
 	const options = [
 		{ label: 'Grupper', value: 0 },
@@ -61,11 +77,11 @@ const SearchField = props => {
 		<View style={styles.parent}>
 			<View style={styles.container}>
 				<View style={styles.searchbarContainer} >
-					<TouchableOpacity style={inFocus?{display:'flex'}:{display:'none'}}   onPress={() => back()} >
+					<TouchableOpacity style={inFocus?{display:'flex'}:{display:'none'}}  onPress={() => back()} >
 						<AntDesign name="arrowleft" size={30} color={colors.darkGrey} />
 					</TouchableOpacity>
 					<View style={styles.textInputContainer} >
-						<TouchableOpacity onPress={() => clear()} >
+						<TouchableOpacity >
 							<MaterialIcons style={!inFocus?{display:'flex'}:{display:'none'}} name="search" size={24} color={colors.darkGrey} />
 						</TouchableOpacity>
 						<TextInput
@@ -77,7 +93,10 @@ const SearchField = props => {
 							onFocus={() => setInFocus(true)}
 						/>
 						<View style={{position: 'absolute', right: 0, paddingRight: 15}} >
-							<MaterialIcons onPress={() => clear()} style={searchString.length>0?{display:'flex'}:{display:'none'}} name="cancel" size={24} color={colors.darkGrey} />
+							<MaterialIcons name="filter-list" style={ selectedCity && !inFocus? {display: 'flex'} : {display:'none'}}  size={24} color="black" />
+							<MaterialIcons onPress={() => clear()} style={
+								searchString.length > 0 && inFocus ? { display : 'flex' } : { display : 'none' }
+							} name="cancel" size={24} color={colors.darkGrey} />
 						</View>
 					</View>
 				</View>
@@ -85,7 +104,7 @@ const SearchField = props => {
 					<SwitchSelector 
 						options={options} 
 						initial={0} 
-						onPress={value => console.log(`Call onPress with value: ${value}`)} 
+						onPress={value => setSelectedSearchType(value)} 
 						textColor={'black'} //'#7a44cf'
 						selectedColor={'black'}
 						backgroundColor={'#eeeef0'}
@@ -98,15 +117,53 @@ const SearchField = props => {
                     
 				</View>
 				<View style={styles.resultsContainer} >
+				{
+					inFocus ?
 					<FlatList
-						data={results}
-						keyExtractor={item => item.tekst}
+						keyboardShouldPersistTaps='handled'
+						data={cityResults}
+						keyExtractor={item => item.postnummer.nr}
 						renderItem={({ item }) => 
-						<TouchableOpacity onPress={() => console.log(item.kommune.navn)} >
-							<City name={item.kommune.navn} />						
+						<TouchableOpacity onPress={() => setSelectedCity(item.postnummer)} >
+							<City name={item.postnummer.navn} />						
 						</TouchableOpacity>
 						}
 					/>
+					:
+					<FlatList
+					keyboardShouldPersistTaps='handled'
+					data={selectedSearchType === 0 ? groupsResults : usersResults}
+					keyExtractor={item => item.key}
+					renderItem={({ item }) => 
+					<TouchableOpacity>
+					{
+						selectedSearchType=== 0 ? 
+						<Group
+						id={item.key}
+						name={item.name}
+						description={item.description}
+						city={item.city}
+						postalCode={item.postalCode}
+						photoUrl={item.photoUrl}
+						admin = {item.admin}
+						dueDate = {item.dueDate}
+						members = {item.members}
+						membersDetails = {item.membersDetails}
+						maxSize = {item.maxSize}
+						/>
+						: 
+						<User 
+							name={item.firstname} 
+							postalCode={item.postalCode} 
+							city={item.city}
+							photoUrl={item.photoUrl} 
+						/>	
+					}
+
+					</TouchableOpacity>					}
+					/>
+
+				}
 				</View>
 			</View>
                 
@@ -182,11 +239,13 @@ const styles = StyleSheet.create({
 		position: 'relative',
 		width: 330,
 		height: 500,
+
 		/*
 		borderWidth: 1, 
 		borderStyle: 'solid', 
 		borderColor: 'lightgrey',
 		*/
+
 	}
 })
 
