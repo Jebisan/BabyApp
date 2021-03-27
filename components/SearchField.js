@@ -22,7 +22,10 @@ const SearchField = props => {
 	const [selectedSearchType, setSelectedSearchType] = useState(0)
 
 	const clear = () => {
-		setSearchString('')
+		setSearchString('');
+		setSelectedCity(undefined);
+		setUsersResults([]);
+		setGroupsResults([]);
 	}
 
 	const back = () => {
