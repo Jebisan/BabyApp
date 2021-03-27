@@ -26,6 +26,7 @@ const SearchField = props => {
 		setSelectedCity(undefined);
 		setUsersResults([]);
 		setGroupsResults([]);
+		setCityResults([])
 	}
 
 	const back = () => {
