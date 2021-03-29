@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: 'lightgrey',
     height: 90,
-    width: 350,
+    width: 320,
   },
   horizontalContainer: {
     flexDirection: 'row'

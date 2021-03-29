@@ -1,285 +1,291 @@
-import React, { useEffect, useState } from 'react'
-import { StyleSheet, Button, Text, View, SafeAreaView, FlatList, TouchableOpacity} from 'react-native'
+import React, { useEffect, useState, useReducer } from 'react'
+import { useSelector } from 'react-redux'
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Keyboard, FlatList } from 'react-native'
+import colors from '../../../constants/colors'
+import { AntDesign, MaterialIcons } from '@expo/vector-icons' 
+import SwitchSelector from 'react-native-switch-selector'
+import City from '../../../components/City'
 import User from '../../../components/User'
 import Group from '../../../components/Group'
-import {useDispatch, useSelector} from 'react-redux'
-import Autocomplete from 'react-native-autocomplete-input'
-import Colors from '../../../constants/colors'
-import { ButtonGroup } from 'react-native-elements'
-import { setShowViewChangerButton } from '../../../store/actions/find'
+
+const initialState = {
+	searchString: '',
+	cityResults: [],
+	usersResults: [],
+	groupsResults: [],
+	selectedCity: undefined,
+	inFocus: false,
+	selectedSearchType: 0
+};
 
 
-const ListView = (props) => {
-	// Data
-	const allGroups = useSelector(state => state.allGroups.allGroups)
-	const myGroups = useSelector(state => state.myGroups)
+function reducer(state, action) {
+	switch (action.type) {
+		case 'SET_SEARCH_STRING':
+			return {...state, searchString: action.searchString};
+		case 'SET_CITY_RESULTS':
+			return {...state, cityResults: action.cityResults};
+		case 'SET_USERS_RESULTS': 
+			return {...state, usersResults: action.usersResults}
+		case 'SET_GROUPS_RESULTS': 
+			return {...state, groupsResults: action.groupsResults}
+		case 'SET_SELECTED_CITY':
+			return {...state, selectedCity: action.selectedCity}
+		case 'SET_IN_FOCUS':
+			return {...state, inFocus: action.inFocus}
+		case 'SET_SELECTED_SEARCH_TYPE':
+			return {...state, selectedSearchType: action.selectedSearchType}
+	  default:
+		throw new Error();
+	}
+  }
+
+const ListView = props => {
 	const allUsers = useSelector(state => state.allUsers)
-	const dispatch = useDispatch()
+	const allGroups = useSelector(state => state.allGroups.allGroups)
 
-	// States
+	const [searchString, setSearchString] = useState('')
+	const [cityResults, setCityResults] = useState([])
+	const [usersResults, setUsersResults] = useState([])
+	const [groupsResults, setGroupsResults] = useState([])
+	const [selectedCity, setSelectedCity] = useState(undefined)
+	const [inFocus, setInFocus] = useState(false)
+	const [selectedSearchType, setSelectedSearchType] = useState(0)
 
-	const [searchMode, setSearchMode] = useState(false)
-  
+	const [state, dispatch] = useReducer(reducer, initialState);
 
-	const [searchText, setSearchText] = useState('')
-	const [selectedIndex, setSelectedIndex] = useState(0)
-	const [filteredUsers, setFilteredUsers] = useState([])
-	const [filteredGroups, setFilteredGroups] = useState([])
-	const [cityData, setCityData] = useState([])
-	const [hideResults, setHideResults] = useState(false)
 
+	const clear = () => {
+		setSearchString('');
+		setSelectedCity(undefined);
+		setUsersResults([]);
+		setGroupsResults([]);
+		setCityResults([])
+	}
+
+	const back = () => {
+		if (!searchString && selectedCity) {
+			setSearchString(selectedCity.navn);
+		}
+		setInFocus(false);
+		Keyboard.dismiss()
+	}
 
 	useEffect(() => {
-		setHideResults(false)
-		if(searchText) {
-			fetch(`https://dawa.aws.dk/postnumre/autocomplete?q=${searchText}`).then((response) => {
-				if (response.status !== 200) {
-					console.log('Looks like there was a problem. Status Code: ' + response.status)
-					return
-				}      
-				response.json().then(data => {
-					const newData = []
-					data.forEach(city => {
-						newData.push(city.postnummer)
-					})
-					setCityData(newData)
-				})
+		if (!searchString) {
+			return
+		}
+		setCityResults([])
+		if(inFocus){
+			fetch(`https://api.dataforsyningen.dk/postnumre/autocomplete?q=${searchString}`)
+			.then(response => response.json())
+			.then(data => {
+				  const filteredArr = [...new Map(data.map(item => [item.postnummer.navn, item])).values()]
+				setCityResults(filteredArr)
 			}
-			).catch(function(err) {
-				console.log('Fetch Error :-S', err)
-			})
-		} 
-		else {
-			setCityData([])
+			)
 		}
-	}, [searchText])
 
-
-	const renderResults = city => {
-		if(selectedIndex==0){
-			let matchedGroups = [] 
-			allGroups.forEach(group => {
-				if(group.city.includes(city.navn.trim())){
-					matchedGroups.push(group)
-				}
-			})
-
-			// Remove my groups from results
-			myGroups.forEach(myGroup => {
-				matchedGroups = matchedGroups.filter(group => group.key !== myGroup.id)
-			})
-
-			setFilteredGroups(matchedGroups)
-		}
-		if(selectedIndex==1){
-			let tempUserArray = [] 
-			allUsers.forEach(user => {
-				if(user.city.trim().includes(city.navn.trim())){
-					tempUserArray.push(user)
-				} else {
-				}
-			})
-			setFilteredUsers(tempUserArray)
-		}
-	}
-  
-	setSelectedCityHandler = (item) => {
-		renderResults(item)
-		setHideResults(true)
-		setSearchText('')
-		setSearchMode(false);
-	}
+	}, [searchString])
 
 	useEffect(() => {
-		if(searchMode === true) {
-			dispatch(setShowViewChangerButton(false))
-		} else {
-			dispatch(setShowViewChangerButton(true))
+		if(!selectedCity){
+			return;
 		}
-	}, [searchMode])
+		setSearchString(selectedCity.navn)
+		setInFocus(false)
+		setCityResults([]);
+		Keyboard.dismiss()
+
+		if (selectedSearchType === 0){
+			const groups = allGroups.filter(group => group.city === selectedCity.navn)
+			setGroupsResults(groups);
+		} else if (selectedSearchType === 1) {
+			const users = allUsers.filter(user => user.city ===selectedCity.navn)
+			setUsersResults(users);
+		}
+	}, [selectedCity, selectedSearchType])
+  
+	const options = [
+		{ label: 'Grupper', value: 0 },
+		{ label: 'Personer', value: 1 },
+	]
 
 	return (
-		<SafeAreaView style= {styles.parentContainer} >
-			<View style={styles.topbarContainer} >
-				<View style={styles.searchInputContainer} >
-					<Autocomplete
-						onFocus={() => setSearchMode(true)}
-						inputContainerStyle={styles.searchInputContainer}
-						containerStyle={styles.containerStyle}
-						listContainerStyle = {styles.listContainerStyle}
-						listStyle	= {styles.listStyle}
-						style={styles.searchInput}
-						keyExtractor={item => item.nr}
-						data={cityData}
-						hideResults={hideResults}
-						placeholder="Søg"
-						onChangeText={text => setSearchText(text)}
-						renderItem={({ item, i }) => (
-							<TouchableOpacity onPress={() => setSelectedCityHandler(item)}>
-								<Text>{item.navn}</Text>
-							</TouchableOpacity>
-						)}
-					/>
-				</View>
-  
-				<ButtonGroup
-					onPress={index => setSelectedIndex(index)}
-					selectedIndex={selectedIndex}
-					buttons={['Grupper', 'Personer']}
-					containerStyle={styles.buttonContainer} 
-					selectedButtonStyle={styles.buttonSelected}
-					buttonStyle={styles.button}
-					textStyle={styles.textStyle}
-					selectedTextStyle={styles.textStyle}
-				/>
-  
-				{
-					// Border under ButtonGroup
-					<View style={{top: 20, borderWidth: 0.5, width: '100%', borderColor: Colors.mediumGrey}} ></View>
-				}
-			</View>
-
-			{
-				searchMode 
-					? 
-					<Text>Searching..</Text>
-					: 
-					<View style={styles.foundUsersContainer}>
-						<SafeAreaView>
-							{selectedIndex===1 &&
-    <FlatList
-    	data={filteredUsers}
-    	renderItem={({ item }) => 
-    		<TouchableOpacity onPress={() => props.navigation.navigate('UserDetail', {
-    			id: item.key,
-    			name: item.name,
-    			gender: item.gender,
-    			dueDate: item.dueDate,
-    			city: item.city,
-    			postalCode: item.postalCode,
-    			birthday: item.birthday,
-    			photoUrl: item.photoUrl,
-    			firstTimer: item.firstTimer,
-    			pushToken: item.pushToken,
-    			children: item.children
-    		})}>
-    			<User
-    				name={item.name}
-    				dueDate={item.dueDate}
-    				gender={item.gender}
-    				city={item.city}
-    				postalCode={item.postalCode}
-    				photoUrl={item.photoUrl}
-    			/>
-    		</TouchableOpacity>
-    	}
-    	keyExtractor={item => item.key}
-    />
-							}
-  
-							{selectedIndex===0 &&
-    <FlatList
-    	data={filteredGroups}
-    	renderItem={({ item }) => 
-    		<TouchableOpacity onPress={() => props.navigation.navigate('GroupDetail', {
-    			id: item.key
-    		})}>
-    			<Group
-    				id={item.key}
-    				name={item.name}
-    				description={item.description}
-    				city={item.city}
-    				postalCode={item.postalCode}
-    				photoUrl={item.photoUrl}
-    				admin = {item.admin}
-    				dueDate = {item.dueDate}
-    				members = {item.members}
-    				membersDetails = {item.membersDetails}
-    				maxSize = {item.maxSize}
-    			/>
-    		</TouchableOpacity>
-    	}
-    	keyExtractor={item => item.key}
-    />}
-  
-						</SafeAreaView>          
+		<View style={styles.parent}>
+			<View style={styles.container}>
+				<View style={styles.searchbarContainer} >
+					<TouchableOpacity style={inFocus?{display:'flex'}:{display:'none'}}  onPress={() => back()} >
+						<AntDesign name="arrowleft" size={30} color={colors.darkGrey} />
+					</TouchableOpacity>
+					<View style={styles.textInputContainer} >
+						<TouchableOpacity >
+							<MaterialIcons style={!inFocus?{display:'flex'}:{display:'none'}} name="search" size={24} color={colors.darkGrey} />
+						</TouchableOpacity>
+						<TextInput
+							onChangeText={text => setSearchString(text)}
+							placeholder={'Søg'}
+							style={styles.textInput}
+							value={searchString}
+							keyboardType={'web-search'}
+							onFocus={() => setInFocus(true)}
+						/>
+						<View style={{position: 'absolute', right: 0, paddingRight: 15}} >
+							<MaterialIcons name="filter-list" style={ selectedCity && !inFocus? {display: 'flex'} : {display:'none'}}  size={24} color="black" />
+							<MaterialIcons onPress={() => clear()} style={
+								searchString.length > 0 && inFocus ? { display : 'flex' } : { display : 'none' }
+							} name="cancel" size={24} color={colors.darkGrey} />
+						</View>
 					</View>
-			}
+				</View>
+				<View style={styles.buttonContainer} >
+					<SwitchSelector 
+						options={options} 
+						initial={0} 
+						onPress={value => setSelectedSearchType(value)} 
+						textColor={'black'} //'#7a44cf'
+						selectedColor={'black'}
+						backgroundColor={'#eeeef0'}
+						buttonColor={'white'}
+						borderColor={'#eeeef0'}
+						selectedTextStyle={{fontFamily:'roboto-bold'}}
+						textStyle={{fontFamily:'roboto-regular'}}
+						hasPadding={true}
+					/>
+                    
+				</View>
+				<View style={styles.resultsContainer} >
+				{
+					inFocus ?
+					<FlatList
+						horizontal={false}
+						keyboardShouldPersistTaps='handled'
+						data={cityResults}
+						keyExtractor={item => item.postnummer.nr}
+						renderItem={({ item }) => 
+						<TouchableOpacity onPress={() => setSelectedCity(item.postnummer)} >
+							<City name={item.postnummer.navn} />						
+						</TouchableOpacity>
+						}
+					/>
+					:
+					<FlatList
+					horizontal={false}
+					keyboardShouldPersistTaps='handled'
+					data={selectedSearchType === 0 ? groupsResults : usersResults}
+					keyExtractor={item => item.key}
+					renderItem={({ item }) => 
+					<TouchableOpacity>
+					{
+						selectedSearchType=== 0 ? 
+						<Group
+						id={item.key}
+						name={item.name}
+						description={item.description}
+						city={item.city}
+						postalCode={item.postalCode}
+						photoUrl={item.photoUrl}
+						admin = {item.admin}
+						dueDate = {item.dueDate}
+						members = {item.members}
+						membersDetails = {item.membersDetails}
+						maxSize = {item.maxSize}
+						/>
+						: 
+						<User 
+							name={item.firstname} 
+							postalCode={item.postalCode} 
+							city={item.city}
+							photoUrl={item.photoUrl} 
+						/>	
+					}
 
-		</SafeAreaView>
-	)}
+					</TouchableOpacity>					}
+					/>
+
+				}
+				</View>
+			</View>
+                
+
+		</View>
+
+	)
+}
+
+ListView.navigationOptions = navigationData => {
+
+	return {
+		headerTitle: 'Hjem',
+	}
+}
 
 const styles = StyleSheet.create({
-	parentContainer: {
-		flex: 1,
+	parent: {
 		flexDirection: 'column',
 		justifyContent: 'flex-start',
 		alignItems: 'center',
-		backgroundColor: 'white',
-		position: 'relative'
+		width: '100%',
+		height: '100%',
+		backgroundColor: colors.lightGrey,
+		paddingHorizontal: 20
+
 	},
-	topbarContainer: {
-		top: 20,
-		position: 'relative'
-	},
-	foundUsersContainer: {
-		top: 25,
-		height: '87,5%',
-		marginTop: '-1%',
-	},  
-	button: {
-		justifyContent: 'center',
+	container: {
+		flexDirection: 'column',
+		justifyContent: 'flex-end',
 		alignItems: 'center',
-		width: 110,
-		height: 20,
-		borderRadius: 50,
-		shadowOpacity: 0.1,
-		shadowRadius: 3,
-		shadowOffset: {width: 3, height: 3},
+		top: 80,
+		borderColor: 'red',
+		borderWidth: 0,
+		borderStyle: 'dashed'
+
 	},
-	buttonSelected: {
-		left: 5,
-		justifyContent: 'center',
+	searchbarContainer: {
+		display: 'flex', 
+		flexDirection: 'row', 
+		justifyContent: 'center', 
+		alignItems:'center',
+	},
+	textInputContainer: {
+		height: 45,
+		flexDirection: 'row',
+		justifyContent: 'flex-start',
 		alignItems: 'center',
-		width: 110,
-		height: 20,
-		borderRadius: 50,
-		shadowOpacity: 0.1,
-		shadowRadius: 4,
-		shadowOffset: {width: 3, height: 3},  
-		backgroundColor: Colors.lightGrey,
+		borderColor: colors.mediumGrey,
+		borderStyle: 'solid',
+		borderWidth: 1,
+		borderRadius: 25,
+		paddingLeft: 15,
+		paddingRight: 15,
 	},
-	textStyle: {
-		color: 'black',
-		fontFamily: 'roboto-medium',
-		fontSize: 14
+	textInput: {
+		fontFamily: 'roboto-regular',
+		width: '90%',
+		height: '100%',
+		fontSize: 15,
+		borderColor: 'blue',
+		borderStyle: 'solid',
+		borderWidth: 0,
 	},
 	buttonContainer: {
-		top: 15,
-		width: 250, 
-		height: 45, 
-		backgroundColor: '#eff6fc',
-		borderRadius: 50,
-		borderWidth: 0,
-		paddingVertical: 5
+		margin: 20,
+		width: 330
 	},
-	searchInputContainer: {
-		borderWidth: 0,
-		top: 5,
-		zIndex: 10,
-	},
-	containerStyle: {
-	},
-	listStyle: {
-	},
-	searchInput: {
-		paddingLeft: 20,
-		height: 45,
-		width: 350,
-		backgroundColor: 'white',
-		borderRadius: 50,
-		borderWidth: 1,
-		borderColor: Colors.mediumGrey
+	resultsContainer: {
+		flexDirection: 'column',
+		justifyContent: 'flex-start',
+		alignItems: 'flex-start',
+		position: 'relative',
+		width: 330,
+		height: 500,
+
+		/*
+		borderWidth: 1, 
+		borderStyle: 'solid', 
+		borderColor: 'lightgrey',
+		*/
+
 	}
 })
 

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
 import {useSelector} from 'react-redux';
 import colors from '../../constants/colors';
-import SearchField from '../../components/SearchField';
+import ListView from '../Find/ListView/ListView';
 
 const HomeScreen = props => {
 
@@ -81,7 +81,7 @@ useEffect(() => {
 
   return (
           <View style={styles.parent}>
-            <SearchField />
+            <ListView/>
           </View>
 
   );
@@ -97,12 +97,17 @@ HomeScreen.navigationOptions = navigationData => {
 const styles = StyleSheet.create({
   parent: {
       flexDirection: 'column',
-      justifyContent: 'center',
+      justifyContent: 'flex-start',
       alignItems: 'center',
       width: '100%',
       height: '100%',
       backgroundColor: colors.lightGrey,
   },
+  header: {
+    fontSize: 22,
+    fontFamily: 'roboto-medium',
+    top: 160
+  }
 });
 
 export default HomeScreen;

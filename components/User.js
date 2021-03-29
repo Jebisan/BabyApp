@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: 'lightgrey',
     height: 75,
-    width: 350,
+    width: 320,
   },
   horizontalContainer: {
     flexDirection: 'row'
