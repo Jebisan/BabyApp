@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useReducer } from 'react'
+import React, { useEffect, useReducer } from 'react'
 import { useSelector } from 'react-redux'
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Keyboard, FlatList } from 'react-native'
+import { StyleSheet, View, TextInput, TouchableOpacity, Keyboard, FlatList } from 'react-native'
 import colors from '../../../constants/colors'
 import { AntDesign, MaterialIcons } from '@expo/vector-icons' 
 import SwitchSelector from 'react-native-switch-selector'
@@ -17,7 +17,6 @@ const initialState = {
 	inFocus: false,
 	selectedSearchType: 0
 };
-
 
 function reducer(state, action) {
 	switch (action.type) {
@@ -44,67 +43,61 @@ const ListView = props => {
 	const allUsers = useSelector(state => state.allUsers)
 	const allGroups = useSelector(state => state.allGroups.allGroups)
 
-	const [searchString, setSearchString] = useState('')
-	const [cityResults, setCityResults] = useState([])
-	const [usersResults, setUsersResults] = useState([])
-	const [groupsResults, setGroupsResults] = useState([])
-	const [selectedCity, setSelectedCity] = useState(undefined)
-	const [inFocus, setInFocus] = useState(false)
-	const [selectedSearchType, setSelectedSearchType] = useState(0)
-
 	const [state, dispatch] = useReducer(reducer, initialState);
 
 
 	const clear = () => {
-		setSearchString('');
-		setSelectedCity(undefined);
-		setUsersResults([]);
-		setGroupsResults([]);
-		setCityResults([])
+		dispatch({type:'SET_SEARCH_STRING', searchString: ''})
+		dispatch({type:'SET_SELECTED_CITY', searchString: undefined})
+		dispatch({type:'SET_USERS_RESULTS', usersResults: []})
+		dispatch({type:'SET_GROUPS_RESULTS', groupsResults: []})
+		dispatch({type:'SET_CITY_RESULTS', cityResults: []})
 	}
 
 	const back = () => {
-		if (!searchString && selectedCity) {
-			setSearchString(selectedCity.navn);
+		if (!state.searchString && state.selectedCity) {
+			dispatch({type:'SET_SEARCH_STRING', searchString: state.selectedCity.navn})
 		}
-		setInFocus(false);
+		dispatch({type: 'SET_IN_FOCUS', inFocus: false})
 		Keyboard.dismiss()
 	}
 
 	useEffect(() => {
-		if (!searchString) {
+		if (!state.searchString) {
 			return
 		}
-		setCityResults([])
-		if(inFocus){
-			fetch(`https://api.dataforsyningen.dk/postnumre/autocomplete?q=${searchString}`)
+		dispatch({type:'SET_CITY_RESULTS', cityResults: []})
+
+		if(state.inFocus){
+			fetch(`https://api.dataforsyningen.dk/postnumre/autocomplete?q=${state.searchString}`)
 			.then(response => response.json())
 			.then(data => {
 				  const filteredArr = [...new Map(data.map(item => [item.postnummer.navn, item])).values()]
-				setCityResults(filteredArr)
+				  dispatch({type:'SET_CITY_RESULTS', cityResults: filteredArr})
 			}
 			)
 		}
 
-	}, [searchString])
+	}, [state.searchString])
 
 	useEffect(() => {
-		if(!selectedCity){
+		if(!state.selectedCity){
 			return;
 		}
-		setSearchString(selectedCity.navn)
-		setInFocus(false)
-		setCityResults([]);
+		dispatch({type:'SET_SEARCH_STRING', searchString: state.selectedCity.navn})
+		dispatch({type: 'SET_IN_FOCUS', inFocus: false})
+		dispatch({type:'SET_CITY_RESULTS', cityResults: []})
+
 		Keyboard.dismiss()
 
-		if (selectedSearchType === 0){
-			const groups = allGroups.filter(group => group.city === selectedCity.navn)
-			setGroupsResults(groups);
-		} else if (selectedSearchType === 1) {
-			const users = allUsers.filter(user => user.city ===selectedCity.navn)
-			setUsersResults(users);
+		if (state.selectedSearchType === 0){
+			const groups = allGroups.filter(group => group.city === state.selectedCity.navn)
+			dispatch({type:'SET_GROUPS_RESULTS', groupsResults: groups})
+		} else if (state.selectedSearchType === 1) {
+			const users = allUsers.filter(user => user.city === state.selectedCity.navn)
+			dispatch({type:'SET_USERS_RESULTS', usersResults: users})
 		}
-	}, [selectedCity, selectedSearchType])
+	}, [state.selectedCity, state.selectedSearchType])
   
 	const options = [
 		{ label: 'Grupper', value: 0 },
@@ -115,25 +108,25 @@ const ListView = props => {
 		<View style={styles.parent}>
 			<View style={styles.container}>
 				<View style={styles.searchbarContainer} >
-					<TouchableOpacity style={inFocus?{display:'flex'}:{display:'none'}}  onPress={() => back()} >
+					<TouchableOpacity style={state.inFocus?{display:'flex'}:{display:'none'}}  onPress={() => back()} >
 						<AntDesign name="arrowleft" size={30} color={colors.darkGrey} />
 					</TouchableOpacity>
 					<View style={styles.textInputContainer} >
 						<TouchableOpacity >
-							<MaterialIcons style={!inFocus?{display:'flex'}:{display:'none'}} name="search" size={24} color={colors.darkGrey} />
+							<MaterialIcons style={!state.inFocus?{display:'flex'}:{display:'none'}} name="search" size={24} color={colors.darkGrey} />
 						</TouchableOpacity>
 						<TextInput
-							onChangeText={text => setSearchString(text)}
+							onChangeText={text => dispatch({type:'SET_SEARCH_STRING', searchString: text})}
 							placeholder={'Søg'}
 							style={styles.textInput}
-							value={searchString}
+							value={state.searchString}
 							keyboardType={'web-search'}
-							onFocus={() => setInFocus(true)}
+							onFocus={() => dispatch({type: 'SET_IN_FOCUS', inFocus: true})}
 						/>
 						<View style={{position: 'absolute', right: 0, paddingRight: 15}} >
-							<MaterialIcons name="filter-list" style={ selectedCity && !inFocus? {display: 'flex'} : {display:'none'}}  size={24} color="black" />
+							<MaterialIcons name="filter-list" style={ state.selectedCity && !state.inFocus? {display: 'flex'} : {display:'none'}}  size={24} color="black" />
 							<MaterialIcons onPress={() => clear()} style={
-								searchString.length > 0 && inFocus ? { display : 'flex' } : { display : 'none' }
+								state.searchString.length > 0 && state.inFocus ? { display : 'flex' } : { display : 'none' }
 							} name="cancel" size={24} color={colors.darkGrey} />
 						</View>
 					</View>
@@ -142,7 +135,7 @@ const ListView = props => {
 					<SwitchSelector 
 						options={options} 
 						initial={0} 
-						onPress={value => setSelectedSearchType(value)} 
+						onPress={value => dispatch({type:'SET_SELECTED_SEARCH_TYPE', selectedSearchType: value})} 
 						textColor={'black'} //'#7a44cf'
 						selectedColor={'black'}
 						backgroundColor={'#eeeef0'}
@@ -156,14 +149,14 @@ const ListView = props => {
 				</View>
 				<View style={styles.resultsContainer} >
 				{
-					inFocus ?
+					state.inFocus ?
 					<FlatList
 						horizontal={false}
 						keyboardShouldPersistTaps='handled'
-						data={cityResults}
+						data={state.cityResults}
 						keyExtractor={item => item.postnummer.nr}
 						renderItem={({ item }) => 
-						<TouchableOpacity onPress={() => setSelectedCity(item.postnummer)} >
+						<TouchableOpacity onPress={() => dispatch({type:'SET_SELECTED_CITY', selectedCity: item.postnummer})} >
 							<City name={item.postnummer.navn} />						
 						</TouchableOpacity>
 						}
@@ -172,12 +165,12 @@ const ListView = props => {
 					<FlatList
 					horizontal={false}
 					keyboardShouldPersistTaps='handled'
-					data={selectedSearchType === 0 ? groupsResults : usersResults}
+					data={state.selectedSearchType === 0 ? state.groupsResults : state.usersResults}
 					keyExtractor={item => item.key}
 					renderItem={({ item }) => 
 					<TouchableOpacity>
 					{
-						selectedSearchType=== 0 ? 
+						state.selectedSearchType=== 0 ? 
 						<Group
 						id={item.key}
 						name={item.name}
