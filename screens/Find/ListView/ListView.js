@@ -13,9 +13,7 @@ import { Text } from 'react-native'
 
 const initialState = {
 	searchString: '',
-	autocompleteResultsCities: [],
-	autocompleteResultsUsers: [],
-	autocompleteResultsGroups: [],
+	autocompleteResults: [],
 	usersResults: [],
 	groupsResults: [],
 	selectedCity: undefined,
@@ -29,12 +27,8 @@ function reducer(state, action) {
 	switch (action.type) {
 	case 'SET_SEARCH_STRING':
 		return {...state, searchString: action.searchString}
-	case 'SET_AUTOCOMPLETE_RESULTS_CITIES':
-		return {...state, autocompleteResultsCities: action.autocompleteResultsCities}
-	case 'SET_AUTOCOMPLETE_RESULTS_USERS':
-		return {...state, autocompleteResultsUsers: action.autocompleteResultsUsers}
-	case 'SET_AUTOCOMPLETE_RESULTS_GROUPS':
-		return {...state, autocompleteResultsGroups: action.autocompleteResultsGroups}
+	case 'SET_AUTOCOMPLETE_RESULTS':
+		return {...state, autocompleteResults: action.autocompleteResults}
 	case 'SET_USERS_RESULTS': 
 		return {...state, usersResults: action.usersResults}
 	case 'SET_GROUPS_RESULTS': 
@@ -71,9 +65,7 @@ const ListView = props => {
 		dispatch({type:'SET_SELECTED_CITY', searchString: undefined})
 		dispatch({type:'SET_USERS_RESULTS', usersResults: []})
 		dispatch({type:'SET_GROUPS_RESULTS', groupsResults: []})
-		dispatch({type:'SET_AUTOCOMPLETE_RESULTS_CITIES', autocompleteResultsCities: []})
-		dispatch({type:'SET_AUTOCOMPLETE_RESULTS_USERS', autocompleteResultsUsers: []})
-		dispatch({type:'SET_AUTOCOMPLETE_RESULTS_GROUPS', autocompleteResultsGroups: []})
+		dispatch({type:'SET_AUTOCOMPLETE_RESULTS', autocompleteResults: []})
 	}
 
 	const back = () => {
@@ -89,9 +81,7 @@ const ListView = props => {
 			return;
 		}
 		if(state.searchString === '') {
-			dispatch({type:'SET_AUTOCOMPLETE_RESULTS_CITIES', autocompleteResultsCities: []})
-			dispatch({type:'SET_AUTOCOMPLETE_RESULTS_USERS', autocompleteResultsUsers: []})
-			dispatch({type:'SET_AUTOCOMPLETE_RESULTS_GROUPS', autocompleteResultsGroups: []})
+			dispatch({type:'SET_AUTOCOMPLETE_RESULTS', autocompleteResults: []})
 			dispatch({type:'SET_USERS_RESULTS', usersResults: []})
 			dispatch({type:'SET_GROUPS_RESULTS', groupsResults: []})
 			return;
@@ -101,21 +91,39 @@ const ListView = props => {
 		fetch(`https://api.dataforsyningen.dk/postnumre/autocomplete?q=${state.searchString}`)
 			.then(response => response.json())
 			.then(data => {
-				const filteredArr = [...new Map(data.map(item => [item.postnummer.navn, item])).values()].slice(0,3)
-				dispatch({type:'SET_AUTOCOMPLETE_RESULTS_CITIES', autocompleteResultsCities: filteredArr})
-				});
+				const filteredArr = [...new Map(data.map(item => [item.postnummer.navn, {id: item.tekst, type: 'CITY', data: item}])).values()].slice(0,3)
 
-		// UPDATE FIRST THREE GROUPS WHICH SATIFIES THE SEARCH QUERY IF SEARCH TYPE IS GROUP
 		if (state.selectedSearchType === 0) {
 			const groups = allGroups.filter(group => group.name.includes(state.searchString));
-			dispatch({type:'SET_AUTOCOMPLETE_RESULTS_GROUPS', autocompleteResultsGroups: groups});
+
+			groups.forEach(group => {
+				if(filteredArr.length !== 5) {
+					filteredArr.push({
+						id: group.key,
+						type: 'GROUP',
+						data: group
+
+					})
+				}
+			});
 		}
 
-		// UPDATE FIRST THREE USERS WHICH SATIFIES THE SEARCH QUERY IF SEARCH TYPE IS USERS
 		if (state.selectedSearchType === 1) {
 			const users = allUsers.filter(group => group.firstname.includes(state.searchString||group.lastname.includes(state.searchString)));
-			dispatch({type:'SET_AUTOCOMPLETE_RESULTS_USERS', autocompleteResultsUsers: users});
+			users.forEach(user => {
+				if(filteredArr.length !== 5) {
+					filteredArr.push({
+						id: user.key,
+						type: 'USER',
+						data: user
+						}
+					)
+				}
+			})
 		}
+		console.log(filteredArr);
+		dispatch({type:'SET_AUTOCOMPLETE_RESULTS', autocompleteResults: filteredArr})
+	});
 	}, [state.searchString, state.selectedSearchType])
 
 	useEffect(() => {
@@ -137,9 +145,7 @@ const ListView = props => {
 	
 		dispatch({type:'SET_SEARCH_STRING', searchString: state.selectedCity.navn})
 		dispatch({type:'SET_IN_FOCUS', inFocus: false})
-		dispatch({type:'SET_AUTOCOMPLETE_RESULTS_CITIES', autocompleteResultsCities: []})
-		dispatch({type:'SET_AUTOCOMPLETE_RESULTS_USERS', autocompleteResultsUsers: []})
-		dispatch({type:'SET_AUTOCOMPLETE_RESULTS_GROUPS', autocompleteResultsGroups: []})
+		dispatch({type:'SET_AUTOCOMPLETE_RESULTS', autocompleteResults: []})
 		Keyboard.dismiss()
 
 			if (state.selectedSearchType === 0){
@@ -164,11 +170,6 @@ const ListView = props => {
 		}
 		dispatch({type:'SET_SEARCH_STRING', searchString: state.searchString})
 		dispatch({type:'SET_IN_FOCUS', inFocus: false})
-		/*
-		dispatch({type:'SET_AUTOCOMPLETE_RESULTS_CITIES', autocompleteResultsCities: []})
-		dispatch({type:'SET_AUTOCOMPLETE_RESULTS_USERS', autocompleteResultsUsers: []})
-		dispatch({type:'SET_AUTOCOMPLETE_RESULTS_GROUPS', autocompleteResultsGroups: []})
-		*/
 		Keyboard.dismiss();
 		
 		if (state.selectedSearchType === 0){
@@ -179,6 +180,23 @@ const ListView = props => {
 			dispatch({type:'SET_USERS_RESULTS', usersResults: users})
 		}
 	}, [state.querySearch, state.selectedSearchType])
+
+	autocompletePressedHandler = (item) => {
+		switch(item.type) {
+			case 'CITY':
+				dispatch({type:'SET_SELECTED_CITY', selectedCity: item.data.postnummer})
+				break;
+			case 'USER':
+				console.log('You pressed a User!')
+				break;
+			case 'GROUP':
+				console.log('You pressed a Group!')
+				break;
+			default:
+				break;
+
+		}
+	}
 
 	return (
 		<View style={styles.parent}>
@@ -225,57 +243,21 @@ const ListView = props => {
 				</View>
 
 				<View style={styles.autocompleteContainer} >
-				{
-					// AUTOCOMPLETE CITIES
-					state.inFocus &&
-						<FlatList
-							style={styles.resultsContainer}
-							horizontal={false}
-							keyboardShouldPersistTaps='handled'
-							keyExtractor={item => item.postnummer.navn}
-							data={state.autocompleteResultsCities}
-							renderItem={({ item }) => 
-							<View>
-									<TouchableOpacity onPress={() => dispatch({type:'SET_SELECTED_CITY', selectedCity: item.postnummer})} >
-										<City name={item.postnummer.navn}></City>
-									</TouchableOpacity>
-							</View>
-							}
-						/>
-				}
-
-				{
-					// AUTOCOMPLETE GROUPS
-					state.inFocus && state.selectedSearchType === 0 &&
-						<FlatList
-							style={styles.resultsContainer}
-							horizontal={false}
-							keyboardShouldPersistTaps='handled'
-							keyExtractor={item => item.key}
-							data={state.autocompleteResultsGroups}
-							renderItem={({ item }) => 
-										<GroupAutocomplete 
-											name={item.name}
-											photoUrl={item.photoUrl}
-											
-										/>
-							}
-						/>
-				}
-				{state.inFocus && state.selectedSearchType === 1 &&
-					// AUTOCOMPLETE USERS
+		
+				{state.inFocus &&
+					// AUTOCOMPLETE
 						<FlatList
 						style={styles.resultsContainer}
 						horizontal={false}
 						keyboardShouldPersistTaps='handled'
-						keyExtractor={item => item.key}
-						data={state.autocompleteResultsUsers}
+						keyExtractor={item => item.id}
+						data={state.autocompleteResults}
 						renderItem={({ item }) => 
-									<UserAutocomplete
-										firstname={item.firstname}
-										lastname={item.lastname}
-										photoUrl={item.photoUrl}
-									/>
+						<TouchableOpacity onPress={() => autocompletePressedHandler(item)} >
+							{item.type === 'CITY' && <City name = {item.data.postnummer.navn} />}
+							{item.type === 'USER' && <UserAutocomplete firstname = {item.data.firstname} lastname = {item.data.lastname} photoUrl={item.data.photoUrl} />}
+							{item.type === 'GROUP' && <GroupAutocomplete name = {item.data.name} photoUrl={item.data.photoUrl} />}
+						</TouchableOpacity>
 						}
 					/>
 				}
