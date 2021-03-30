@@ -20,15 +20,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    padding: 10,
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingLeft: 10,
     width: 330,
-    
-    /*
-    borderWidth: 1,
-    borderColor: 'black',
-    borderStyle: 'solid'
-    */
-
   },
   city: {
     fontSize: 14,

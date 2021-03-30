@@ -18,7 +18,7 @@ const User = props => {
       </View>
 
       <View style={styles.verticalContainer}>
-      <Text style= {styles.titleText}>{props.name}</Text>
+      <Text style= {styles.titleText}>{props.firstname + ' ' + props.lastname}</Text>
       <Text style= {styles.descriptionText}>{props.postalCode} {props.city}</Text>
       </View>
       </View>

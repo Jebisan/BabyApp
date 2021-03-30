@@ -5,57 +5,79 @@ import colors from '../../../constants/colors'
 import { AntDesign, MaterialIcons } from '@expo/vector-icons' 
 import SwitchSelector from 'react-native-switch-selector'
 import City from '../../../components/City'
+import UserAutocomplete from '../../../components/UserAutocomplete'
 import User from '../../../components/User'
 import Group from '../../../components/Group'
+import GroupAutocomplete from '../../../components/GroupAutocomplete'
+import { Text } from 'react-native'
 
 const initialState = {
 	searchString: '',
-	cityResults: [],
+	autocompleteResultsCities: [],
+	autocompleteResultsUsers: [],
+	autocompleteResultsGroups: [],
 	usersResults: [],
 	groupsResults: [],
 	selectedCity: undefined,
 	inFocus: false,
-	selectedSearchType: 0
-};
+	selectedSearchType: 0,
+	showFilter: false,
+	querySearch: false
+}
 
 function reducer(state, action) {
 	switch (action.type) {
-		case 'SET_SEARCH_STRING':
-			return {...state, searchString: action.searchString};
-		case 'SET_CITY_RESULTS':
-			return {...state, cityResults: action.cityResults};
-		case 'SET_USERS_RESULTS': 
-			return {...state, usersResults: action.usersResults}
-		case 'SET_GROUPS_RESULTS': 
-			return {...state, groupsResults: action.groupsResults}
-		case 'SET_SELECTED_CITY':
-			return {...state, selectedCity: action.selectedCity}
-		case 'SET_IN_FOCUS':
-			return {...state, inFocus: action.inFocus}
-		case 'SET_SELECTED_SEARCH_TYPE':
-			return {...state, selectedSearchType: action.selectedSearchType}
-	  default:
-		throw new Error();
+	case 'SET_SEARCH_STRING':
+		return {...state, searchString: action.searchString}
+	case 'SET_AUTOCOMPLETE_RESULTS_CITIES':
+		return {...state, autocompleteResultsCities: action.autocompleteResultsCities}
+	case 'SET_AUTOCOMPLETE_RESULTS_USERS':
+		return {...state, autocompleteResultsUsers: action.autocompleteResultsUsers}
+	case 'SET_AUTOCOMPLETE_RESULTS_GROUPS':
+		return {...state, autocompleteResultsGroups: action.autocompleteResultsGroups}
+	case 'SET_USERS_RESULTS': 
+		return {...state, usersResults: action.usersResults}
+	case 'SET_GROUPS_RESULTS': 
+		return {...state, groupsResults: action.groupsResults}
+	case 'SET_SELECTED_CITY':
+		return {...state, selectedCity: action.selectedCity}
+	case 'SET_IN_FOCUS':
+		return {...state, inFocus: action.inFocus}
+	case 'SET_SELECTED_SEARCH_TYPE':
+		return {...state, selectedSearchType: action.selectedSearchType}
+	case 'SET_SHOW_FILTER':
+		return {...state, showFilter: action.showFilter}
+	case 'SET_QUERY_SEARCH':
+		return {...state, querySearch: action.querySearch}
+
+	default:
+		throw new Error()
 	}
-  }
+}
 
 const ListView = props => {
 	const allUsers = useSelector(state => state.allUsers)
 	const allGroups = useSelector(state => state.allGroups.allGroups)
 
-	const [state, dispatch] = useReducer(reducer, initialState);
+	const [state, dispatch] = useReducer(reducer, initialState)
 
+	useEffect(() => {
+		console.clear();
+		console.table(state);
+	}, [state])
 
 	const clear = () => {
 		dispatch({type:'SET_SEARCH_STRING', searchString: ''})
 		dispatch({type:'SET_SELECTED_CITY', searchString: undefined})
 		dispatch({type:'SET_USERS_RESULTS', usersResults: []})
 		dispatch({type:'SET_GROUPS_RESULTS', groupsResults: []})
-		dispatch({type:'SET_CITY_RESULTS', cityResults: []})
+		dispatch({type:'SET_AUTOCOMPLETE_RESULTS_CITIES', autocompleteResultsCities: []})
+		dispatch({type:'SET_AUTOCOMPLETE_RESULTS_USERS', autocompleteResultsUsers: []})
+		dispatch({type:'SET_AUTOCOMPLETE_RESULTS_GROUPS', autocompleteResultsGroups: []})
 	}
 
 	const back = () => {
-		if (!state.searchString && state.selectedCity) {
+		if (state.selectedCity) {
 			dispatch({type:'SET_SEARCH_STRING', searchString: state.selectedCity.navn})
 		}
 		dispatch({type: 'SET_IN_FOCUS', inFocus: false})
@@ -63,50 +85,103 @@ const ListView = props => {
 	}
 
 	useEffect(() => {
-		if (!state.searchString) {
-			return
+		if(state.querySearch) {
+			return;
 		}
-		dispatch({type:'SET_CITY_RESULTS', cityResults: []})
+		if(state.searchString === '') {
+			dispatch({type:'SET_AUTOCOMPLETE_RESULTS_CITIES', autocompleteResultsCities: []})
+			dispatch({type:'SET_AUTOCOMPLETE_RESULTS_USERS', autocompleteResultsUsers: []})
+			dispatch({type:'SET_AUTOCOMPLETE_RESULTS_GROUPS', autocompleteResultsGroups: []})
+			dispatch({type:'SET_USERS_RESULTS', usersResults: []})
+			dispatch({type:'SET_GROUPS_RESULTS', groupsResults: []})
+			return;
+		}
 
-		if(state.inFocus){
-			fetch(`https://api.dataforsyningen.dk/postnumre/autocomplete?q=${state.searchString}`)
+		// UPDATE AUTOCOMPLETE CITY RESULTS.
+		fetch(`https://api.dataforsyningen.dk/postnumre/autocomplete?q=${state.searchString}`)
 			.then(response => response.json())
 			.then(data => {
-				  const filteredArr = [...new Map(data.map(item => [item.postnummer.navn, item])).values()]
-				  dispatch({type:'SET_CITY_RESULTS', cityResults: filteredArr})
-			}
-			)
+				const filteredArr = [...new Map(data.map(item => [item.postnummer.navn, item])).values()].slice(0,3)
+				dispatch({type:'SET_AUTOCOMPLETE_RESULTS_CITIES', autocompleteResultsCities: filteredArr})
+				});
+
+		// UPDATE FIRST THREE GROUPS WHICH SATIFIES THE SEARCH QUERY IF SEARCH TYPE IS GROUP
+		if (state.selectedSearchType === 0) {
+			const groups = allGroups.filter(group => group.name.includes(state.searchString));
+			dispatch({type:'SET_AUTOCOMPLETE_RESULTS_GROUPS', autocompleteResultsGroups: groups});
 		}
 
-	}, [state.searchString])
+		// UPDATE FIRST THREE USERS WHICH SATIFIES THE SEARCH QUERY IF SEARCH TYPE IS USERS
+		if (state.selectedSearchType === 1) {
+			const users = allUsers.filter(group => group.firstname.includes(state.searchString||group.lastname.includes(state.searchString)));
+			dispatch({type:'SET_AUTOCOMPLETE_RESULTS_USERS', autocompleteResultsUsers: users});
+		}
+	}, [state.searchString, state.selectedSearchType])
+
+	useEffect(() => {
+		if (state.inFocus) {
+			dispatch({type:'SET_SELECTED_CITY', selectedCity: undefined})
+			dispatch({type:'SET_QUERY_SEARCH', querySearch: false})
+		} else {
+			
+		}
+	}, [state.inFocus])
+
+
+	// A city has been selected. Determine what to do depending on whether the search field is focused or not.
 
 	useEffect(() => {
 		if(!state.selectedCity){
-			return;
+			return
 		}
+	
 		dispatch({type:'SET_SEARCH_STRING', searchString: state.selectedCity.navn})
-		dispatch({type: 'SET_IN_FOCUS', inFocus: false})
-		dispatch({type:'SET_CITY_RESULTS', cityResults: []})
-
+		dispatch({type:'SET_IN_FOCUS', inFocus: false})
+		dispatch({type:'SET_AUTOCOMPLETE_RESULTS_CITIES', autocompleteResultsCities: []})
+		dispatch({type:'SET_AUTOCOMPLETE_RESULTS_USERS', autocompleteResultsUsers: []})
+		dispatch({type:'SET_AUTOCOMPLETE_RESULTS_GROUPS', autocompleteResultsGroups: []})
 		Keyboard.dismiss()
 
+			if (state.selectedSearchType === 0){
+				const groups = allGroups.filter(group => group.city === state.selectedCity.navn)
+				dispatch({type:'SET_GROUPS_RESULTS', groupsResults: groups})
+			} else if (state.selectedSearchType === 1) {
+				const users = allUsers.filter(user => user.city === state.selectedCity.navn)
+				dispatch({type:'SET_USERS_RESULTS', usersResults: users})
+			}
+
+	}, [state.selectedCity, state.selectedSearchType])
+
+	// Showing all results satifying the search query
+	startQuerySearch = () => {
+		dispatch({type:'SET_QUERY_SEARCH', querySearch: true})
+
+	}
+
+	useEffect(() => {
+		if(!state.querySearch) {
+			return;
+		}
+		dispatch({type:'SET_SEARCH_STRING', searchString: state.searchString})
+		dispatch({type:'SET_IN_FOCUS', inFocus: false})
+		/*
+		dispatch({type:'SET_AUTOCOMPLETE_RESULTS_CITIES', autocompleteResultsCities: []})
+		dispatch({type:'SET_AUTOCOMPLETE_RESULTS_USERS', autocompleteResultsUsers: []})
+		dispatch({type:'SET_AUTOCOMPLETE_RESULTS_GROUPS', autocompleteResultsGroups: []})
+		*/
+		Keyboard.dismiss();
+		
 		if (state.selectedSearchType === 0){
-			const groups = allGroups.filter(group => group.city === state.selectedCity.navn)
+			const groups = allGroups.filter(group => group.name.includes(state.searchString))
 			dispatch({type:'SET_GROUPS_RESULTS', groupsResults: groups})
 		} else if (state.selectedSearchType === 1) {
-			const users = allUsers.filter(user => user.city === state.selectedCity.navn)
+			const users = allUsers.filter(user => user.firstname.includes(state.searchString) || user.lastname.includes(state.searchString))
 			dispatch({type:'SET_USERS_RESULTS', usersResults: users})
 		}
-	}, [state.selectedCity, state.selectedSearchType])
-  
-	const options = [
-		{ label: 'Grupper', value: 0 },
-		{ label: 'Personer', value: 1 },
-	]
+	}, [state.querySearch, state.selectedSearchType])
 
 	return (
 		<View style={styles.parent}>
-			<View style={styles.container}>
 				<View style={styles.searchbarContainer} >
 					<TouchableOpacity style={state.inFocus?{display:'flex'}:{display:'none'}}  onPress={() => back()} >
 						<AntDesign name="arrowleft" size={30} color={colors.darkGrey} />
@@ -124,17 +199,19 @@ const ListView = props => {
 							onFocus={() => dispatch({type: 'SET_IN_FOCUS', inFocus: true})}
 						/>
 						<View style={{position: 'absolute', right: 0, paddingRight: 15}} >
-							<MaterialIcons name="filter-list" style={ state.selectedCity && !state.inFocus? {display: 'flex'} : {display:'none'}}  size={24} color="black" />
+							<MaterialIcons name="filter-list" style={!state.inFocus? {display: 'flex'} : {display:'none'}}  size={24} color="black" />
 							<MaterialIcons onPress={() => clear()} style={
 								state.searchString.length > 0 && state.inFocus ? { display : 'flex' } : { display : 'none' }
 							} name="cancel" size={24} color={colors.darkGrey} />
 						</View>
 					</View>
 				</View>
+
 				<View style={styles.buttonContainer} >
 					<SwitchSelector 
-						options={options} 
-						initial={0} 
+						options={[{ label: 'Grupper', value: 0 },{ label: 'Personer', value: 1 },]} 
+						initial={state.selectedSearchType}
+						value={state.selectedSearchType}
 						onPress={value => dispatch({type:'SET_SELECTED_SEARCH_TYPE', selectedSearchType: value})} 
 						textColor={'black'} //'#7a44cf'
 						selectedColor={'black'}
@@ -145,33 +222,84 @@ const ListView = props => {
 						textStyle={{fontFamily:'roboto-regular'}}
 						hasPadding={true}
 					/>
-                    
 				</View>
-				<View style={styles.resultsContainer} >
+
+				<View style={styles.autocompleteContainer} >
 				{
-					state.inFocus ?
-					<FlatList
+					// AUTOCOMPLETE CITIES
+					state.inFocus &&
+						<FlatList
+							style={styles.resultsContainer}
+							horizontal={false}
+							keyboardShouldPersistTaps='handled'
+							keyExtractor={item => item.postnummer.navn}
+							data={state.autocompleteResultsCities}
+							renderItem={({ item }) => 
+							<View>
+									<TouchableOpacity onPress={() => dispatch({type:'SET_SELECTED_CITY', selectedCity: item.postnummer})} >
+										<City name={item.postnummer.navn}></City>
+									</TouchableOpacity>
+							</View>
+							}
+						/>
+				}
+
+				{
+					// AUTOCOMPLETE GROUPS
+					state.inFocus && state.selectedSearchType === 0 &&
+						<FlatList
+							style={styles.resultsContainer}
+							horizontal={false}
+							keyboardShouldPersistTaps='handled'
+							keyExtractor={item => item.key}
+							data={state.autocompleteResultsGroups}
+							renderItem={({ item }) => 
+										<GroupAutocomplete 
+											name={item.name}
+											photoUrl={item.photoUrl}
+											
+										/>
+							}
+						/>
+				}
+				{state.inFocus && state.selectedSearchType === 1 &&
+					// AUTOCOMPLETE USERS
+						<FlatList
+						style={styles.resultsContainer}
 						horizontal={false}
 						keyboardShouldPersistTaps='handled'
-						data={state.cityResults}
-						keyExtractor={item => item.postnummer.nr}
+						keyExtractor={item => item.key}
+						data={state.autocompleteResultsUsers}
 						renderItem={({ item }) => 
-						<TouchableOpacity onPress={() => dispatch({type:'SET_SELECTED_CITY', selectedCity: item.postnummer})} >
-							<City name={item.postnummer.navn} />						
-						</TouchableOpacity>
+									<UserAutocomplete
+										firstname={item.firstname}
+										lastname={item.lastname}
+										photoUrl={item.photoUrl}
+									/>
 						}
 					/>
-					:
+				}
+					{  state.searchString.length > 0 && state.inFocus &&
+						<TouchableOpacity style={styles.seeAllResultsContainer} onPress={() => startQuerySearch()} > 
+							<Text style={styles.seeAllResultsText}>Se resultater for</Text>
+							<Text style={{...styles.seeAllResultsText, fontFamily: 'roboto-bold'}}> {state.searchString}</Text>
+						</TouchableOpacity>
+					}
+				</View>
+
+{	// OUT OF FOCUS STUFF WHEN CITY IS SELECTED: 
+}
+
+			{
+			 !state.inFocus && state.selectedCity && state.selectedSearchType === 0 &&
 					<FlatList
+					style={styles.resultsContainer}
 					horizontal={false}
 					keyboardShouldPersistTaps='handled'
-					data={state.selectedSearchType === 0 ? state.groupsResults : state.usersResults}
 					keyExtractor={item => item.key}
+					data={state.groupsResults}
 					renderItem={({ item }) => 
-					<TouchableOpacity>
-					{
-						state.selectedSearchType=== 0 ? 
-						<Group
+					<Group
 						id={item.key}
 						name={item.name}
 						description={item.description}
@@ -183,30 +311,83 @@ const ListView = props => {
 						members = {item.members}
 						membersDetails = {item.membersDetails}
 						maxSize = {item.maxSize}
-						/>
-						: 
-						<User 
-							name={item.firstname} 
-							postalCode={item.postalCode} 
-							city={item.city}
-							photoUrl={item.photoUrl} 
-						/>	
-					}
-
-					</TouchableOpacity>					}
 					/>
-
+					}
+					/>
 				}
-				</View>
-			</View>
-                
+				{
+				!state.inFocus && state.selectedCity && state.selectedSearchType === 1 &&
+					<FlatList
+					style={styles.resultsContainer}
+					horizontal={false}
+					keyboardShouldPersistTaps='handled'
+					keyExtractor={item => item.key}
+					data={state.usersResults}
+					renderItem={({ item }) => 
+					<User
+						firstname={item.firstname}
+						lastname={item.lastname}
+						city={item.city}
+						postalCode={item.postalCode}
+						photoUrl={item.photoUrl}
+					/>
+					}
+					/>
+				}
+
+{	// OUT OF FOCUS STUFF WHEN CITY IS NOT SELECTED: 
+}
+{
+	state.querySearch && state.selectedSearchType === 0 &&
+		   <FlatList
+		   style={styles.resultsContainer}
+		   horizontal={false}
+		   keyboardShouldPersistTaps='handled'
+		   keyExtractor={item => item.key}
+		   data={state.groupsResults}
+		   renderItem={({ item }) => 
+		   <Group
+			   id={item.key}
+			   name={item.name}
+			   description={item.description}
+			   city={item.city}
+			   postalCode={item.postalCode}
+			   photoUrl={item.photoUrl}
+			   admin = {item.admin}
+			   dueDate = {item.dueDate}
+			   members = {item.members}
+			   membersDetails = {item.membersDetails}
+			   maxSize = {item.maxSize}
+		   />
+		   }
+		   />
+	   }
+	   {
+	   state.querySearch && state.selectedSearchType === 1 &&
+		   <FlatList
+		   style={styles.resultsContainer}
+		   horizontal={false}
+		   keyboardShouldPersistTaps='handled'
+		   keyExtractor={item => item.key}
+		   data={state.usersResults}
+		   renderItem={({ item }) => 
+		   <User
+			   firstname={item.firstname}
+			   lastname={item.lastname}
+			   city={item.city}
+			   postalCode={item.postalCode}
+			   photoUrl={item.photoUrl}
+		   />
+		   }
+		   />
+	   }
 
 		</View>
 
 	)
 }
 
-ListView.navigationOptions = navigationData => {
+ListView.navigationOptions = () => {
 
 	return {
 		headerTitle: 'Hjem',
@@ -216,31 +397,30 @@ ListView.navigationOptions = navigationData => {
 const styles = StyleSheet.create({
 	parent: {
 		flexDirection: 'column',
+		position:'relative',
 		justifyContent: 'flex-start',
 		alignItems: 'center',
 		width: '100%',
-		height: '100%',
-		backgroundColor: colors.lightGrey,
-		paddingHorizontal: 20
-
-	},
-	container: {
-		flexDirection: 'column',
-		justifyContent: 'flex-end',
-		alignItems: 'center',
-		top: 80,
-		borderColor: 'red',
+		backgroundColor: colors.white,
+		paddingHorizontal: 20,
 		borderWidth: 0,
-		borderStyle: 'dashed'
-
+		borderStyle: 'solid', 
+		borderColor: 'green',
+		paddingVertical: 50,
+		height: "100%"
 	},
 	searchbarContainer: {
 		display: 'flex', 
 		flexDirection: 'row', 
 		justifyContent: 'center', 
 		alignItems:'center',
+		borderColor: 'yellow',
+		borderWidth: 0,
+		borderStyle: 'solid',
+		position: 'relative'
 	},
 	textInputContainer: {
+		position: 'relative',
 		height: 45,
 		flexDirection: 'row',
 		justifyContent: 'flex-start',
@@ -265,20 +445,37 @@ const styles = StyleSheet.create({
 		margin: 20,
 		width: 330
 	},
-	resultsContainer: {
+	autocompleteContainer: {
+		flexDirection: 'column', 
+		justifyContent: 'flex-start', 
+		borderWidth: 0, 
+		borderColor: 'blue', 
+		width: 330
+	},
+	autocompleteResults: {
 		flexDirection: 'column',
-		justifyContent: 'flex-start',
-		alignItems: 'flex-start',
+		justifyContent: 'center',
+		alignItems: 'center',
 		position: 'relative',
 		width: 330,
-		height: 500,
-
-		/*
-		borderWidth: 1, 
+		borderWidth: 0, 
 		borderStyle: 'solid', 
-		borderColor: 'lightgrey',
-		*/
-
+		borderColor: 'black',
+	},
+	seeAllResultsContainer: {
+		flexDirection: 'row',
+		justifyContent: 'flex-start',
+	},
+	seeAllResultsText: {
+		color: colors.lightBlue,
+		paddingTop: 25,
+		fontFamily: 'roboto-regular',
+		fontSize: 15
+	},
+	resultsContainer: {
+		borderWidth: 0, 
+		borderStyle: 'solid', 
+		borderColor: 'pink',
 	}
 })
 

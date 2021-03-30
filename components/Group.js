@@ -13,6 +13,11 @@ const Group = props => {
   const membersDetails = useSelector(state => state.allGroups.allGroups).find(group => group.key === props.id).membersDetails
 
   useEffect(() => {
+    console.log(props);
+  }, [])
+
+
+  useEffect(() => {
     if (props.membersDetails.length === 0) {
       dispatch(setMembers(props.id))
     }
@@ -44,6 +49,7 @@ const Group = props => {
         <Text style={{...styles.smallText, left: 18, bottom: 0}}>{convertDate2(props.dueDate)}</Text>
       </View>
       {
+        
         membersDetails && 
         <View style={styles.membersContainer}>
         {membersDetails.map((member, index) => (
