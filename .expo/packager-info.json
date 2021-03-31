@@ -2,9 +2,9 @@
   "devToolsPort": 19002,
   "expoServerPort": 19000,
   "packagerPort": 19001,
-  "packagerPid": 976,
-  "expoServerNgrokUrl": "https://ht-7zg.jebisan.babyapp.exp.direct",
-  "packagerNgrokUrl": "https://packager.ht-7zg.jebisan.babyapp.exp.direct",
-  "ngrokPid": 29484,
+  "packagerPid": 8061,
+  "expoServerNgrokUrl": null,
+  "packagerNgrokUrl": null,
+  "ngrokPid": null,
   "webpackServerPort": null
 }

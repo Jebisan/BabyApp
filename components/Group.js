@@ -13,7 +13,7 @@ const Group = props => {
   const membersDetails = useSelector(state => state.allGroups.allGroups).find(group => group.key === props.id).membersDetails
 
   useEffect(() => {
-    console.log(props);
+    // console.log(props);
   }, [])
 
 

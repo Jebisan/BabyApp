@@ -56,6 +56,7 @@ const ListView = props => {
 	const [state, dispatch] = useReducer(reducer, initialState)
 
 	useEffect(() => {
+		return;
 		console.clear();
 		console.table(state);
 	}, [state])
@@ -71,15 +72,20 @@ const ListView = props => {
 	const back = () => {
 		if (state.selectedCity) {
 			dispatch({type:'SET_SEARCH_STRING', searchString: state.selectedCity.navn})
+		} else if (state.querySearch) {
+			dispatch({type:'SET_SEARCH_STRING', searchString: state.searchString})
 		}
 		dispatch({type: 'SET_IN_FOCUS', inFocus: false})
 		Keyboard.dismiss()
 	}
 
+	// ONLY IN FOCUS STUFF
 	useEffect(() => {
+		/*
 		if(state.querySearch) {
 			return;
 		}
+		*/
 		if(state.searchString === '') {
 			dispatch({type:'SET_AUTOCOMPLETE_RESULTS', autocompleteResults: []})
 			dispatch({type:'SET_USERS_RESULTS', usersResults: []})
@@ -125,10 +131,39 @@ const ListView = props => {
 	});
 	}, [state.searchString, state.selectedSearchType])
 
+	// OUT OF FOCUS STUFF
+	useEffect(() => {
+		if(state.inFocus) {
+			return;
+		}
+
+		if(state.selectedCity) {
+			if (state.selectedSearchType === 0){
+				const groups = allGroups.filter(group => group.city === state.selectedCity.navn)
+				dispatch({type:'SET_GROUPS_RESULTS', groupsResults: groups})
+			} else if (state.selectedSearchType === 1) {
+				const users = allUsers.filter(user => user.city === state.selectedCity.navn)
+				dispatch({type:'SET_USERS_RESULTS', usersResults: users})
+			}
+		}
+
+		if(state.querySearch) {
+			if (state.selectedSearchType === 0){
+				const groups = allGroups.filter(group => group.name.includes(state.searchString))
+				dispatch({type:'SET_GROUPS_RESULTS', groupsResults: groups})
+			} else if (state.selectedSearchType === 1) {
+				const users = allUsers.filter(user => user.firstname.includes(state.searchString) || user.lastname.includes(state.searchString))
+				dispatch({type:'SET_USERS_RESULTS', usersResults: users})
+			}
+		}
+
+	}, [state.selectedSearchType])
+
 	useEffect(() => {
 		if (state.inFocus) {
-			dispatch({type:'SET_SELECTED_CITY', selectedCity: undefined})
+			// dispatch({type:'SET_SELECTED_CITY', selectedCity: undefined})
 			dispatch({type:'SET_QUERY_SEARCH', querySearch: false})
+
 		} else {
 			
 		}
@@ -141,21 +176,20 @@ const ListView = props => {
 		if(!state.selectedCity){
 			return
 		}
-	
+
 		dispatch({type:'SET_SEARCH_STRING', searchString: state.selectedCity.navn})
 		dispatch({type:'SET_IN_FOCUS', inFocus: false})
-		dispatch({type:'SET_AUTOCOMPLETE_RESULTS', autocompleteResults: []})
-		Keyboard.dismiss()
+			Keyboard.dismiss()
+	
+				if (state.selectedSearchType === 0){
+					const groups = allGroups.filter(group => group.city === state.selectedCity.navn)
+					dispatch({type:'SET_GROUPS_RESULTS', groupsResults: groups})
+				} else if (state.selectedSearchType === 1) {
+					const users = allUsers.filter(user => user.city === state.selectedCity.navn)
+					dispatch({type:'SET_USERS_RESULTS', usersResults: users})
+				}
 
-			if (state.selectedSearchType === 0){
-				const groups = allGroups.filter(group => group.city === state.selectedCity.navn)
-				dispatch({type:'SET_GROUPS_RESULTS', groupsResults: groups})
-			} else if (state.selectedSearchType === 1) {
-				const users = allUsers.filter(user => user.city === state.selectedCity.navn)
-				dispatch({type:'SET_USERS_RESULTS', usersResults: users})
-			}
-
-	}, [state.selectedCity, state.selectedSearchType])
+	}, [state.selectedCity])
 
 	// Showing all results satifying the search query
 	startQuerySearch = () => {
@@ -167,10 +201,6 @@ const ListView = props => {
 		if(!state.querySearch) {
 			return;
 		}
-		dispatch({type:'SET_SEARCH_STRING', searchString: state.searchString})
-		dispatch({type:'SET_IN_FOCUS', inFocus: false})
-		Keyboard.dismiss();
-		
 		if (state.selectedSearchType === 0){
 			const groups = allGroups.filter(group => group.name.includes(state.searchString))
 			dispatch({type:'SET_GROUPS_RESULTS', groupsResults: groups})
@@ -178,7 +208,11 @@ const ListView = props => {
 			const users = allUsers.filter(user => user.firstname.includes(state.searchString) || user.lastname.includes(state.searchString))
 			dispatch({type:'SET_USERS_RESULTS', usersResults: users})
 		}
-	}, [state.querySearch, state.selectedSearchType])
+		dispatch({type:'SET_SEARCH_STRING', searchString: state.searchString})
+		dispatch({type:'SET_IN_FOCUS', inFocus: false})
+		Keyboard.dismiss();
+
+	}, [state.querySearch])
 
 	autocompletePressedHandler = (item) => {
 		switch(item.type) {
@@ -272,7 +306,7 @@ const ListView = props => {
 }
 
 			{
-			 !state.inFocus && state.selectedCity && state.selectedSearchType === 0 &&
+			 !state.inFocus && !state.querySearch && state.selectedSearchType === 0 &&
 					<FlatList
 					style={styles.resultsContainer}
 					horizontal={false}
@@ -300,7 +334,7 @@ const ListView = props => {
 					
 				}
 				{
-				!state.inFocus && state.selectedCity && state.selectedSearchType === 1 &&
+				!state.inFocus && !state.querySearch && state.selectedSearchType === 1 &&
 					<FlatList
 					style={styles.resultsContainer}
 					horizontal={false}

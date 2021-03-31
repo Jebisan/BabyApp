@@ -81,7 +81,8 @@ useEffect(() => {
 
   return (
           <View style={styles.parent}>
-            <ListView/>
+          <ListView/>
+          <Text style={styles.header} >Velkommen tilbage!</Text>
           </View>
 
   );
