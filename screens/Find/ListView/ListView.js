@@ -109,7 +109,7 @@ const ListView = props => {
 		}
 
 		if (state.selectedSearchType === 1) {
-			const users = allUsers.filter(group => group.firstname.includes(state.searchString||group.lastname.includes(state.searchString)));
+			const users = allUsers.filter(user => user.firstname.includes(state.searchString||user.lastname.includes(state.searchString)));
 			users.forEach(user => {
 				if(filteredArr.length !== 5) {
 					filteredArr.push({
@@ -121,7 +121,6 @@ const ListView = props => {
 				}
 			})
 		}
-		console.log(filteredArr);
 		dispatch({type:'SET_AUTOCOMPLETE_RESULTS', autocompleteResults: filteredArr})
 	});
 	}, [state.searchString, state.selectedSearchType])
@@ -190,13 +189,13 @@ const ListView = props => {
 				console.log('You pressed a User!')
 				break;
 			case 'GROUP':
-				console.log('You pressed a Group!')
+				props.navigation.navigate('GroupDetail', { id: item.data.key })
 				break;
 			default:
 				break;
-
 		}
 	}
+	
 
 	return (
 		<View style={styles.parent}>
@@ -281,21 +280,24 @@ const ListView = props => {
 					keyExtractor={item => item.key}
 					data={state.groupsResults}
 					renderItem={({ item }) => 
-					<Group
-						id={item.key}
-						name={item.name}
-						description={item.description}
-						city={item.city}
-						postalCode={item.postalCode}
-						photoUrl={item.photoUrl}
-						admin = {item.admin}
-						dueDate = {item.dueDate}
-						members = {item.members}
-						membersDetails = {item.membersDetails}
-						maxSize = {item.maxSize}
-					/>
+					<TouchableOpacity onPress={() => props.navigation.navigate('GroupDetail', { id: item.key })}>
+						<Group
+							id={item.key}
+							name={item.name}
+							description={item.description}
+							city={item.city}
+							postalCode={item.postalCode}
+							photoUrl={item.photoUrl}
+							admin = {item.admin}
+							dueDate = {item.dueDate}
+							members = {item.members}
+							membersDetails = {item.membersDetails}
+							maxSize = {item.maxSize}
+						/>
+					</TouchableOpacity>
 					}
 					/>
+					
 				}
 				{
 				!state.inFocus && state.selectedCity && state.selectedSearchType === 1 &&
@@ -327,7 +329,9 @@ const ListView = props => {
 		   keyboardShouldPersistTaps='handled'
 		   keyExtractor={item => item.key}
 		   data={state.groupsResults}
-		   renderItem={({ item }) => 
+		   renderItem={({ item }) =>
+		   <TouchableOpacity onPress={() => props.navigation.navigate('GroupDetail', { id: item.key })
+		} >
 		   <Group
 			   id={item.key}
 			   name={item.name}
@@ -341,6 +345,7 @@ const ListView = props => {
 			   membersDetails = {item.membersDetails}
 			   maxSize = {item.maxSize}
 		   />
+		   </TouchableOpacity>
 		   }
 		   />
 	   }
