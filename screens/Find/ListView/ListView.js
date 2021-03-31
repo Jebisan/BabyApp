@@ -100,7 +100,7 @@ const ListView = props => {
 				const filteredArr = [...new Map(data.map(item => [item.postnummer.navn, {id: item.tekst, type: 'CITY', data: item}])).values()].slice(0,3)
 
 		if (state.selectedSearchType === 0) {
-			const groups = allGroups.filter(group => group.name.includes(state.searchString));
+			const groups = allGroups.filter(group => group.name.toLowerCase().includes(state.searchString.toLowerCase()));
 
 			groups.forEach(group => {
 				if(filteredArr.length !== 5) {
@@ -115,7 +115,7 @@ const ListView = props => {
 		}
 
 		if (state.selectedSearchType === 1) {
-			const users = allUsers.filter(user => user.firstname.includes(state.searchString||user.lastname.includes(state.searchString)));
+			const users = allUsers.filter(user => (user.firstname + ' ' + user.lastname).toLowerCase().includes(state.searchString.toLowerCase()));
 			users.forEach(user => {
 				if(filteredArr.length !== 5) {
 					filteredArr.push({
@@ -149,10 +149,10 @@ const ListView = props => {
 
 		if(state.querySearch) {
 			if (state.selectedSearchType === 0){
-				const groups = allGroups.filter(group => group.name.includes(state.searchString))
+				const groups = allGroups.filter(group => group.name.toLowerCase().includes(state.searchString.toLowerCase()))
 				dispatch({type:'SET_GROUPS_RESULTS', groupsResults: groups})
 			} else if (state.selectedSearchType === 1) {
-				const users = allUsers.filter(user => user.firstname.includes(state.searchString) || user.lastname.includes(state.searchString))
+				const users = allUsers.filter(user => (user.firstname + ' ' + user.lastname).toLowerCase().includes(state.searchString.toLowerCase()))
 				dispatch({type:'SET_USERS_RESULTS', usersResults: users})
 			}
 		}
@@ -202,10 +202,10 @@ const ListView = props => {
 			return;
 		}
 		if (state.selectedSearchType === 0){
-			const groups = allGroups.filter(group => group.name.includes(state.searchString))
+			const groups = allGroups.filter(group => group.name.toLowerCase().includes(state.searchString.toLowerCase()))
 			dispatch({type:'SET_GROUPS_RESULTS', groupsResults: groups})
 		} else if (state.selectedSearchType === 1) {
-			const users = allUsers.filter(user => user.firstname.includes(state.searchString) || user.lastname.includes(state.searchString))
+			const users = allUsers.filter(user => (user.firstname + ' ' + user.lastname).toLowerCase().includes(state.searchString.toLowerCase()))
 			dispatch({type:'SET_USERS_RESULTS', usersResults: users})
 		}
 		dispatch({type:'SET_SEARCH_STRING', searchString: state.searchString})
