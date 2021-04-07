@@ -7,101 +7,101 @@ import { convertDate2 } from '../../Shared'
 import { useSelector } from 'react-redux'
 import MapView, { Marker } from 'react-native-maps'
 import RequestModal from '../../components/RequestModal'
+import { getMembersDetails } from '../../store/actions/find'
 
 const GroupDetail = props => {
-	const [visible, setVisible] = useState(false) // Pass 'visible' to the Modal component, to conditionally render it
+	const group = props.route.params
+	const [visible, setVisible] = useState(false) // Parse 'visible' to the Modal component, to conditionally render it
 	const [requested, setRequested] = useState(false)
-
-	const group = useSelector(state => state.allGroups.allGroups).find(group => group.key === props.route.params.id)
-	const userId = useSelector(state => state.auth.userId)
+	const [membersDetails, setMembersDetails] = useState([])
 
 	const toggleModal = () => {
 		setVisible(!visible)
 	}
 
 	useEffect(() => {
-		if(group.requests.has(userId)){
-			setRequested(true)
-		}	
-	}, [group.requests])
-
-	useEffect(() => {
-		console.log(group)
-	}, [group])
-
+		getMembersDetails(group.members).then(data => {
+			setMembersDetails(data)
+		})
+	}, [])
 
 	return (
-		<View style={styles.parent}>
-			{visible &&
-		<RequestModal id = {group.key} toggleModal={toggleModal}/>
-			}
-			<View style={styles.topContainer}>
-				<AntDesign onPress={() => props.navigation.goBack()} style={styles.backIcon} name="arrowleft" size={24} color="white" />
-				<LinearGradient  colors={[colors.secondaryShade1, colors.secondaryShade2]} style={styles.linearGradient}>
-					<View style={styles.header}></View>
-				</LinearGradient>
-				<View style={styles.groupFactsContainer}>
-					<View style={styles.imageContainer} >
-						<Image source={{ uri: group.photoUrl }} style={styles.image} resizeMode="cover"></Image>
-					</View>
-					<Text style={styles.title}>{group.name}</Text>
-					<Text style={styles.subTitle}>{group.groupType === 1 ?'Fædregruppe' : 'Mødregruppe'}</Text>
-					<View style={styles.horizontalContainer} >
-						<Entypo style={{left: -10, bottom: 1}} name="location-pin" size={16} color={colors.darkGrey} />
-						<Text style={{...styles.smallText, left: -9, bottom: 1}}>{group.city}</Text>
-						<FontAwesome style={{left: 13, bottom: 1}}  name="calendar-o" size={13} color={colors.darkGrey} />
-						<Text style={{...styles.smallText, left: 16, bottom: 1}}>{convertDate2(group.dueDate)}</Text>
-					</View>
-					<View style={styles.buttonContainer} >
-						<TouchableOpacity style = {styles.directMessageButtonContainer} onPress={() => Alert.alert('Not supported yet')} >
-							<MaterialCommunityIcons name="chat-outline" size={24} color={'black'} />                
-						</TouchableOpacity>
-					{ !requested ?
-						<TouchableOpacity style={styles.requestButton} onPress={toggleModal} > 
-							<Text style={styles.buttonText}>Anmod</Text>
-						</TouchableOpacity>
-						:
-						<TouchableOpacity disabled={true} style={styles.requestedButton}> 
-							<AntDesign style={{right: 6, top: 1}} name="check" size={23} color={colors.darkGrey} />
-							<Text style={{...styles.buttonText, color: colors.darkGrey}}>Anmodning sendt</Text>
-						</TouchableOpacity>
-					}
-					</View>
-				</View>
-			</View>
-			<View style={styles.middleContainer} >
-				<View style={styles.descriptionContainer}>
-					<Text style={styles.smallTitle}>Om gruppen</Text>
-					<Text style={styles.descriptionText}>{group.description}</Text>
-				</View>
-			</View>
-			<View style={styles.bottomContainer} >
-				<TouchableOpacity style={styles.membersContainer} onPress={() => Alert.alert('Not sypported yet')} >
-					<Text style={styles.smallTitle}>Medlemmer</Text>
-					<View style={styles.memberPicturesContainer} >
-						{group.membersDetails.map((member, index) => (
-							<Image key={index} source={{uri: member.photoUrl}} style={styles.memberImage} resizeMode="cover"></Image>
-						))}
-						<View style={styles.memberImage}>
-							<Text style={styles.availableSpotsText}>{group.maxSize-group.members.length}</Text>
-						</View>
-						<SimpleLineIcons style={{position: 'absolute', left: 310}} name="arrow-right" size={16} color={colors.darkGrey} />
-					</View>
-				</TouchableOpacity>
-			
-				<MapView style={styles.mapPreview} mapType={'mutedStandard'} region={{...group.location, latitudeDelta: 0.0122, longitudeDelta: 0.0121}} >
-					<Marker key={group.key} coordinate={group.location}>
-						<View style={styles.group}>
-							<FontAwesome name='group' size={14} color={colors.primary} 
-							/>
-						</View>
-					</Marker>
-				</MapView>
+		<View>
+		{		
+        <View style={styles.parent}>
+            {visible &&
+        <RequestModal id = {group.key} toggleModal={toggleModal}/>
+            }
+            <View style={styles.topContainer}>
+                <AntDesign onPress={() => props.navigation.goBack()} style={styles.backIcon} name="arrowleft" size={24} color="white" />
+                <LinearGradient  colors={[colors.secondaryShade1, colors.secondaryShade2]} style={styles.linearGradient}>
+                    <View style={styles.header}></View>
+                </LinearGradient>
+                <View style={styles.groupFactsContainer}>
+                    <View style={styles.imageContainer} >
+                        <Image source={{ uri: group.photoUrl }} style={styles.image} resizeMode="cover"></Image>
+                    </View>
+                    <Text style={styles.title}>{group.name}</Text>
+                    <Text style={styles.subTitle}>{group.groupType === 1 ?'Fædregruppe' : 'Mødregruppe'}</Text>
+                    <View style={styles.horizontalContainer} >
+                        <Entypo style={{left: -10, bottom: 1}} name="location-pin" size={16} color={colors.darkGrey} />
+                        <Text style={{...styles.smallText, left: -9, bottom: 1}}>{group.city}</Text>
+                        <FontAwesome style={{left: 13, bottom: 1}}  name="calendar-o" size={13} color={colors.darkGrey} />
+                        <Text style={{...styles.smallText, left: 16, bottom: 1}}>{convertDate2(group.dueDate)}</Text>
+                    </View>
+                    <View style={styles.buttonContainer} >
+                        <TouchableOpacity style = {styles.directMessageButtonContainer} onPress={() => Alert.alert('Not supported yet')} >
+                            <MaterialCommunityIcons name="chat-outline" size={24} color={'black'} />                
+                        </TouchableOpacity>
+                    { !requested ?
+                        <TouchableOpacity style={styles.requestButton} onPress={toggleModal} > 
+                            <Text style={styles.buttonText}>Anmod</Text>
+                        </TouchableOpacity>
+                        :
+                        <TouchableOpacity disabled={true} style={styles.requestedButton}> 
+                            <AntDesign style={{right: 6, top: 1}} name="check" size={23} color={colors.darkGrey} />
+                            <Text style={{...styles.buttonText, color: colors.darkGrey}}>Anmodning sendt</Text>
+                        </TouchableOpacity>
+                    }
+                    </View>
+                </View>
+            </View>
+            <View style={styles.middleContainer} >
+                <View style={styles.descriptionContainer}>
+                    <Text style={styles.smallTitle}>Om gruppen</Text>
+                    <Text style={styles.descriptionText}>{group.description}</Text>
+                </View>
+            </View>
+            <View style={styles.bottomContainer} >
+                <TouchableOpacity style={styles.membersContainer} onPress={() => Alert.alert('Not sypported yet')} >
+                    <Text style={styles.smallTitle}>Medlemmer</Text>
+                    <View style={styles.memberPicturesContainer} >
+                        {membersDetails.map((member, index) => (
+                            <Image key={index} source={{uri: member.photoUrl}} style={styles.memberImage} resizeMode="cover"></Image>
+                        ))}
+                        <View style={styles.memberImage}>
+						{
+                            group.members && <Text style={styles.availableSpotsText}>{group.maxSize-group.members.length}</Text>
+						}
+                        </View>
+                        <SimpleLineIcons style={{position: 'absolute', left: 310}} name="arrow-right" size={16} color={colors.darkGrey} />
+                    </View>
+                </TouchableOpacity>
+            
+                <MapView style={styles.mapPreview} mapType={'mutedStandard'} region={{...group.location, latitudeDelta: 0.0122, longitudeDelta: 0.0121}} >
+                    <Marker key={group.key} coordinate={group.location}>
+                        <View style={styles.group}>
+                            <FontAwesome name='group' size={14} color={colors.primary} 
+                            />
+                        </View>
+                    </Marker>
+                </MapView>
 
-			</View>
-			<View>
-			</View>
-
+            </View>
+            <View>
+            </View>
+        </View>
+	}
 		</View>
 	)
 }

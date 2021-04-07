@@ -22,13 +22,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 10,
     paddingBottom: 10,
-    paddingLeft: 10,
     width: 330,
   },
   city: {
     fontSize: 14,
     fontFamily: 'roboto-regular',
-    paddingLeft: 20,
+    paddingLeft: 16,
   },
 });
 

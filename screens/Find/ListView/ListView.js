@@ -1,15 +1,13 @@
 import React, { useEffect, useReducer } from 'react'
-import { useSelector } from 'react-redux'
 import { StyleSheet, View, TextInput, TouchableOpacity, Keyboard, FlatList } from 'react-native'
 import colors from '../../../constants/colors'
 import { AntDesign, MaterialIcons } from '@expo/vector-icons' 
 import SwitchSelector from 'react-native-switch-selector'
 import City from '../../../components/City'
-import UserAutocomplete from '../../../components/UserAutocomplete'
 import User from '../../../components/User'
 import Group from '../../../components/Group'
-import GroupAutocomplete from '../../../components/GroupAutocomplete'
 import { Text } from 'react-native'
+import {getGroupsByCity, getGroupsByName, getUsersByCity, getUsersByName} from '../../../store/actions/find'
 
 const initialState = {
 	searchString: '',
@@ -50,15 +48,12 @@ function reducer(state, action) {
 }
 
 const ListView = props => {
-	const allUsers = useSelector(state => state.allUsers)
-	const allGroups = useSelector(state => state.allGroups.allGroups)
-
 	const [state, dispatch] = useReducer(reducer, initialState)
 
 	useEffect(() => {
 		return;
-		console.clear();
-		console.table(state);
+		console.clear()
+		console.table(state)
 	}, [state])
 
 	const clear = () => {
@@ -70,308 +65,272 @@ const ListView = props => {
 	}
 
 	const back = () => {
-		if (state.selectedCity) {
-			dispatch({type:'SET_SEARCH_STRING', searchString: state.selectedCity.navn})
-		} else if (state.querySearch) {
+		if (!state.querySearch) {
 			dispatch({type:'SET_SEARCH_STRING', searchString: state.searchString})
+		} else {
+			dispatch({type:'SET_SEARCH_STRING', searchString: state.selectedCity.navn})
 		}
 		dispatch({type: 'SET_IN_FOCUS', inFocus: false})
 		Keyboard.dismiss()
 	}
 
-	// ONLY IN FOCUS STUFF
+	// AUTOCOMPLETE STUFF (IN FOCUS)
 	useEffect(() => {
-		/*
-		if(state.querySearch) {
-			return;
-		}
-		*/
 		if(state.searchString === '') {
 			dispatch({type:'SET_AUTOCOMPLETE_RESULTS', autocompleteResults: []})
 			dispatch({type:'SET_USERS_RESULTS', usersResults: []})
 			dispatch({type:'SET_GROUPS_RESULTS', groupsResults: []})
-			return;
+			return
 		}
 
-		// UPDATE AUTOCOMPLETE CITY RESULTS.
 		fetch(`https://api.dataforsyningen.dk/postnumre/autocomplete?q=${state.searchString}`)
 			.then(response => response.json())
 			.then(data => {
-				const filteredArr = [...new Map(data.map(item => [item.postnummer.navn, {id: item.tekst, type: 'CITY', data: item}])).values()].slice(0,3)
-
-		if (state.selectedSearchType === 0) {
-			const groups = allGroups.filter(group => group.name.toLowerCase().includes(state.searchString.toLowerCase()));
-
-			groups.forEach(group => {
-				if(filteredArr.length !== 5) {
-					filteredArr.push({
-						id: group.key,
-						type: 'GROUP',
-						data: group
-
-					})
-				}
-			});
-		}
-
-		if (state.selectedSearchType === 1) {
-			const users = allUsers.filter(user => (user.firstname + ' ' + user.lastname).toLowerCase().includes(state.searchString.toLowerCase()));
-			users.forEach(user => {
-				if(filteredArr.length !== 5) {
-					filteredArr.push({
-						id: user.key,
-						type: 'USER',
-						data: user
-						}
-					)
-				}
+				const filteredArr = [...new Map(data.map(item => [item.postnummer.navn, item])).values()].slice(0,5)
+				dispatch({type:'SET_AUTOCOMPLETE_RESULTS', autocompleteResults: filteredArr})
 			})
-		}
-		dispatch({type:'SET_AUTOCOMPLETE_RESULTS', autocompleteResults: filteredArr})
-	});
 	}, [state.searchString, state.selectedSearchType])
 
-	// OUT OF FOCUS STUFF
+	// WHEN SELECTED_SEARCH_TYPE HAS CHANGED (OUT OF FOCUS)
 	useEffect(() => {
 		if(state.inFocus) {
-			return;
+			return
 		}
 
 		if(state.selectedCity) {
-			if (state.selectedSearchType === 0){
-				const groups = allGroups.filter(group => group.city === state.selectedCity.navn)
-				dispatch({type:'SET_GROUPS_RESULTS', groupsResults: groups})
-			} else if (state.selectedSearchType === 1) {
-				const users = allUsers.filter(user => user.city === state.selectedCity.navn)
-				dispatch({type:'SET_USERS_RESULTS', usersResults: users})
-			}
+			startCitySearch();
 		}
 
 		if(state.querySearch) {
-			if (state.selectedSearchType === 0){
-				const groups = allGroups.filter(group => group.name.toLowerCase().includes(state.searchString.toLowerCase()))
-				dispatch({type:'SET_GROUPS_RESULTS', groupsResults: groups})
-			} else if (state.selectedSearchType === 1) {
-				const users = allUsers.filter(user => (user.firstname + ' ' + user.lastname).toLowerCase().includes(state.searchString.toLowerCase()))
-				dispatch({type:'SET_USERS_RESULTS', usersResults: users})
-			}
+			startQuerySearch();
 		}
-
 	}, [state.selectedSearchType])
 
+
+	// WHEN QUERY SEARCH IS SELECTED
 	useEffect(() => {
 		if (state.inFocus) {
-			// dispatch({type:'SET_SELECTED_CITY', selectedCity: undefined})
 			dispatch({type:'SET_QUERY_SEARCH', querySearch: false})
-
-		} else {
-			
 		}
 	}, [state.inFocus])
 
 
-	// A city has been selected. Determine what to do depending on whether the search field is focused or not.
-
+	// A CITY HAS BEEN SELECTED
 	useEffect(() => {
 		if(!state.selectedCity){
 			return
 		}
 
+		startCitySearch();
 		dispatch({type:'SET_SEARCH_STRING', searchString: state.selectedCity.navn})
 		dispatch({type:'SET_IN_FOCUS', inFocus: false})
-			Keyboard.dismiss()
-	
-				if (state.selectedSearchType === 0){
-					const groups = allGroups.filter(group => group.city === state.selectedCity.navn)
-					dispatch({type:'SET_GROUPS_RESULTS', groupsResults: groups})
-				} else if (state.selectedSearchType === 1) {
-					const users = allUsers.filter(user => user.city === state.selectedCity.navn)
-					dispatch({type:'SET_USERS_RESULTS', usersResults: users})
-				}
+		Keyboard.dismiss()
 
 	}, [state.selectedCity])
 
-	// Showing all results satifying the search query
-	startQuerySearch = () => {
-		dispatch({type:'SET_QUERY_SEARCH', querySearch: true})
-
-	}
-
 	useEffect(() => {
 		if(!state.querySearch) {
-			return;
+			return
 		}
-		if (state.selectedSearchType === 0){
-			const groups = allGroups.filter(group => group.name.toLowerCase().includes(state.searchString.toLowerCase()))
-			dispatch({type:'SET_GROUPS_RESULTS', groupsResults: groups})
-		} else if (state.selectedSearchType === 1) {
-			const users = allUsers.filter(user => (user.firstname + ' ' + user.lastname).toLowerCase().includes(state.searchString.toLowerCase()))
-			dispatch({type:'SET_USERS_RESULTS', usersResults: users})
-		}
+
+		startQuerySearch();
 		dispatch({type:'SET_SEARCH_STRING', searchString: state.searchString})
 		dispatch({type:'SET_IN_FOCUS', inFocus: false})
-		Keyboard.dismiss();
+		Keyboard.dismiss()
 
 	}, [state.querySearch])
 
-	autocompletePressedHandler = (item) => {
-		switch(item.type) {
-			case 'CITY':
-				dispatch({type:'SET_SELECTED_CITY', selectedCity: item.data.postnummer})
-				break;
-			case 'USER':
-				console.log('You pressed a User!')
-				break;
-			case 'GROUP':
-				props.navigation.navigate('GroupDetail', { id: item.data.key })
-				break;
-			default:
-				break;
+	startQuerySearch = async() => {
+		if (state.selectedSearchType === 0){
+			//const groups = allGroups.filter(group => group.name.toLowerCase().includes(state.searchString.toLowerCase()))
+			const groups = await getGroupsByName(state.searchString.toLowerCase())
+			dispatch({type:'SET_GROUPS_RESULTS', groupsResults: groups})
+		} else if (state.selectedSearchType === 1) {
+			const users = await getUsersByName(state.searchString.toLowerCase())
+			dispatch({type:'SET_USERS_RESULTS', usersResults: users})
 		}
 	}
-	
+
+	startCitySearch = () => {
+		if (state.selectedSearchType === 0){
+			getGroupsByCity(state.selectedCity.navn).then(groups => {
+				dispatch({type:'SET_GROUPS_RESULTS', groupsResults: groups})
+			})
+		} else if (state.selectedSearchType === 1) {
+			getUsersByCity(state.selectedCity.navn).then(users => {
+				dispatch({type:'SET_USERS_RESULTS', usersResults: users})
+			});
+			
+		}
+	}
 
 	return (
 		<View style={styles.parent}>
-				<View style={styles.searchbarContainer} >
-					<TouchableOpacity style={state.inFocus?{display:'flex'}:{display:'none'}}  onPress={() => back()} >
-						<AntDesign name="arrowleft" size={30} color={colors.darkGrey} />
+			<View style={styles.searchbarContainer} >
+				<TouchableOpacity style={state.inFocus?{display:'flex'}:{display:'none'}}  onPress={() => back()} >
+					<AntDesign name="arrowleft" size={30} color={colors.darkGrey} />
+				</TouchableOpacity>
+				<View style={styles.textInputContainer} >
+					<TouchableOpacity >
+						<MaterialIcons style={!state.inFocus?{display:'flex'}:{display:'none'}} name="search" size={24} color={colors.darkGrey} />
 					</TouchableOpacity>
-					<View style={styles.textInputContainer} >
-						<TouchableOpacity >
-							<MaterialIcons style={!state.inFocus?{display:'flex'}:{display:'none'}} name="search" size={24} color={colors.darkGrey} />
-						</TouchableOpacity>
-						<TextInput
-							onChangeText={text => dispatch({type:'SET_SEARCH_STRING', searchString: text})}
-							placeholder={'Søg'}
-							style={styles.textInput}
-							value={state.searchString}
-							keyboardType={'web-search'}
-							onFocus={() => dispatch({type: 'SET_IN_FOCUS', inFocus: true})}
-						/>
-						<View style={{position: 'absolute', right: 0, paddingRight: 15}} >
-							<MaterialIcons name="filter-list" style={!state.inFocus? {display: 'flex'} : {display:'none'}}  size={24} color="black" />
-							<MaterialIcons onPress={() => clear()} style={
-								state.searchString.length > 0 && state.inFocus ? { display : 'flex' } : { display : 'none' }
-							} name="cancel" size={24} color={colors.darkGrey} />
-						</View>
+					<TextInput
+						onChangeText={text => dispatch({type:'SET_SEARCH_STRING', searchString: text})}
+						placeholder={'Søg'}
+						style={styles.textInput}
+						value={state.searchString}
+						keyboardType={'web-search'}
+						onFocus={() => dispatch({type: 'SET_IN_FOCUS', inFocus: true})}
+					/>
+					<View style={{position: 'absolute', right: 0, paddingRight: 15}} >
+						<MaterialIcons name="filter-list" style={!state.inFocus? {display: 'flex'} : {display:'none'}}  size={24} color="black" />
+						<MaterialIcons onPress={() => clear()} style={
+							state.searchString.length > 0 && state.inFocus ? { display : 'flex' } : { display : 'none' }
+						} name="cancel" size={24} color={colors.darkGrey} />
 					</View>
 				</View>
+			</View>
 
-				<View style={styles.buttonContainer} >
-					<SwitchSelector 
-						options={[{ label: 'Grupper', value: 0 },{ label: 'Personer', value: 1 },]} 
-						initial={state.selectedSearchType}
-						value={state.selectedSearchType}
-						onPress={value => dispatch({type:'SET_SELECTED_SEARCH_TYPE', selectedSearchType: value})} 
-						textColor={'black'} //'#7a44cf'
-						selectedColor={'black'}
-						backgroundColor={'#eeeef0'}
-						buttonColor={'white'}
-						borderColor={'#eeeef0'}
-						selectedTextStyle={{fontFamily:'roboto-bold'}}
-						textStyle={{fontFamily:'roboto-regular'}}
-						hasPadding={true}
-					/>
-				</View>
+			<SwitchSelector 
+				options={[{ label: 'Grupper', value: 0 },{ label: 'Personer', value: 1 },]} 
+				initial={state.selectedSearchType}
+				value={state.selectedSearchType}
+				onPress={value => dispatch({type:'SET_SELECTED_SEARCH_TYPE', selectedSearchType: value})} 
+				textColor={'black'} //'#7a44cf'
+				selectedColor={'black'}
+				backgroundColor={'#eeeef0'}
+				buttonColor={'white'}
+				borderColor={'#eeeef0'}
+				selectedTextStyle={{fontFamily:'roboto-bold'}}
+				textStyle={{fontFamily:'roboto-regular'}}
+				hasPadding={true}
+				style={styles.buttonContainer}
+				height={styles.buttonContainer.height}
+			/>
 
-				<View style={styles.autocompleteContainer} >
+			<View style={styles.autocompleteContainer} >
 		
 				{state.inFocus &&
-					// AUTOCOMPLETE
+				// AUTOCOMPLETE
 						<FlatList
-						style={styles.resultsContainer}
-						horizontal={false}
-						keyboardShouldPersistTaps='handled'
-						keyExtractor={item => item.id}
-						data={state.autocompleteResults}
-						renderItem={({ item }) => 
-						<TouchableOpacity onPress={() => autocompletePressedHandler(item)} >
-							{item.type === 'CITY' && <City name = {item.data.postnummer.navn} />}
-							{item.type === 'USER' && <UserAutocomplete firstname = {item.data.firstname} lastname = {item.data.lastname} photoUrl={item.data.photoUrl} />}
-							{item.type === 'GROUP' && <GroupAutocomplete name = {item.data.name} photoUrl={item.data.photoUrl} />}
-						</TouchableOpacity>
-						}
-					/>
+							style={styles.resultsContainer}
+							horizontal={false}
+							keyboardShouldPersistTaps='handled'
+							keyExtractor={item => item.tekst}
+							data={state.autocompleteResults}
+							renderItem={({ item }) => 
+								<TouchableOpacity onPress={() => dispatch({type:'SET_SELECTED_CITY', selectedCity: item.postnummer})} >
+									<City name = {item.postnummer.navn} />
+								</TouchableOpacity>
+							}
+						/>
 				}
-					{  state.searchString.length > 0 && state.inFocus &&
-						<TouchableOpacity style={styles.seeAllResultsContainer} onPress={() => startQuerySearch()} > 
+				{  state.searchString.length > 0 && state.inFocus &&
+						<TouchableOpacity style={styles.seeAllResultsContainer} onPress={() => dispatch({type:'SET_QUERY_SEARCH', querySearch: true})} > 
 							<Text style={styles.seeAllResultsText}>Se resultater for</Text>
 							<Text style={{...styles.seeAllResultsText, fontFamily: 'roboto-bold'}}> {state.searchString}</Text>
 						</TouchableOpacity>
-					}
-				</View>
+				}
+			</View>
 
-{	// OUT OF FOCUS STUFF WHEN CITY IS SELECTED: 
-}
+			{	// OUT OF FOCUS STUFF WHEN CITY IS SELECTED: 
+			}
 
 			{
 			 !state.inFocus && !state.querySearch && state.selectedSearchType === 0 &&
 					<FlatList
-					style={styles.resultsContainer}
-					horizontal={false}
-					keyboardShouldPersistTaps='handled'
-					keyExtractor={item => item.key}
-					data={state.groupsResults}
-					renderItem={({ item }) => 
-					<TouchableOpacity onPress={() => props.navigation.navigate('GroupDetail', { id: item.key })}>
-						<Group
-							id={item.key}
-							name={item.name}
-							description={item.description}
-							city={item.city}
-							postalCode={item.postalCode}
-							photoUrl={item.photoUrl}
-							admin = {item.admin}
-							dueDate = {item.dueDate}
-							members = {item.members}
-							membersDetails = {item.membersDetails}
-							maxSize = {item.maxSize}
-						/>
-					</TouchableOpacity>
-					}
+						style={styles.resultsContainer}
+						horizontal={false}
+						keyboardShouldPersistTaps='handled'
+						keyExtractor={item => item.id}
+						data={state.groupsResults}
+						renderItem={({ item }) => 
+							<TouchableOpacity onPress={() => props.navigation.navigate('GroupDetail', {
+								id: item.id,
+								name: item.name,
+								description :item.description,
+								city: item.city,
+								location: item.location,
+								postalCode: item.postalCode,
+								photoUrl: item.photoUrl,
+								admin: item.admin,
+								dueDate: item.dueDate,
+								members: item.members,
+								membersDetails: item.membersDetails,
+								maxSize: item.maxSize
+							})}>
+								<Group
+									id={item.id}
+									name={item.name}
+									description={item.description}
+									city={item.city}
+									location= {item.location}
+									postalCode={item.postalCode}
+									photoUrl={item.photoUrl}
+									admin = {item.admin}
+									dueDate = {item.dueDate}
+									members = {item.members}
+									membersDetails = {item.membersDetails}
+									maxSize = {item.maxSize}
+								/>
+							</TouchableOpacity>
+						}
 					/>
 					
-				}
-				{
+			}
+			{
 				!state.inFocus && !state.querySearch && state.selectedSearchType === 1 &&
 					<FlatList
-					style={styles.resultsContainer}
-					horizontal={false}
-					keyboardShouldPersistTaps='handled'
-					keyExtractor={item => item.key}
-					data={state.usersResults}
-					renderItem={({ item }) => 
-					<User
-						firstname={item.firstname}
-						lastname={item.lastname}
-						city={item.city}
-						postalCode={item.postalCode}
-						photoUrl={item.photoUrl}
+						style={styles.resultsContainer}
+						horizontal={false}
+						keyboardShouldPersistTaps='handled'
+						keyExtractor={item => item.id}
+						data={state.usersResults}
+						renderItem={({ item }) => 
+							<User
+								firstname={item.firstname}
+								lastname={item.lastname}
+								city={item.city}
+								postalCode={item.postalCode}
+								photoUrl={item.photoUrl}
+							/>
+						}
 					/>
-					}
-					/>
-				}
+			}
 
-{	// OUT OF FOCUS STUFF WHEN CITY IS NOT SELECTED: 
-}
-{
-	state.querySearch && state.selectedSearchType === 0 &&
+			{	// OUT OF FOCUS STUFF WHEN CITY IS NOT SELECTED: 
+			}
+			{
+				state.querySearch && state.selectedSearchType === 0 &&
 		   <FlatList
 		   style={styles.resultsContainer}
 		   horizontal={false}
 		   keyboardShouldPersistTaps='handled'
-		   keyExtractor={item => item.key}
+		   keyExtractor={item => item.id}
 		   data={state.groupsResults}
 		   renderItem={({ item }) =>
-		   <TouchableOpacity onPress={() => props.navigation.navigate('GroupDetail', { id: item.key })
-		} >
+		   <TouchableOpacity onPress={() => props.navigation.navigate('GroupDetail', { 
+				id: item.id,
+				name: item.name,
+				description :item.description,
+				city: item.city,
+				location: item.location,
+				postalCode: item.postalCode,
+				photoUrl: item.photoUrl,
+				admin: item.admin,
+				dueDate: item.dueDate,
+				members: item.members,
+				membersDetails: item.membersDetails,
+				maxSize: item.maxSize
+			})
+		   		} >
 		   <Group
-			   id={item.key}
+			   id={item.id}
 			   name={item.name}
 			   description={item.description}
 			   city={item.city}
 			   postalCode={item.postalCode}
+			   location = {item.location}
 			   photoUrl={item.photoUrl}
 			   admin = {item.admin}
 			   dueDate = {item.dueDate}
@@ -389,7 +348,7 @@ const ListView = props => {
 		   style={styles.resultsContainer}
 		   horizontal={false}
 		   keyboardShouldPersistTaps='handled'
-		   keyExtractor={item => item.key}
+		   keyExtractor={item => item.id}
 		   data={state.usersResults}
 		   renderItem={({ item }) => 
 		   <User
@@ -428,7 +387,7 @@ const styles = StyleSheet.create({
 		borderStyle: 'solid', 
 		borderColor: 'green',
 		paddingVertical: 50,
-		height: "100%"
+		height: '100%'
 	},
 	searchbarContainer: {
 		display: 'flex', 
@@ -455,16 +414,20 @@ const styles = StyleSheet.create({
 	},
 	textInput: {
 		fontFamily: 'roboto-regular',
-		width: '90%',
+		width: '95%',
 		height: '100%',
 		fontSize: 15,
 		borderColor: 'blue',
 		borderStyle: 'solid',
 		borderWidth: 0,
+		paddingLeft: 2
 	},
 	buttonContainer: {
 		margin: 20,
-		width: 330
+		width: 345,
+		borderWidth: 0,
+		borderColor: 'red',
+		height: 34
 	},
 	autocompleteContainer: {
 		flexDirection: 'column', 
@@ -497,7 +460,7 @@ const styles = StyleSheet.create({
 		borderWidth: 0, 
 		borderStyle: 'solid', 
 		borderColor: 'pink',
-	}
+	},
 })
 
 export default ListView

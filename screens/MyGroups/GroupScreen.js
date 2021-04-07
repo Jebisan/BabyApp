@@ -45,10 +45,7 @@ useEffect(() => {
   
 
   useEffect(() => {
-    // Only fetch members if they are not already fetched and saved
-    if(groupData.members.length === 0){
       dispatch(getMembers(groupData.id));
-    }
       dispatch(getRequests(groupData.id));
   }, [])
 

@@ -3,21 +3,16 @@ import { View, StyleSheet, Text, Image } from 'react-native';
 import {Entypo, FontAwesome, SimpleLineIcons} from '@expo/vector-icons';
 import colors from '../constants/colors';
 import { convertDate2 } from '../Shared';
-import { useDispatch } from 'react-redux';
-import {setMembers} from '../store/actions/allGroups'
+import { getMembersDetails } from '../store/actions/find';
 
 const SelectedGroup = props => {
-
-  const dispatch = useDispatch();
-
+  const [membersDetails, setMembersDetails] = useState([]);
 
   useEffect(() => {
-    if (props.group.membersDetails.length === 0) {
-      dispatch(setMembers(props.group.key))
-    } else {
-    }
-  }, [props.group])
-
+		getMembersDetails(props.group.members).then(data => {
+			setMembersDetails(data)
+		})  
+  }, [])
 
   return (
     <View style={styles.parentContainer}>
@@ -37,9 +32,9 @@ const SelectedGroup = props => {
           <Text style={{...styles.smallText, left: 18, bottom: 0}}>{convertDate2(props.group.dueDate)}</Text>
         </View>
 
-        {props.group.membersDetails.length > 0 && 
+        {membersDetails.length > 0 && 
           <View style={styles.membersContainer}>
-          {props.group.membersDetails.map((member, index) => (
+          {membersDetails.map((member, index) => (
             <Image key={index} source={{uri: member.photoUrl}} style={styles.memberImage} resizeMode="cover"></Image>
             ))}
             <View style={styles.memberImage}>

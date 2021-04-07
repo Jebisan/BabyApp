@@ -1,27 +1,22 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {View, StyleSheet, Text, Image } from 'react-native';
 import {Entypo, FontAwesome, Ionicons} from '@expo/vector-icons';
-import {convertDate2} from '../Shared'
+import {convertDate2, convertFirebaseUser} from '../Shared'
 import colors from '../constants/colors';
-import {setMembers} from '../store/actions/allGroups'
-import { useDispatch, useSelector } from 'react-redux';
+import {getMembersDetails} from '../store/actions/find';
 
 
 const Group = props => {
-  const dispatch = useDispatch();
-  const membersDetails = useSelector(state => state.allGroups.allGroups).find(group => group.key === props.id).membersDetails
-
-  useEffect(() => {
-    // console.log(props);
-  }, [])
-
+  const [membersDetails, setMembersDetails] = useState([]);
 
   useEffect(() => {
     if (props.membersDetails.length === 0) {
-      dispatch(setMembers(props.id))
+          getMembersDetails(props.members).then(data => {
+            setMembersDetails(data)
+          })    
     }
-  }, [props.key])
+  }, [])
 
 
   return (
@@ -49,13 +44,13 @@ const Group = props => {
         <Text style={{...styles.smallText, left: 18, bottom: 0}}>{convertDate2(props.dueDate)}</Text>
       </View>
       {
-        
         membersDetails && 
         <View style={styles.membersContainer}>
         {membersDetails.map((member, index) => (
           <Image key={index} source={{uri: member.photoUrl}} style={styles.memberImage} resizeMode="cover"></Image>
           ))}
       </View>
+
       }
       </View>
       </View>

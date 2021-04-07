@@ -58,7 +58,6 @@ export default allGroupsReducer = (state = INITIAL_STATE, action) => {
         }
         case 'SET_REQUEST': 
         const newList = state.allGroups.map((group) => {
-          console.log(group.key)
           if (group.key === action.groupId) {
             const requestsMap = new Map()
             for (var i in group.requests)

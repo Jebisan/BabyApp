@@ -1,18 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, View, Text } from "react-native";
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
-import {useSelector} from 'react-redux';
 import colors from '../../constants/colors';
 import ListView from '../Find/ListView/ListView';
 
 const HomeScreen = props => {
-
-  const allGroups = useSelector(state => state.allGroups)
-  
-  
-  useEffect(() => {
-  }, [allGroups])
 
 useEffect(() => {
   registerForPushNotificationsAsync()
@@ -81,8 +74,11 @@ useEffect(() => {
 
   return (
           <View style={styles.parent}>
-          <ListView/>
           <Text style={styles.header} >Velkommen tilbage!</Text>
+          {
+           // <ListView />
+          }
+
           </View>
 
   );

@@ -46,7 +46,18 @@ const MapScreen = props => {
             {selectedGroup 
               &&
               <TouchableOpacity onPress={() => props.navigation.navigate('GroupDetail', {
-                id: selectedGroup.key
+                id: selectedGroup.key,
+                name: selectedGroup.name,
+                description :selectedGroup.description,
+                city: selectedGroup.city,
+                location: selectedGroup.location,
+                postalCode: selectedGroup.postalCode,
+                photoUrl: selectedGroup.photoUrl,
+                admin: selectedGroup.admin,
+                dueDate: selectedGroup.dueDate,
+                members: selectedGroup.members,
+                membersDetails: selectedGroup.membersDetails,
+                maxSize: selectedGroup.maxSize
               })}>
                 <SelectedGroup group={selectedGroup}/>
               </TouchableOpacity> 

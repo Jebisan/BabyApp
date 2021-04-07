@@ -14,10 +14,6 @@ const Find = (props) => {
 	const showMap = useSelector(state => state.find.showMap)
 	const showViewChangerButton = useSelector(state => state.find.showViewChangerButton)
 
-	useEffect(() => {
-		console.log(showViewChangerButton);
-	}, [showViewChangerButton])
-
 	return (
 		<View style= {styles.parentContainer} >
 		{

@@ -25,6 +25,10 @@ init = () => {
     return firebase.database().ref("users");
 }
 
+get me() {
+    return firebase.database().ref("users/PLSbt76AtqOKWQEAnxehhfLW88F3");
+}
+
     get groups() {
       return firebase.database().ref("groups");
   }

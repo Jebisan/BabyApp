@@ -32,28 +32,8 @@ export const fetchAllGroups = () => {
 
 export const setSelectedGroup = (key) => {
 	return async (dispatch, getState) => {
+		console.log('HER', key)
 			dispatch({type: 'SET_SELECTED_GROUP', key});
-	}
-}
-
-// DOWNLOAD MEMBER DETAILS WHENEVER NEEDED E.G SelectedGroup
-export const setMembers = (groupId) => {
-	return async (dispatch, getState) => {
-		const list = []
-			Fire.firebase.database().ref(`groups/${groupId}/members`).once('value').then((groupObject => {
-	
-				let group = Object.keys(groupObject.val()).map(key => {
-					return key
-		  })
-		  group.forEach(member => {
-			Fire.firebase.database().ref(`users/${member}`).once('value').then((memberObj => {
-			  list.push(memberObj.val());
-			  if(list.length === group.length){
-				dispatch({type: 'SET_MEMBERS_DETAILS', groupId, membersDetails: list});
-			  }
-			}))
-		  });
-		}))
 	}
 }
 
