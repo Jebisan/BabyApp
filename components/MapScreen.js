@@ -22,7 +22,7 @@ const MapScreen = props => {
 	}
 
 	const [loading, setLoading] = useState(false)
-	const [myLocation, setMyLocation] = useState(undefined)
+	const [showUserLocation, setShowUserLocation] = useState(false)
 	const selectedGroup = allGroups.find(group => group.selected === true) 
 
 
@@ -61,49 +61,16 @@ const MapScreen = props => {
 		return true
 	}
 
-	const setMyPosition = () => {
-		setLoading(true)
-		getMyPosition().then((data) => {
-			setMyLocation({
-				latitudeDelta: 0.0122,
-				longitudeDelta: 0.0060,
-				latitude: data.latitude,
-				longitude: data.longitude,
-			})
-		}).finally(() => {
-			setLoading(false)
-		}).catch(error => {
-			setLoading(false)
-			console.error(error)
-		})
-	}
-
-
-	const getMyPosition = async() => {
-		let { status } = await Location.requestPermissionsAsync()
-		if (status !== 'granted') {
-			return new Error('Permission to access location was denied')
-		}
-
-		let location = await Location.getCurrentPositionAsync({})
-		return location.coords
-	}
-
 	return (
 		<MapView 
 			onPress={(e) =>{ e.stopPropagation(); dispatch(clearSelectedGroup())}} 
 			style={styles.map} 
 			mapType={'mutedStandard'}
 			initialRegion ={defaultLocation}
+			showsUserLocation = {showUserLocation}
 		>
-			{
-				myLocation && 
-        <Marker onPress={e => e.stopPropagation()} coordinate={myLocation}>
-        	<MyPositionMarker />
-        </Marker>
-			}
-      
-			<TouchableOpacity style={styles.getMyPositionButton} onPress={e => { setMyPosition(); e.stopPropagation() }} >
+    
+			<TouchableOpacity style={styles.getMyPositionButton} onPress={() => setShowUserLocation(true)} >
 				{
 					loading ? <ActivityIndicator size='small' color={Colors.secondaryShade2} />
 						:

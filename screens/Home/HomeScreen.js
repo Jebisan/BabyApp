@@ -3,10 +3,14 @@ import { StyleSheet, View, Text } from "react-native";
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
 import colors from '../../constants/colors';
+import * as Notifications from 'expo-notifications';
 import ListView from '../Find/ListView/ListView';
+import { useDispatch } from 'react-redux';
+import {addPushTokenToUser} from '../../store/actions/auth';
 
 const HomeScreen = props => {
 
+  const dispatch = useDispatch();
 useEffect(() => {
   registerForPushNotificationsAsync()
   
@@ -30,7 +34,7 @@ useEffect(() => {
       }
       let token = await Notifications.getExpoPushTokenAsync();
       dispatch(addPushTokenToUser(token));
-      Notifications.addListener(_handleNotification);
+      Notifications.addPushTokenListener(_handleNotification);
     } else {
       console.log('Must use physical device for Push Notifications');
     }
