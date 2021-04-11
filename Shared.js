@@ -63,9 +63,8 @@ export const convertFirebaseUsersToArray = (data) => {
          return convertFirebaseUser(key, usersObject[key]);
       })
    } else {
-      console.error('No usersObject');
+      console.log('No usersObject');
    }
-   console.log(usersArray);
    return usersArray;
 }
 
@@ -75,7 +74,7 @@ export const convertFirebaseGroupsToArray = (data) => {
    const groupsObject = data.val()
 
       if(!groupsObject) {
-         console.error('No group object')
+         console.log('No group object')
          return
       }
       groupsArray = Object.keys(groupsObject).map(key => {

@@ -21,7 +21,7 @@ const Group = props => {
 
   return (
     <View style = {styles.parent}>
-      <View style = {styles.wishContainer}>
+      <View style = {styles.container}>
 
       <View style={styles.horizontalContainer}>
       <View style={styles.verticalContainer}>
@@ -36,12 +36,12 @@ const Group = props => {
       <View style={styles.verticalContainer}>
         <Text style= {styles.titleText}>{props.name}</Text>
         <View style={styles.factsContainer}>
-        <FontAwesome style={{right: 2}} name='group' size={10} color={colors.darkGrey} />
-        <Text style={styles.smallText}>{props.groupType === 1 ?'Fædre' : 'Mødre'}</Text>
-        <Entypo style={{left: 6, bottom: 1}} name="location-pin" size={12} color={colors.darkGrey} />
-        <Text style={{...styles.smallText, left: 5, bottom: 1}}>5,5km</Text>
-        <FontAwesome style={{left: 16, bottom: 0}}  name="calendar-o" size={10} color={colors.darkGrey} />
-        <Text style={{...styles.smallText, left: 18, bottom: 0}}>{convertDate2(props.dueDate)}</Text>
+          {/*<FontAwesome style={{right: 2}} name='group' size={10} color={colors.darkGrey} />
+          <Text style={styles.smallText}>{props.groupType === 1 ?'Fædre' : 'Mødre'}</Text>*/}
+          <Entypo style={{right: 6, bottom: 1}} name="location-pin" size={12} color={colors.darkGrey} />
+          <Text style={{...styles.smallText, right: 5, bottom: 1}}>{props.city}</Text>
+          <FontAwesome style={{left: 10, bottom: 0}}  name="calendar-o" size={10} color={colors.darkGrey} />
+          <Text style={{...styles.smallText, left: 15, bottom: 1}}>{convertDate2(props.dueDate)}</Text>
       </View>
       {
         membersDetails && 
@@ -66,23 +66,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   } ,
   titleText: {
-    fontSize: 20,
-    fontWeight: "normal"
+    fontSize: 16,
+    fontWeight: "normal",
+    fontFamily: 'roboto-medium'
   },
-  descriptionText: {
-    fontSize: 14,
-    color: 'grey',
-    paddingTop: 3,
-    paddingLeft: 1,
-    fontStyle:'italic'
-  },
-  descriptionText2: {
-    fontSize: 14,
-    color: 'grey',
-    paddingTop: 3,
-    paddingLeft: 1,
-  },
-  wishContainer: {
+  container: {
     borderStyle: 'solid',
     borderBottomWidth: 1,
     borderBottomColor: 'lightgrey',
@@ -106,15 +94,22 @@ const styles = StyleSheet.create({
 
   },
   imageContainer: {
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    shadowOffset: {
+      width: 0, 
+      height: 10
+    }
   },
   image: {
     width: 70, 
     height: 70, 
-    borderRadius: 12
+    borderRadius: 14,
+
   },
   smallText: {
-    fontFamily: 'roboto-regular',
-    fontSize: 10,
+    fontFamily: 'roboto-medium',
+    fontSize: 11,
     color: colors.darkGrey,
   }, 
   factsContainer: {
@@ -127,19 +122,26 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     marginTop: 7,
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    shadowOffset: {
+      width: 0, 
+      height: 2
+    }
   },
   memberImage: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    width: 20,
-    height: 20,
+    width: 27,
+    height: 26,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 50,
-    borderWidth: 1,
+    borderWidth: 0.3,
     borderColor: colors.mediumGrey,
-    margin: 3
+    marginTop: 3,
+    marginHorizontal: -2,
   },
   availableSpotsText: {
     fontFamily: 'roboto-light',

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View} from "react-native";
-import MapContainer from '../../../components/MapContainer';
+import MapScreen from '../../../components/MapScreen';
 
- const Find = (props) => {
+
+ const MapView = (props) => {
   const [searchText, setSearchText] = useState('');
-  const [coordinates, setCoordinates] = useState(undefined);
 
 
 useEffect(() => {
@@ -35,15 +35,13 @@ useEffect(() => {
 
     return (
       <View style= {styles.parentContainer} >
-        <MapContainer coordinates = {coordinates} navigation = {props.navigation} />
+        <MapScreen navigation = {props.navigation} />
       </View>
     )}
 
 const styles = StyleSheet.create({
   parentContainer: {
     flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
   },
   button: {
     padding: 10,
@@ -66,5 +64,5 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Find;
+export default MapView;
 

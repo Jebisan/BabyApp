@@ -6,6 +6,7 @@ import Colors from '../../constants/colors'
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons'
 import { useDispatch, useSelector } from 'react-redux'
 import { toggleShowMap } from '../../store/actions/find'
+import colors from '../../constants/colors'
 
 const Find = (props) => {
 	const dispatch = useDispatch()
@@ -65,11 +66,12 @@ const styles = StyleSheet.create({
 		shadowRadius: 6,
 		shadowOpacity: 0.3,
 		shadowOffset: { width: 6, height: 6 },
+		shadowColor: Colors.normalBlue
 	},
 	buttonTitleStyle: {
 		fontSize: 15,
 		color: Colors.lightGrey,
-		fontFamily: 'roboto-bold',
+		fontFamily: 'roboto-medium',
 	}
 })
 

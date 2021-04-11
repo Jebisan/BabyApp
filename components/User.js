@@ -1,5 +1,7 @@
+import { Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
 import React from 'react';
 import {View, StyleSheet, Text, Image } from 'react-native';
+import colors from '../constants/colors';
 
 const User = props => {
 
@@ -7,21 +9,20 @@ const User = props => {
   
   return (
     <View style = {styles.parent}>
-      <View style = {styles.wishContainer}>
-
       <View style={styles.horizontalContainer}>
-      <View style={styles.verticalContainer}>
-        <View style={styles.imageContainer}>
-          <Image style={{width: 50, height: 50, borderRadius: 400/ 2}} source={ props.photoUrl?{uri: props.photoUrl }: {uri: 'http://criticare.isccm.org/assets/images/male_placeholder.png' }} />
-      </View>
-
-      </View>
-
-      <View style={styles.verticalContainer}>
-      <Text style= {styles.titleText}>{props.firstname + ' ' + props.lastname}</Text>
-      <Text style= {styles.descriptionText}>{props.postalCode} {props.city}</Text>
-      </View>
-      </View>
+        <View style={styles.imageContainer} >
+          <Image style={styles.image} source={ props.photoUrl?{uri: props.photoUrl }: {uri: 'http://criticare.isccm.org/assets/images/male_placeholder.png' }} />
+        </View>
+        <View style={styles.infoContainer}>
+          <Text style={styles.titleText}>{props.firstname + ' ' + props.lastname}</Text>
+          <View style={styles.subInfoContainer} >
+            <Entypo style={{right: 5, bottom: 4}} name="location-pin" size={20} color={colors.darkGrey} />
+            <Text style={styles.descriptionText}>{props.city}</Text>
+            <MaterialCommunityIcons style={{left: 7, bottom: 3}} name="baby-face-outline" size={20} color={colors.darkGrey} />
+            <Text style={{...styles.descriptionText, left: 10}}>2</Text>
+          </View>
+          
+        </View>
       </View>
     </View>
   );
@@ -29,47 +30,63 @@ const User = props => {
 
 const styles = StyleSheet.create({
   parent: {
-    paddingTop: 10,
     justifyContent: 'flex-start',
     alignItems: 'center',
-  } ,
-  titleText: {
-    fontSize: 20,
-    fontWeight: "bold"
-  },
-  descriptionText: {
-    fontSize: 14,
-    color: 'grey',
-    paddingTop: 3,
-    paddingLeft: 1,
-  },
-  wishContainer: {
+    borderColor: colors.mediumGrey,
     borderStyle: 'solid',
-    borderBottomWidth: 1,
-    borderBottomColor: 'lightgrey',
-    height: 75,
-    width: 320,
+    borderBottomWidth: 0.5,
+    paddingVertical: 3
   },
   horizontalContainer: {
-    flexDirection: 'row'
-  },
-  verticalContainer: {
-    flexDirection: 'column',
-    padding: 7, 
-  },
-  icon: {
+    width: 330,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    justifyContent: 'center',
-    left: 310,
-    bottom: 35,
-    height: 20,
-    width: 20,
+    borderWidth: 0,
+    borderColor: 'blue',
+    borderStyle: 'solid',
+  },
+  titleText: {
+    fontSize: 17,
+    fontFamily: 'roboto-medium'
+  },
+  descriptionText: {
+    fontSize: 12,
+    fontFamily: 'roboto-regular',
+    color: colors.darkGrey,
+    right: 5
+  },
 
+  infoContainer: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    borderStyle: 'solid',
+    borderWidth: 0,
+    borderColor: 'red',
+    padding: 8,
+    paddingTop: 18
+  },
+  image: {
+    width: 75,
+    height: 75, 
+    borderRadius: 50
   },
   imageContainer: {
-    borderRadius: 400/ 2,
-    borderWidth: 1,
-    borderColor: 'lightgrey'
+    padding: 10,
+    shadowRadius: 8,
+    shadowOpacity: 0.15,
+    shadowOffset: {
+      height: 6,
+      width: 0
+    },
+    borderStyle: 'solid',
+    borderWidth: 0,
+    borderColor: 'green'
+  },
+  subInfoContainer: {
+    flexDirection: 'row',
+    marginTop: 7
   }
 });
 

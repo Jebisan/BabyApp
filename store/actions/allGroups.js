@@ -37,6 +37,12 @@ export const setSelectedGroup = (key) => {
 	}
 }
 
+export const clearSelectedGroup = () => {
+	return async (dispatch, getState) => {
+			dispatch({type: 'CLEAR_SELECTED_GROUP'});
+	}
+}
+
 export const setRequest = (groupId, text) => {
     return async (dispatch, getState) => {
 
