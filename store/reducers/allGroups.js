@@ -1,44 +1,63 @@
 
 const INITIAL_STATE = {
   allGroups: [],
+  allGroupLocations: [],
+  selectedGroup: undefined
 };
 
 export default allGroupsReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
+
+    case 'FETCH_ALL_GROUP_LOCATIONS': 
+    return {...state, allGroupLocations: action.allGroupLocations}
     
         case 'FETCH_ALL_GROUPS':
           return { ...state, allGroups: action.groups };
-
-        case 'SET_SELECTED_GROUP':
-          // If already selected, deselect
-          const found = state.allGroups.find(group => group.key === action.key) 
-          if (found.selected === true) {
-            const mappedList = state.allGroups.map((group) => {
-                return {
-                  ...group,
-                  selected: false
-                };
-            });
-            return {...state, allGroups: mappedList}
-          } else {
-          // Else toggle
-          let found;
-            const newList = state.allGroups.map((group) => {
-              if (group.key === action.key) {
-                found = group;
-                return {
-                  ...group,
-                  selected: true
-                };
+          case 'SET_SELECTED_GROUP_ICON':
+              // If already selected, deselect
+              const found = state.allGroupLocations.find(group => group.id === action.id) 
+              if (found.selected === true) {
+                const mappedList = state.allGroupLocations.map((group) => {
+                    return {
+                      ...group,
+                      selected: false
+                    };
+                });
+                return {...state, allGroupLocations: mappedList}
               } else {
-                return {
-                  ...group,
-                  selected: false
-                };
-              };
-            }); 
-            return {...state, allGroups: newList}
-          }
+              // Else toggle
+              let found;
+                const newList = state.allGroupLocations.map((group) => {
+                  if (group.id === action.id) {
+                    found = group;
+                    return {
+                      ...group,
+                      selected: true,
+                    };
+                  } else {
+                    return {
+                      ...group,
+                      selected: false
+                    };
+                  };
+                }); 
+                return {...state, allGroupLocations: newList}
+              }
+              case 'SET_SELECTED_GROUP':
+                // if there is no group selected, select the incoming group
+              if(!state.selectedGroup) {
+                return {...state, selectedGroup: action.group}
+              } else {
+                // incoming group is already selected. Deselct it!
+                if(state.selectedGroup.id === action.group.id) {
+                  return {...state, selectedGroup: undefined}
+                } else {
+                  // incoming group is a difference group. Select it!
+                  return {...state, selectedGroup: action.group}
+                }
+              }
+  
+                
         case 'SET_MEMBERS_DETAILS': 
         const newAllGroups = state.allGroups.map((group) => {
           if (group.key === action.groupId) {

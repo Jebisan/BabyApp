@@ -6,11 +6,14 @@ import Colors from '../constants/colors'
 import SelectedGroup from './SelectedGroup'
 import { useDispatch, useSelector } from 'react-redux'
 import * as Permissions from 'expo-permissions'
-import {clearSelectedGroup, setSelectedGroup} from '../store/actions/allGroups'
+import {clearSelectedGroup, fetchSelectedGroup, setSelectedGroupIcon} from '../store/actions/allGroups'
 
 const MapScreen = props => {
 	const allGroups = useSelector(state => state.allGroups.allGroups)
-	const selectedGroup = allGroups.find(group => group.selected === true) 
+	// const selectedGroup = allGroups.find(group => group.selected === true) 
+
+	const allGroupLocations = useSelector(state => state.allGroups.allGroupLocations)
+	const selectedGroup = useSelector(state => state.allGroups.selectedGroup)
 
 	const dispatch = useDispatch()
 	const map = useRef()
@@ -23,7 +26,6 @@ const MapScreen = props => {
 	}
 
 	const [showUserLocation, setShowUserLocation] = useState(false)
-
 
 	useEffect(() => {
 		if(getLocationPermission()) {
@@ -87,72 +89,80 @@ const MapScreen = props => {
 		return true
 	}
 
+	const groupSelectedHandler = (e, id) => {
+		e.stopPropagation(); 
+		dispatch(setSelectedGroupIcon(id))
+		dispatch(fetchSelectedGroup(id))
+	}
+
 
 	return (
-		<MapView 
-			ref = {map}
-			onPress={(e) =>{ e.stopPropagation(); dispatch(clearSelectedGroup())}} 
-			style={styles.map} 
-			mapType={'mutedStandard'}
-			initialRegion ={initialRegion}
-			showsUserLocation = {showUserLocation}
-			showsMyLocationButton={false}
-		>
-    
-			<TouchableOpacity style={styles.getMyPositionButton} onPress={() => getUserLocationHandler()} >
-				<MaterialIcons name="my-location" size={18} color={Colors.secondaryShade2} /> 
-			</TouchableOpacity>
+		<View style={styles.parent} >
+			<MapView 
+				ref = {map}
+				onPress={(e) =>{ e.stopPropagation(); dispatch(clearSelectedGroup())}} 
+				style={styles.map} 
+				mapType={'mutedStandard'}
+				initialRegion ={initialRegion}
+				showsUserLocation = {showUserLocation}
+				showsMyLocationButton={false}
+			>
+		
+				<TouchableOpacity style={styles.getMyPositionButton} onPress={() => getUserLocationHandler()} >
+					<MaterialIcons name="my-location" size={18} color={Colors.secondaryShade2} /> 
+				</TouchableOpacity>
 
-			{allGroups && allGroups.map((group, index) => (
-				<Marker key={group.key} coordinate={group.location} onPress={(e) => { e.stopPropagation(); dispatch(setSelectedGroup(group.key))
-
-				}}>
-					{group.selected?
-						<View style={{...styles.group, ...styles.selectedGroupIcon}}>
-							<FontAwesome name='group' size={14} color={'white'} 
-							/>
-						</View>
-						: 
-						<View style={styles.group}>
-							<FontAwesome name='group' size={14} color={Colors.primary} 
-							/>
-						</View>
-					}
-				</Marker>
-			))}
+				{allGroupLocations && allGroupLocations.map((group, index) => (
+					<Marker key={group.id} coordinate={{latitude: group.latitude, longitude: group.longitude}} onPress={(e) => groupSelectedHandler(e, group.id)}>
+						{group.selected?
+							<View style={{...styles.group, ...styles.selectedGroupIcon}}>
+								<FontAwesome name='group' size={14} color={'white'} 
+								/>
+							</View>
+							: 
+							<View style={styles.group}>
+								<FontAwesome name='group' size={14} color={Colors.primary} 
+								/>
+							</View>
+						}
+					</Marker>
+				))}
+			</MapView>
 			{
-				<View style={styles.selectedGroupContainer} > 
-					{selectedGroup 
-              &&
-              <TouchableOpacity onPress={() => props.navigation.navigate('GroupDetail', {
-              	id: selectedGroup.key,
-              	name: selectedGroup.name,
-              	description :selectedGroup.description,
-              	city: selectedGroup.city,
-              	location: selectedGroup.location,
-              	postalCode: selectedGroup.postalCode,
-              	photoUrl: selectedGroup.photoUrl,
-              	admin: selectedGroup.admin,
-              	dueDate: selectedGroup.dueDate,
-              	members: selectedGroup.members,
-              	membersDetails: selectedGroup.membersDetails,
-              	maxSize: selectedGroup.maxSize
-              })}>
-              	<SelectedGroup group={selectedGroup}/>
-              </TouchableOpacity> 
-					}
-				</View>
-			}
-		</MapView>
+				selectedGroup &&
+			<View style={styles.selectedGroupContainer} > 
+
+			<TouchableOpacity onPress={() => props.navigation.navigate('GroupDetail', {
+				id: selectedGroup.key,
+				name: selectedGroup.name,
+				description :selectedGroup.description,
+				city: selectedGroup.city,
+				location: selectedGroup.location,
+				postalCode: selectedGroup.postalCode,
+				photoUrl: selectedGroup.photoUrl,
+				admin: selectedGroup.admin,
+				dueDate: selectedGroup.dueDate,
+				members: selectedGroup.members,
+				membersDetails: selectedGroup.membersDetails,
+				maxSize: selectedGroup.maxSize
+				})}>
+					<SelectedGroup group={selectedGroup}/>
+			</TouchableOpacity> 
+			</View>
+		}
+		  </View>
 	)
 }
 
 const styles = StyleSheet.create({
+	parent: {
+		flex: 1,
+		flexDirection: 'row',
+		justifyContent: 'center',
+	
+	}, 
 	map: {
 		flex: 1,
-		flexDirection: 'column',
-		justifyContent: 'center',
-		alignItems: 'center'
 	},
 	group: {
 		justifyContent: 'center',
@@ -173,7 +183,7 @@ const styles = StyleSheet.create({
 	},
 	selectedGroupContainer: {
 		position: 'absolute',
-		bottom: 30
+		bottom: 30,
 	},
 	getMyPositionButton: {
 		flexDirection: 'row',
@@ -191,7 +201,7 @@ const styles = StyleSheet.create({
 			height: 4
 		},
 		right: 30,
-		bottom: 130
+		bottom: 130,
 	},
 })
 

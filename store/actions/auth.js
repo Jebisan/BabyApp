@@ -10,7 +10,7 @@ import * as Facebook from 'expo-facebook';
 import firebase from 'firebase';
 import {fetchUserDms} from './directMessage';
 import {fetchUserGroups} from './myGroups';
-import {fetchAllGroups} from './allGroups';
+import {fetchAllGroupLocations, fetchAllGroups} from './allGroups';
 import {fetchAllUsers} from './allUsers';
 
 let timer;
@@ -359,7 +359,8 @@ export const fetchEverything = (userId) => {
       dispatch(fetchUserDms()),
       dispatch(fetchUserGroups()),
       dispatch(fetchAllGroups()),
-      dispatch(fetchAllUsers())
+      dispatch(fetchAllUsers()),
+      dispatch(fetchAllGroupLocations())
   ]
       ).then(() => {
           dispatch({'type': 'SET_EVERYTHING_FETCHED', value: true})

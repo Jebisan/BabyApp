@@ -9,9 +9,11 @@ const SelectedGroup = props => {
   const [membersDetails, setMembersDetails] = useState([]);
 
   useEffect(() => {
-		getMembersDetails(props.group.members).then(data => {
-			setMembersDetails(data)
-		})  
+    if (props.group.members) {
+      getMembersDetails(props.group.members).then(data => {
+        setMembersDetails(data)
+      })  
+    }
   }, [])
 
   return (

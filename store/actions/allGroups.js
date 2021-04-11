@@ -1,5 +1,6 @@
 
 import Fire from '../../Fire'
+import { convertFirebaseGroup } from '../../Shared'
 
 export const fetchAllGroups = () => {
 	return async (dispatch, getState) => {
@@ -30,10 +31,36 @@ export const fetchAllGroups = () => {
 	}
 }
 
-export const setSelectedGroup = (key) => {
+export const fetchAllGroupLocations = () => {
 	return async (dispatch, getState) => {
-		console.log('HER', key)
-			dispatch({type: 'SET_SELECTED_GROUP', key});
+		const data = await Fire.groupLocations.orderByChild('location').once('value')
+		let locationsList = []
+		const locationsObj = data.val()
+		if(locationsObj) {
+			locationsList = Object.keys(locationsObj).map(key => {
+				return {
+					id: key, 
+					latitude: locationsObj[key].latitude, 
+					longitude: locationsObj[key].longitude,
+					selected: false
+				}
+			})
+		}
+		dispatch({type: 'FETCH_ALL_GROUP_LOCATIONS', allGroupLocations: locationsList})
+	}
+}
+
+export const fetchSelectedGroup = (id) => {
+	return async (dispatch, getState) => {
+ 		const data = await Fire.getGroup(id).once('value');
+		const group = convertFirebaseGroup(id, data);
+		dispatch({type: 'SET_SELECTED_GROUP', group});
+	}
+}
+
+export const setSelectedGroupIcon = (id) => {
+	return async (dispatch, getState) => {
+		dispatch({type: 'SET_SELECTED_GROUP_ICON', id});
 	}
 }
 

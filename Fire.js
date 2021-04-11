@@ -20,21 +20,29 @@ init = () => {
         });   
     }
 }
-    
-  get users() {
-    return firebase.database().ref("users");
-}
-
-get me() {
-    return firebase.database().ref("users/PLSbt76AtqOKWQEAnxehhfLW88F3");
-}
-
-    get groups() {
-      return firebase.database().ref("groups");
-  }
 
     get firebase(){
         return firebase;
+    }
+    
+    get users() {
+        return firebase.database().ref("users");
+    }
+
+    get me() {
+        return firebase.database().ref("users/PLSbt76AtqOKWQEAnxehhfLW88F3");
+    }
+
+    get groups() {
+      return firebase.database().ref("groups");
+    }
+
+    get groupLocations() {
+        return firebase.database().ref("groupLocations");
+    }
+
+    getGroup = (id) => {
+        return firebase.database().ref(`groups/${id}`);
     }
 
 } 

@@ -10,8 +10,7 @@ import colors from '../../constants/colors'
 
 const Find = (props) => {
 	const dispatch = useDispatch()
-	const allGroups = useSelector(state => state.allGroups.allGroups)
-	const selectedGroup = allGroups.find(group => group.selected === true) 
+	const selectedGroup = useSelector(state => state.allGroups.selectedGroup)
 	const showMap = useSelector(state => state.find.showMap)
 	const showViewChangerButton = useSelector(state => state.find.showViewChangerButton)
 

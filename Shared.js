@@ -104,3 +104,34 @@ export const convertFirebaseGroupsToArray = (data) => {
 }
 
 
+// Takes a Firebase Object, and returns a regular object
+export const convertFirebaseGroup = (id, data) => {
+   const groupObject = data.val()
+
+      if(!groupObject) {
+         console.log('No group object')
+         return
+      }
+
+         const membersObj = groupObject.members;
+         const requestsObj = groupObject.requests;
+         
+         let membersArray = []
+         let requestsArray = []
+
+         if(membersObj){
+            membersArray = Object.keys(membersObj).map(id => {
+            return id;
+           });
+         }
+
+         if(requestsObj){
+            requestsArray = Object.keys(requestsObj).map(id => {
+            return id;
+           });
+         }
+
+         return {id, ...groupObject, members: membersArray, requests: requestsArray}
+}
+
+
