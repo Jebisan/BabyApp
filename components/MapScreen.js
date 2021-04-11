@@ -1,29 +1,28 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { View, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native'
 import MapView, {Marker}  from 'react-native-maps'
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons'
 import Colors from '../constants/colors'
 import SelectedGroup from './SelectedGroup'
-import MyPositionMarker from './MyPositionMarker'
 import { useDispatch, useSelector } from 'react-redux'
 import * as Permissions from 'expo-permissions'
-import * as Location from 'expo-location'
 import {clearSelectedGroup, setSelectedGroup} from '../store/actions/allGroups'
 
 const MapScreen = props => {
 	const allGroups = useSelector(state => state.allGroups.allGroups)
-	const dispatch = useDispatch()
+	const selectedGroup = allGroups.find(group => group.selected === true) 
 
-	const defaultLocation = {
+	const dispatch = useDispatch()
+	const map = useRef()
+
+	const initialRegion = {
 		latitude: 55.898147, 
 		longitude: 10.429636, 
 		latitudeDelta: 5.387598, 
 		longitudeDelta: 5.227751
 	}
 
-	const [loading, setLoading] = useState(false)
 	const [showUserLocation, setShowUserLocation] = useState(false)
-	const selectedGroup = allGroups.find(group => group.selected === true) 
 
 
 	useEffect(() => {
@@ -33,6 +32,33 @@ const MapScreen = props => {
 			console.log('ERROR')
 		}
 	}, [])
+
+
+	const getUserLocationHandler = () => {
+		if(!showUserLocation) {
+			setShowUserLocation(true);
+		}
+		zoomToUserLocation();
+	}
+
+
+	const zoomToUserLocation = () => {
+		try {
+		  navigator.geolocation.getCurrentPosition(position => {
+			  const region = {
+				latitude: position.coords.latitude,
+				longitude: position.coords.longitude,
+				latitudeDelta: 0.2,
+				longitudeDelta: 0.2,
+			  };
+				setTimeout(() => map.current.animateToRegion(region), 10);
+			}
+		  );
+		} catch(e) {
+		  alert(e.message || "");
+		}
+	  };
+
 
 	const getLocationPermission = async () => {
 		try {
@@ -61,21 +87,20 @@ const MapScreen = props => {
 		return true
 	}
 
+
 	return (
 		<MapView 
+			ref = {map}
 			onPress={(e) =>{ e.stopPropagation(); dispatch(clearSelectedGroup())}} 
 			style={styles.map} 
 			mapType={'mutedStandard'}
-			initialRegion ={defaultLocation}
+			initialRegion ={initialRegion}
 			showsUserLocation = {showUserLocation}
+			showsMyLocationButton={false}
 		>
     
-			<TouchableOpacity style={styles.getMyPositionButton} onPress={() => setShowUserLocation(true)} >
-				{
-					loading ? <ActivityIndicator size='small' color={Colors.secondaryShade2} />
-						:
-						<MaterialIcons name="my-location" size={18} color={Colors.secondaryShade2} /> 
-				}
+			<TouchableOpacity style={styles.getMyPositionButton} onPress={() => getUserLocationHandler()} >
+				<MaterialIcons name="my-location" size={18} color={Colors.secondaryShade2} /> 
 			</TouchableOpacity>
 
 			{allGroups && allGroups.map((group, index) => (
