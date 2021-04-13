@@ -207,8 +207,28 @@ const ListView = props => {
 				height={styles.buttonContainer.height}
 			/>
 
-			{ !state.inFocus && (state.groupsResults.length > 0 || state.usersResults.length > 0) ?
-			<View style={styles.buttonContainerBottomBorder} ></View> : null
+
+
+			{
+				(!state.inFocus && state.selectedSearchType === 0 && state.groupsResults.length === 0) &&
+				<Text style={styles.noResultsText} >Ingen grupper fundet</Text>
+			}
+
+
+			{
+				(!state.inFocus && state.selectedSearchType === 1 && state.usersResults.length === 0) && 
+				<Text style={styles.noResultsText} >Ingen personer fundet</Text>
+			}
+
+
+			{
+				(!state.inFocus && state.selectedSearchType === 0 && state.groupsResults.length !== 0) && 
+				<View style={styles.buttonContainerBottomBorder} ></View>
+			}
+
+			{
+				(!state.inFocus && state.selectedSearchType === 1 && state.usersResults.length !== 0) && 
+				<View style={styles.buttonContainerBottomBorder} ></View>
 			}
 
 			<View style={styles.autocompleteContainer} >
@@ -305,7 +325,7 @@ const ListView = props => {
 			}
 			{
 				state.querySearch && state.selectedSearchType === 0 &&
-				<FlatList
+					<FlatList
 					style={styles.resultsContainer}
 					horizontal={false}
 					keyboardShouldPersistTaps='handled'
@@ -344,7 +364,7 @@ const ListView = props => {
 						</TouchableOpacity>
 					}
 				/>
-			}
+				}
 			{
 				state.querySearch && state.selectedSearchType === 1 &&
 				<FlatList
@@ -364,7 +384,6 @@ const ListView = props => {
 					}
 				/>
 			}
-
 		</View>
 
 	)
@@ -473,6 +492,12 @@ const styles = StyleSheet.create({
 		borderStyle: 'solid',
 		borderBottomWidth: 0.5,
 		paddingVertical: 3
+	},
+	noResultsText: {
+		fontFamily: 'roboto-regular',
+		top: 200,
+		fontSize: 18,
+		color: colors.darkGrey
 	}
 })
 

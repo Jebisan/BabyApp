@@ -77,13 +77,13 @@ export default allGroupsReducer = (state = INITIAL_STATE, action) => {
         }
         case 'CLEAR_SELECTED_GROUP':
           // Deselect all groups
-            const deselectedGroups = state.allGroups.map((group) => {
+            const deselectedGroups = state.allGroupLocations.map((group) => {
                 return {
                   ...group,
                   selected: false
                 };
             });
-            return {...state, allGroups: deselectedGroups}
+            return {...state, allGroupLocations: deselectedGroups, selectedGroup: undefined}
         case 'SET_REQUEST': 
         const newList = state.allGroups.map((group) => {
           if (group.key === action.groupId) {

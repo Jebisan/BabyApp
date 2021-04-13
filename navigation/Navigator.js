@@ -30,7 +30,6 @@ import ChildScreen, {screenOptions as childScreenScreenOptions} from '../screens
 import GroupDetail, {screenOptions as groupDetailScreenOptions} from '../screens/Find/GroupDetail'
 import UserDetail, {screenOptions as userDetailScreenOptions} from '../screens/Find/UserDetail'
 import Find from '../screens/Find/Find'
-import MapScreen from '../components/MapScreen'
 
 //MYGROUPS
 import Groups, {screenOptions as groupsScreenOptions} from '../screens/MyGroups/Groups'
@@ -78,7 +77,6 @@ export const FindNaviagator = () => {
 				<FindStackNavigator.Screen name = 'GroupChat' component = {GroupChat} />
 				<FindStackNavigator.Screen name = 'DirectMessage' component = {DirectMessage} />
 				<FindStackNavigator.Screen name = 'GroupScreen' component = {GroupScreen} options = {groupScreenScreenOptions} />
-				<FindStackNavigator.Screen name = 'MapScreen' component = {MapScreen} />
 				<FindStackNavigator.Screen name = 'Child' component = {ChildScreen} options = {childScreenScreenOptions} />
 	</FindStackNavigator.Navigator>
 }
