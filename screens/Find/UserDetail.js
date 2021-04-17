@@ -1,13 +1,11 @@
 import React, {useState, useEffect} from 'react'
 import {View, StyleSheet, Text, ScrollView ,SafeAreaView, Image, TouchableOpacity} from 'react-native'
 import { Ionicons, MaterialIcons, AntDesign } from '@expo/vector-icons'
-import { Alert } from 'react-native'
 import moment from 'moment'
 import 'moment/locale/da'
 import ProgressCircle from 'react-native-progress-circle'
 import {useSelector} from 'react-redux'
-import {generateRandomId} from '../../Shared'
-import Child from '../../components/Child';
+import {generateRandomId} from '../../shared/generic'
 
 
 

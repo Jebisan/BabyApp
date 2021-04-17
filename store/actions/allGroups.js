@@ -1,6 +1,6 @@
 
 import Fire from '../../Fire'
-import { convertFirebaseGroup } from '../../Shared'
+import { convertFirebaseGroup } from '../../shared/firebase'
 
 export const fetchAllGroups = () => {
 	return async (dispatch, getState) => {

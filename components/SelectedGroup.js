@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text, Image } from 'react-native';
 import {Entypo, FontAwesome, SimpleLineIcons} from '@expo/vector-icons';
 import colors from '../constants/colors';
-import { convertDate2 } from '../Shared';
+import { convertDate2 } from '../shared/generic';
 import { getMembersDetails } from '../store/actions/find';
 
 const SelectedGroup = props => {

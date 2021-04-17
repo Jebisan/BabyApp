@@ -17,20 +17,6 @@ const Find = (props) => {
 	return (
 		<View style= {styles.parentContainer} >
 		{
-			showViewChangerButton &&
-			<View style={styles.front}>
-			{!selectedGroup && 
-				<TouchableOpacity style={styles.buttonContainer} onPress={() => dispatch(toggleShowMap())} >
-				{ showMap
-					? 
-					<MaterialIcons name="list" size={25} color={Colors.lightGrey} /> 
-					:
-					<FontAwesome name="map-o"  size={16} color={Colors.lightGrey} />
-				} 
-				<Text style={styles.buttonTitleStyle}>{showMap?' Liste':'  Kort'}</Text>
-				</TouchableOpacity>
-			}
-			</View>
 		}
 			<View style={styles.back} >
 				{showMap ? <MapView navigation= {props.navigation} /> : <ListView navigation= {props.navigation} />} 
@@ -43,16 +29,12 @@ const styles = StyleSheet.create({
 	parentContainer: {
 		flex: 1,
 	},
-	front: {
-		position: 'absolute',
-		zIndex: 1,
-	},
 	back: {
 		width: '100%',
 		height: '100%',  
 		zIndex: 0
 	},
-	buttonContainer:{
+	findTypeButton:{
 		top: 645,
 		left: 255,
 		width: 90,

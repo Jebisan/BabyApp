@@ -8,8 +8,6 @@ import ProgressCircle from 'react-native-progress-circle'
 import moment from 'moment'
 import HeaderButton from '../../components/HeaderButton'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
-import Child from '../../components/Child';
-
 
 const Profile = props => {
 

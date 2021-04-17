@@ -1,13 +1,14 @@
-import { AntDesign, MaterialIcons } from '@expo/vector-icons'
+import { AntDesign, MaterialIcons, FontAwesome } from '@expo/vector-icons'
 import React, { useEffect, useReducer } from 'react'
 import { ActivityIndicator } from 'react-native'
 import { FlatList, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import SwitchSelector from 'react-native-switch-selector'
+import { useDispatch } from 'react-redux'
 import City from '../../../components/City'
 import Group from '../../../components/Group'
 import User from '../../../components/User'
 import colors from '../../../constants/colors'
-import { getGroupsByCity, getGroupsByName, getUsersByCity, getUsersByName } from '../../../store/actions/find'
+import { getGroupsByCity, getGroupsByName, getUsersByCity, getUsersByName, toggleShowMap } from '../../../store/actions/find'
 
 const initialState = {
 	searchString: '',
@@ -52,6 +53,8 @@ function reducer(state, action) {
 
 const ListView = props => {
 	const [state, dispatch] = useReducer(reducer, initialState)
+
+	const reduxDispatch = useDispatch()
 
 	useEffect(() => {
 		return;
@@ -192,6 +195,12 @@ const ListView = props => {
 
 	return (
 		<View style={styles.parent}>
+
+		<TouchableOpacity style={styles.findTypeButton} onPress={() => reduxDispatch(toggleShowMap())} >
+			<FontAwesome name="map-o" size={16} color={colors.lightGrey} />
+			<Text style={styles.buttonTitleStyle}> Kort</Text>
+		</TouchableOpacity>
+
 			<View style={styles.searchbarContainer} >
 				<TouchableOpacity style={state.inFocus ? { display: 'flex' } : { display: 'none' }} onPress={() => back()} >
 					<AntDesign style={{right: 5}} name="arrowleft" size={30} color={colors.darkGrey} />
@@ -528,7 +537,31 @@ const styles = StyleSheet.create({
 		top: 200,
 		fontSize: 18,
 		color: colors.darkGrey
-	}
+	},
+	buttonTitleStyle: {
+		fontSize: 15,
+		color: colors.lightGrey,
+		fontFamily: 'roboto-medium',
+	},
+	findTypeButton:{
+		position: 'absolute',
+		zIndex: 4,
+		top: 640,
+		left: 250,
+		width: 90,
+		height: 40,
+		borderRadius: 30,
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: colors.primary,
+		shadowRadius: 6,
+		shadowOpacity: 0.3,
+		shadowOffset: { 
+			width: 6, 
+			height: 6 },
+		shadowColor: colors.normalBlue
+	},
 })
 
 export default ListView

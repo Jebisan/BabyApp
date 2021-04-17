@@ -1,10 +1,9 @@
 import Fire from "../../Fire";
-import { convertFirebaseGroupsToArray, convertFirebaseUsersToArray } from "../../Shared";
+import { convertFirebaseGroupsToArray, convertFirebaseUsersToArray } from "../../shared/firebase";
 
 export const toggleShowMap = () => {
 	return async (dispatch, getState) => {
 		const showMap = getState().find.showMap;
-		
 			dispatch({type: 'TOGGLE_SHOW_MAP', showMap: !showMap})
 	}
 }

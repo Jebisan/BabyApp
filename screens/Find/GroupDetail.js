@@ -3,7 +3,7 @@ import {View, StyleSheet, Text, TouchableOpacity, Image, Alert} from 'react-nati
 import { LinearGradient } from 'expo-linear-gradient'
 import colors from '../../constants/colors'
 import {Entypo, FontAwesome, AntDesign, MaterialCommunityIcons, SimpleLineIcons} from '@expo/vector-icons'
-import { convertDate2 } from '../../Shared'
+import { convertDate2 } from '../../shared/generic'
 import { useSelector } from 'react-redux'
 import MapView, { Marker } from 'react-native-maps'
 import RequestModal from '../../components/RequestModal'

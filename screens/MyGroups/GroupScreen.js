@@ -6,7 +6,7 @@ import { Ionicons} from '@expo/vector-icons';
 import HeaderButton from '../../components/HeaderButton';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import {getMembers, getRequests} from '../../store/actions/myGroups'
-import {convertDate} from '../../Shared'
+import {convertDate} from '../../shared/generic'
 
 const GroupScreen = props => {
   const { navigation } = props;

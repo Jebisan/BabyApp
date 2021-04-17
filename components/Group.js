@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 
 import {View, StyleSheet, Text, Image } from 'react-native';
 import {Entypo, FontAwesome, Ionicons} from '@expo/vector-icons';
-import {convertDate2, convertFirebaseUser} from '../Shared'
+import {convertDate2} from '../shared/generic'
 import colors from '../constants/colors';
 import {getMembersDetails} from '../store/actions/find';
 

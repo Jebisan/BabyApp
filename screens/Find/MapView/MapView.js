@@ -1,30 +1,67 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useReducer } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { View, StyleSheet, TouchableOpacity, TextInput, Alert, Keyboard, FlatList } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, Keyboard, FlatList } from 'react-native'
 import MapView, {Marker}  from 'react-native-maps'
 import { FontAwesome, MaterialIcons, AntDesign, FontAwesome5 } from '@expo/vector-icons'
-import Colors from '../../../constants/colors'
+import colors from '../../../constants/colors'
 import SelectedGroup from '../../../components/SelectedGroup'
 import City from '../../../components/City'
 import * as Permissions from 'expo-permissions'
 import {clearSelectedGroup, fetchSelectedGroup, setSelectedGroupIcon} from '../../../store/actions/allGroups'
 import { Icon } from 'react-native-elements'
+import FilterModal from '../../../components/FilterModal'
+import { toggleShowMap } from '../../../store/actions/find'
 
+const initialState = {
+	searchString: '',
+	autocompleteResults: [],
+	selectedCity: undefined,
+	querySearch: false,
+	inFocus: false,
+	showFilter: false,
+	filter: {
+		groupType: undefined,
+		experience: undefined,
+		margin: undefined
+	}
+}
 
+function reducer(state, action) {
+	switch (action.type) {
+		case 'SET_SEARCH_STRING':
+			return { ...state, searchString: action.searchString }
+		case 'SET_AUTOCOMPLETE_RESULTS':
+			return { ...state, autocompleteResults: action.autocompleteResults }
+		case 'SET_SELECTED_CITY':
+			return { ...state, selectedCity: action.selectedCity }
+		case 'SET_IN_FOCUS':
+			return { ...state, inFocus: action.inFocus }
+		case 'SET_SHOW_FILTER':
+			return { ...state, showFilter: action.showFilter }
+		case 'SET_QUERY_SEARCH':
+			return { ...state, querySearch: action.querySearch }
+		case 'SET_FILTER':
+			return { ...state, filter: action.filter}
+
+		default:
+			throw new Error('Error in reducer')
+	}
+}
 const MapViewComponent = props => {
 	const allGroupLocations = useSelector(state => state.allGroups.allGroupLocations)
 	const selectedGroup = useSelector(state => state.allGroups.selectedGroup)
+	const [state, dispatch] = useReducer(reducer, initialState)
 
-	const dispatch = useDispatch()
+	const reduxDispatch = useDispatch()
 	const map = useRef()
 
-	const back = () => {
-		setInFocus(false);
-		Keyboard.dismiss()
+	const clear = () => {
+		dispatch({ type: 'SET_SEARCH_STRING', searchString: '' })
 	}
 
-	const clear = () => {
-		setSearchString('')
+	const back = () => {
+		dispatch({ type: 'SET_IN_FOCUS', inFocus: false })
+		Keyboard.dismiss()
 	}
 
 
@@ -35,10 +72,7 @@ const MapViewComponent = props => {
 		longitudeDelta: 5.227751
 	}
 
-	const [inFocus, setInFocus] = useState(false)
-	const [searchString, setSearchString] = useState('')
 	const [showUserLocation, setShowUserLocation] = useState(false)
-	const [searchResults, setSearchResults] = useState([])
 
 	useEffect(() => {
 		if(getLocationPermission()) {
@@ -49,31 +83,36 @@ const MapViewComponent = props => {
 	}, [])
 
 	useEffect(() => {
-		if (inFocus) {
-			dispatch(clearSelectedGroup())
+		console.log('Filter was updated!')
+	}, [state.filter])
+
+	useEffect(() => {
+		if (state.inFocus) {
+			reduxDispatch(clearSelectedGroup())
 		} else {
 			Keyboard.dismiss()
 		}
-	}, [inFocus])
+	}, [state.inFocus])
 
 	useEffect(() => {
-		if(searchString === '') {
-			setSearchResults([])
+		if(state.searchString === '') {
+			dispatch({ type: 'SET_AUTOCOMPLETE_RESULTS', autocompleteResults: [] })
 			return;
 		}
 		
-		if (inFocus) {
-			fetch(`https://api.dataforsyningen.dk/postnumre/autocomplete?q=${searchString}`)
+		if (state.inFocus) {
+			fetch(`https://api.dataforsyningen.dk/postnumre/autocomplete?q=${state.searchString}`)
 			.then(response => response.json())
 			.then(data => {
 				const filteredArr = [...new Map(data.map(item => [item.postnummer.navn, item])).values()].slice(0, 5)
-				setSearchResults(filteredArr)
+				dispatch({ type: 'SET_AUTOCOMPLETE_RESULTS', autocompleteResults: filteredArr })
 			})
 		}
-	}, [searchString])
+	}, [state.searchString])
 
 	const citySelected = (city) => {
-		setSearchString(city.navn)
+		dispatch({ type: 'SET_SEARCH_STRING', searchString: city.navn })
+
 		const region = {
 			latitude: city.visueltcenter_y,
 			longitude: city.visueltcenter_x,
@@ -81,8 +120,6 @@ const MapViewComponent = props => {
 			longitudeDelta: 0.2,
 		  };
 		  setTimeout(() => map.current.animateToRegion(region), 10);
-
-
 	}
 
 
@@ -140,39 +177,55 @@ const MapViewComponent = props => {
 
 	const groupSelectedHandler = (e, id) => {
 		e.stopPropagation(); 
-		dispatch(setSelectedGroupIcon(id))
-		dispatch(fetchSelectedGroup(id))
+		reduxDispatch(setSelectedGroupIcon(id))
+		reduxDispatch(fetchSelectedGroup(id))
 	}
 
 	const onRegionChange = () => {
-		setInFocus(false);
+		dispatch({ type: 'SET_IN_FOCUS', inFocus: false })
+
 	}
 
 
 	return (
 		<View style={styles.parent} >
+		{
+		  	state.showFilter && 
+			  <FilterModal 
+			  	showFilter={state.showFilter}
+				setShowFilter={val => dispatch({ type: 'SET_SHOW_FILTER', showFilter: val})}
+			  	setFilter={f => dispatch({ type: 'SET_FILTER', filter: f})}
+				filter={state.filter}
+			  />
+		}
+
+			<TouchableOpacity style={styles.findTypeButton} onPress={() => reduxDispatch(toggleShowMap())} >
+				<MaterialIcons name="list" size={25} color={colors.lightGrey} /> 
+				<Text style={styles.buttonTitleStyle}>Liste</Text>
+			</TouchableOpacity>
+
 			<View style={styles.searchbarContainer} >
-			<TouchableOpacity style={inFocus ? { display: 'flex' } : { display: 'none' }} onPress={() => back()} >
-				<AntDesign style={{right: 5}} name="arrowleft" size={30} color={Colors.darkGrey} />
+			<TouchableOpacity style={state.inFocus ? { display: 'flex' } : { display: 'none' }} onPress={() => back()} >
+				<AntDesign style={{right: 5}} name="arrowleft" size={30} color={colors.darkGrey} />
 			</TouchableOpacity>
 			<View style={styles.textInputContainer} >
 				<TouchableOpacity >
-					<MaterialIcons style={!inFocus ? { display: 'flex' } : { display: 'none' }} name="search" size={24} color={Colors.darkGrey} />
+					<MaterialIcons style={!state.inFocus ? { display: 'flex' } : { display: 'none' }} name="search" size={24} color={colors.darkGrey} />
 				</TouchableOpacity>
 				<TextInput
-					onChangeText={text => setSearchString(text)}
+					onChangeText={text => dispatch({ type: 'SET_SEARCH_STRING', searchString: text })}
 					placeholder={'Søg'}
-					placeholderTextColor={Colors.darkGrey}
+					placeholderTextColor={colors.darkGrey}
 					style={styles.textInput}
-					value={searchString}
+					value={state.searchString}
 					keyboardType={'web-search'}
-					onFocus={() => setInFocus(true)}
+					onFocus={() => dispatch({ type: 'SET_IN_FOCUS', inFocus: true })}
 				/>
 				<View style={{ position: 'absolute', right: 0, paddingRight: 15 }} >
-					<MaterialIcons name="filter-list" style={!inFocus ? { display: 'flex' } : { display: 'none' }} size={24} color={Colors.darkGrey} />
+					<MaterialIcons onPress={() => dispatch({ type: 'SET_SHOW_FILTER', showFilter: true })} name="filter-list" style={!state.inFocus ? { display: 'flex' } : { display: 'none' }} size={24} color={colors.darkGrey} />
 					<MaterialIcons onPress={() => clear()} style={
-						searchString.length > 0 && inFocus ? { display: 'flex' } : { display: 'none' }
-					} name="cancel" size={24} color={Colors.darkGrey} />
+						state.searchString.length > 0 && state.inFocus ? { display: 'flex' } : { display: 'none' }
+					} name="cancel" size={24} color={colors.darkGrey} />
 				</View>
 			</View>
 		</View>
@@ -182,11 +235,11 @@ const MapViewComponent = props => {
 			name='my-location'
 			type='MaterialIcons'
 			size={18}
-			color={Colors.secondaryShade2}
+			color={colors.secondaryShade2}
 			/>
 		</TouchableOpacity>
 
-		{inFocus &&
+		{state.inFocus &&
 		<View style={styles.autocompleteContainer} >
 
 			{
@@ -196,7 +249,7 @@ const MapViewComponent = props => {
 				horizontal={false}
 				keyboardShouldPersistTaps='handled'
 				keyExtractor={item => item.tekst}
-				data={searchResults}
+				data={state.autocompleteResults}
 				renderItem={({ item }) =>
 					<TouchableOpacity onPress={() => citySelected(item.postnummer)} >
 						<City name={item.postnummer.navn} />
@@ -211,13 +264,13 @@ const MapViewComponent = props => {
 		}
 			
 		{
-			inFocus &&
+			state.inFocus &&
 			<View style={styles.whiteBackground} ></View>
 		}
 
 				<MapView 
 					ref = {map}
-					onPress={(e) =>{ e.stopPropagation(); dispatch(clearSelectedGroup())}} 
+					onPress={(e) =>{ e.stopPropagation(); reduxDispatch(clearSelectedGroup())}} 
 					style={styles.map} 
 					mapType={'mutedStandard'}
 					initialRegion ={initialRegion}
@@ -235,7 +288,7 @@ const MapViewComponent = props => {
 								</View>
 								: 
 								<View style={styles.group}>
-									<FontAwesome name='group' size={14} color={Colors.primary} 
+									<FontAwesome name='group' size={14} color={colors.primary} 
 									/>
 								</View>
 							}
@@ -247,7 +300,7 @@ const MapViewComponent = props => {
 				// Renders the SelectedGroup if search field is not focused.
 			}
 			{
-					selectedGroup && !inFocus &&
+					selectedGroup && !state.inFocus &&
 				<View style={styles.selectedGroupContainer} > 
 
 				<TouchableOpacity onPress={() => props.navigation.navigate('GroupDetail', {
@@ -291,20 +344,21 @@ const styles = StyleSheet.create({
 		width: 25, 
 		height: 25, 
 		borderRadius: 50, 
-		backgroundColor: Colors.white,
+		backgroundColor: colors.white,
 		shadowOpacity: 0.4,
 		shadowRadius: 2,
 		shadowOffset: {width: 0, height: 0}
 	},
 	selectedGroupIcon: {
 		borderWidth: 2,
-		borderColor: Colors.white,
+		borderColor: colors.white,
 		borderStyle: 'solid',
-		backgroundColor: Colors.primary,
+		backgroundColor: colors.primary,
 	},
 	selectedGroupContainer: {
 		position: 'absolute',
 		bottom: 30,
+		zIndex: 3
 	},
 	getMyPositionButton: {
 		flexDirection: 'row',
@@ -315,10 +369,10 @@ const styles = StyleSheet.create({
 		top: 550,
 		width: 55,
 		height: 55,
-		backgroundColor: Colors.white,
+		backgroundColor: colors.white,
 		borderRadius: 50, 
 		borderWidth: 1,
-		borderColor: Colors.mediumGrey,
+		borderColor: colors.mediumGrey,
 		borderStyle: 'solid',
 		shadowOpacity: 0.25,
 		shadowRadius: 7,
@@ -348,13 +402,13 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'flex-start',
 		alignItems: 'center',
-		borderColor: Colors.mediumGrey,
+		borderColor: colors.mediumGrey,
 		borderStyle: 'solid',
 		borderWidth: 1,
 		borderRadius: 25,
 		paddingLeft: 15,
 		paddingRight: 15,
-		backgroundColor: Colors.white
+		backgroundColor: colors.white
 	},
 	textInput: {
 		fontFamily: 'roboto-regular',
@@ -368,7 +422,7 @@ const styles = StyleSheet.create({
 	},
 	whiteBackground: {
 		position: 'absolute', 
-		backgroundColor: Colors.white, 
+		backgroundColor: colors.white, 
 		width: '100%',
 		height: '100%',
 		zIndex: 1
@@ -394,10 +448,34 @@ const styles = StyleSheet.create({
 		justifyContent: 'flex-start',
 	},
 	seeAllResultsText: {
-		color: Colors.lightBlue,
+		color: colors.lightBlue,
 		paddingTop: 25,
 		fontFamily: 'roboto-regular',
 		fontSize: 15
+	},
+	buttonTitleStyle: {
+		fontSize: 15,
+		color: colors.lightGrey,
+		fontFamily: 'roboto-medium',
+	},
+	findTypeButton:{
+		position: 'absolute',
+		zIndex: 3,
+		top: 640,
+		left: 250,
+		width: 90,
+		height: 40,
+		borderRadius: 30,
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: colors.primary,
+		shadowRadius: 6,
+		shadowOpacity: 0.3,
+		shadowOffset: { 
+			width: 6, 
+			height: 6 },
+		shadowColor: colors.normalBlue
 	},
 
 })
