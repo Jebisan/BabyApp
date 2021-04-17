@@ -17,7 +17,7 @@ export const fetchUserGroups = () => {
       const userId = getState().auth.userId;    
   
         Fire.firebase.database().ref("users/"+userId+"/groups").once('value').then(snapshot => {
-  
+
           if(snapshot.val()){
 
             const groupObject = snapshot.val()
@@ -26,10 +26,15 @@ export const fetchUserGroups = () => {
               return key
             });
             
-            groupIdsArray.forEach(groupId => {
-              Fire.firebase.database().ref("groups/"+groupId).once('value').then((snapshot => {
-                
-                const group = {id: snapshot.key, ...snapshot.val(), members: [], requests: [], membersDetails: []}
+            groupIdsArray.forEach(id => {
+              Fire.firebase.database().ref("groups/"+id).once('value').then((data => {
+
+                const membersObject = data.val().members
+                let membersArray = Object.keys(membersObject).map(id => {
+                  return id
+                });
+
+                const group = {id, ...data.val(), members: membersArray, requests: []}
                 dispatch({type: ADD_GROUP, group})
               }))
             }); 

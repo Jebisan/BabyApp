@@ -29,7 +29,7 @@ export const generateRandomId = () => {
 }
 
 // Takes a Firebase object and returns a regular objects
-export const convertFirebaseUser = (key, user) => {
+export const convertFirebaseUser = (id, user) => {
 
    const messagesObj = user.messages;
    const groupsObj = user.groups;
@@ -39,17 +39,17 @@ export const convertFirebaseUser = (key, user) => {
 
    // Consider deleting. Might not need users messages?
    if(messagesObj){
-     messagesArray = Object.keys(messagesObj).map(key => {
-      return key;
+     messagesArray = Object.keys(messagesObj).map(id => {
+      return id;
      });
    }
 
    if(groupsObj){
-      groupsArray = Object.keys(groupsObj).map(key => {
-       return key;
+      groupsArray = Object.keys(groupsObj).map(id => {
+       return id;
       });
     }
-    const convertedData = {id: key, ...user, messages: messagesArray, groups: groupsArray};
+    const convertedData = {id, ...user, messages: messagesArray, groups: groupsArray};
    return convertedData
 }
 
@@ -63,7 +63,7 @@ export const convertFirebaseUsersToArray = (data) => {
          return convertFirebaseUser(key, usersObject[key]);
       })
    } else {
-      console.log('No usersObject');
+      console.error('No usersObject');
       return [];
    }
    return usersArray;
@@ -72,50 +72,28 @@ export const convertFirebaseUsersToArray = (data) => {
 // Takes an object of objects [GROUP], and returns an array of objects
 export const convertFirebaseGroupsToArray = (data) => {
    let groupsArray = []
-   const groupsObject = data.val()
-
-      if(!groupsObject) {
-         console.log('No group object')
-         return []
-      }
+   const groupsObject = data.val();
+   
+   if (groupsObject) {
       groupsArray = Object.keys(groupsObject).map(key => {
-
-         const membersObj = groupsObject[key].members;
-         const requestsObj = groupsObject[key].requests;
-         
-         let membersArray = []
-         let requestsArray = []
-
-         if(membersObj){
-            membersArray = Object.keys(membersObj).map(key => {
-            return key;
-           });
-         }
-
-         if(requestsObj){
-            requestsArray = Object.keys(requestsObj).map(key => {
-            return key;
-           });
-         }
-
-         return {id: key, ...groupsObject[key], members: membersArray, requests: requestsArray, membersDetails: []}
+         return convertFirebaseGroup(key, groupsObject[key]);
       })
-
+   } else {
+      console.error('No groupsObject');
+      return [];
+   }
    return groupsArray;
 }
 
 
 // Takes a Firebase Object, and returns a regular object
-export const convertFirebaseGroup = (id, data) => {
-   const groupObject = data.val()
-
-      if(!groupObject) {
+export const convertFirebaseGroup = (id, group) => {
+      if(!group) {
          console.log('No group object')
          return
       }
-
-         const membersObj = groupObject.members;
-         const requestsObj = groupObject.requests;
+         const membersObj = group.members;
+         const requestsObj = group.requests;
          
          let membersArray = []
          let requestsArray = []
@@ -132,7 +110,7 @@ export const convertFirebaseGroup = (id, data) => {
            });
          }
 
-         return {id, ...groupObject, members: membersArray, requests: requestsArray}
+         return {id, ...group, members: membersArray, requests: requestsArray}
 }
 
 

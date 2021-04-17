@@ -1,15 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { View, StyleSheet, TouchableOpacity, TextInput, Alert, Keyboard } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, TextInput, Alert, Keyboard, FlatList } from 'react-native'
 import MapView, {Marker}  from 'react-native-maps'
-import { FontAwesome, MaterialIcons, AntDesign } from '@expo/vector-icons'
+import { FontAwesome, MaterialIcons, AntDesign, FontAwesome5 } from '@expo/vector-icons'
 import Colors from '../../../constants/colors'
 import SelectedGroup from '../../../components/SelectedGroup'
 import City from '../../../components/City'
 import * as Permissions from 'expo-permissions'
 import {clearSelectedGroup, fetchSelectedGroup, setSelectedGroupIcon} from '../../../store/actions/allGroups'
-import { FlatList } from 'react-native'
-import { Text } from 'react-native'
+import { Icon } from 'react-native-elements'
+
 
 const MapViewComponent = props => {
 	const allGroupLocations = useSelector(state => state.allGroups.allGroupLocations)
@@ -99,8 +99,8 @@ const MapViewComponent = props => {
 			  const region = {
 				latitude: position.coords.latitude,
 				longitude: position.coords.longitude,
-				latitudeDelta: 0.2,
-				longitudeDelta: 0.2,
+				latitudeDelta: 0.01,
+				longitudeDelta: 0.01,
 			  };
 				setTimeout(() => map.current.animateToRegion(region), 10);
 			}
@@ -151,119 +151,124 @@ const MapViewComponent = props => {
 
 	return (
 		<View style={styles.parent} >
-		<View style={styles.searchbarContainer} >
-		<TouchableOpacity style={inFocus ? { display: 'flex' } : { display: 'none' }} onPress={() => back()} >
-			<AntDesign name="arrowleft" size={30} color={Colors.darkGrey} />
-		</TouchableOpacity>
-		<View style={styles.textInputContainer} >
-			<TouchableOpacity >
-				<MaterialIcons style={!inFocus ? { display: 'flex' } : { display: 'none' }} name="search" size={24} color={Colors.darkGrey} />
+			<View style={styles.searchbarContainer} >
+			<TouchableOpacity style={inFocus ? { display: 'flex' } : { display: 'none' }} onPress={() => back()} >
+				<AntDesign style={{right: 5}} name="arrowleft" size={30} color={Colors.darkGrey} />
 			</TouchableOpacity>
-			<TextInput
-				onChangeText={text => setSearchString(text)}
-				placeholder={'Søg'}
-				placeholderTextColor={Colors.darkGrey}
-				style={styles.textInput}
-				value={searchString}
-				keyboardType={'web-search'}
-				onFocus={() => setInFocus(true)}
-			/>
-			<View style={{ position: 'absolute', right: 0, paddingRight: 15 }} >
-				<MaterialIcons name="filter-list" style={!inFocus ? { display: 'flex' } : { display: 'none' }} size={24} color={Colors.darkGrey} />
-				<MaterialIcons onPress={() => clear()} style={
-					searchString.length > 0 && inFocus ? { display: 'flex' } : { display: 'none' }
-				} name="cancel" size={24} color={Colors.darkGrey} />
+			<View style={styles.textInputContainer} >
+				<TouchableOpacity >
+					<MaterialIcons style={!inFocus ? { display: 'flex' } : { display: 'none' }} name="search" size={24} color={Colors.darkGrey} />
+				</TouchableOpacity>
+				<TextInput
+					onChangeText={text => setSearchString(text)}
+					placeholder={'Søg'}
+					placeholderTextColor={Colors.darkGrey}
+					style={styles.textInput}
+					value={searchString}
+					keyboardType={'web-search'}
+					onFocus={() => setInFocus(true)}
+				/>
+				<View style={{ position: 'absolute', right: 0, paddingRight: 15 }} >
+					<MaterialIcons name="filter-list" style={!inFocus ? { display: 'flex' } : { display: 'none' }} size={24} color={Colors.darkGrey} />
+					<MaterialIcons onPress={() => clear()} style={
+						searchString.length > 0 && inFocus ? { display: 'flex' } : { display: 'none' }
+					} name="cancel" size={24} color={Colors.darkGrey} />
+				</View>
 			</View>
 		</View>
-	</View>
 
-	{inFocus &&
-	<View style={styles.autocompleteContainer} >
+		<TouchableOpacity style={styles.getMyPositionButton} onPress={() => getUserLocationHandler()} >
+			<Icon
+			name='my-location'
+			type='MaterialIcons'
+			size={18}
+			color={Colors.secondaryShade2}
+			/>
+		</TouchableOpacity>
+
+		{inFocus &&
+		<View style={styles.autocompleteContainer} >
+
+			{
+				// AUTOCOMPLETE
+			}
+			<FlatList
+				horizontal={false}
+				keyboardShouldPersistTaps='handled'
+				keyExtractor={item => item.tekst}
+				data={searchResults}
+				renderItem={({ item }) =>
+					<TouchableOpacity onPress={() => citySelected(item.postnummer)} >
+						<City name={item.postnummer.navn} />
+					</TouchableOpacity>
+				}
+			/>
+			</View>
+		}
 
 		{
-			// AUTOCOMPLETE
+			// Render map if search field is not focused. Otherwise white background.
 		}
-		<FlatList
-			horizontal={false}
-			keyboardShouldPersistTaps='handled'
-			keyExtractor={item => item.tekst}
-			data={searchResults}
-			renderItem={({ item }) =>
-				<TouchableOpacity onPress={() => citySelected(item.postnummer)} >
-					<City name={item.postnummer.navn} />
-				</TouchableOpacity>
-			}
-		/>
-		</View>
-	}
-
-	{
-		// Render map if search field is not focused. Otherwise white background.
-	}
-		
-	{
-		inFocus &&
-		<View style={styles.whiteBackground} ></View>
-	}
-
-			<MapView 
-				ref = {map}
-				onPress={(e) =>{ e.stopPropagation(); dispatch(clearSelectedGroup())}} 
-				style={styles.map} 
-				mapType={'mutedStandard'}
-				initialRegion ={initialRegion}
-				showsUserLocation = {showUserLocation}
-				showsMyLocationButton={false}
-				onRegionChange={() => onRegionChange()}
-			>
-		
-				<TouchableOpacity style={styles.getMyPositionButton} onPress={() => getUserLocationHandler()} >
-					<MaterialIcons name="my-location" size={18} color={Colors.secondaryShade2} /> 
-				</TouchableOpacity>
-
-				{allGroupLocations && allGroupLocations.map((group, index) => (
-					<Marker key={group.id} coordinate={{latitude: group.latitude, longitude: group.longitude}} onPress={(e) => groupSelectedHandler(e, group.id)}>
-						{group.selected?
-							<View style={{...styles.group, ...styles.selectedGroupIcon}}>
-								<FontAwesome name='group' size={14} color={'white'} 
-								/>
-							</View>
-							: 
-							<View style={styles.group}>
-								<FontAwesome name='group' size={14} color={Colors.primary} 
-								/>
-							</View>
-						}
-					</Marker>
-				))}
-			</MapView>
 			
 		{
-			// Renders the SelectedGroup if search field is not focused.
+			inFocus &&
+			<View style={styles.whiteBackground} ></View>
 		}
-		{
-				selectedGroup && !inFocus &&
-			<View style={styles.selectedGroupContainer} > 
 
-			<TouchableOpacity onPress={() => props.navigation.navigate('GroupDetail', {
-				id: selectedGroup.key,
-				name: selectedGroup.name,
-				description :selectedGroup.description,
-				city: selectedGroup.city,
-				location: selectedGroup.location,
-				postalCode: selectedGroup.postalCode,
-				photoUrl: selectedGroup.photoUrl,
-				admin: selectedGroup.admin,
-				dueDate: selectedGroup.dueDate,
-				members: selectedGroup.members,
-				membersDetails: selectedGroup.membersDetails,
-				maxSize: selectedGroup.maxSize
-				})}>
-					<SelectedGroup group={selectedGroup}/>
-			</TouchableOpacity> 
-			</View>
-		}
-		  </View>
+				<MapView 
+					ref = {map}
+					onPress={(e) =>{ e.stopPropagation(); dispatch(clearSelectedGroup())}} 
+					style={styles.map} 
+					mapType={'mutedStandard'}
+					initialRegion ={initialRegion}
+					showsUserLocation = {showUserLocation}
+					showsMyLocationButton={false}
+					onRegionChange={() => onRegionChange()}
+					userLocationAnnotationTitle = 'Dig'
+				>
+					{allGroupLocations && allGroupLocations.map((group, index) => (
+						<Marker key={group.id} coordinate={{latitude: group.latitude, longitude: group.longitude}} onPress={(e) => groupSelectedHandler(e, group.id)}>
+							{group.selected?
+								<View style={{...styles.group, ...styles.selectedGroupIcon}}>
+									<FontAwesome name='group' size={14} color={'white'} 
+									/>
+								</View>
+								: 
+								<View style={styles.group}>
+									<FontAwesome name='group' size={14} color={Colors.primary} 
+									/>
+								</View>
+							}
+						</Marker>
+					))}
+				</MapView>
+				
+			{
+				// Renders the SelectedGroup if search field is not focused.
+			}
+			{
+					selectedGroup && !inFocus &&
+				<View style={styles.selectedGroupContainer} > 
+
+				<TouchableOpacity onPress={() => props.navigation.navigate('GroupDetail', {
+					id: selectedGroup.key,
+					name: selectedGroup.name,
+					description :selectedGroup.description,
+					city: selectedGroup.city,
+					location: selectedGroup.location,
+					postalCode: selectedGroup.postalCode,
+					photoUrl: selectedGroup.photoUrl,
+					admin: selectedGroup.admin,
+					dueDate: selectedGroup.dueDate,
+					members: selectedGroup.members,
+					membersDetails: selectedGroup.membersDetails,
+					maxSize: selectedGroup.maxSize
+					})}>
+						<SelectedGroup group={selectedGroup}/>
+				</TouchableOpacity> 
+				</View>
+			}
+		</View>
 	)
 }
 
@@ -306,18 +311,22 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		position: 'absolute',
+		right: 30,
+		top: 550,
 		width: 55,
 		height: 55,
 		backgroundColor: Colors.white,
 		borderRadius: 50, 
+		borderWidth: 1,
+		borderColor: Colors.mediumGrey,
+		borderStyle: 'solid',
 		shadowOpacity: 0.25,
 		shadowRadius: 7,
 		shadowOffset: {
 			width: 4,
 			height: 4
 		},
-		right: 30,
-		bottom: 130,
+		zIndex: 3
 	},
 	searchbarContainer: {
 		flexDirection: 'row',
@@ -325,7 +334,6 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		position: 'absolute',
 		top: 50,
-		width: 300,
 		shadowOpacity: 0.20,
 		shadowRadius: 12,
 		shadowOffset: {
@@ -350,13 +358,13 @@ const styles = StyleSheet.create({
 	},
 	textInput: {
 		fontFamily: 'roboto-regular',
-		width: '95%',
+		width: 280,
 		height: '100%',
 		fontSize: 15,
 		borderColor: 'blue',
 		borderStyle: 'solid',
 		borderWidth: 0,
-		paddingLeft: 2,
+		paddingLeft: 7,
 	},
 	whiteBackground: {
 		position: 'absolute', 

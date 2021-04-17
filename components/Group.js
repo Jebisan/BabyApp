@@ -11,10 +11,12 @@ const Group = props => {
   const [membersDetails, setMembersDetails] = useState([]);
 
   useEffect(() => {
-    if (props.membersDetails.length === 0) {
+    if (props.members) {
           getMembersDetails(props.members).then(data => {
             setMembersDetails(data)
-          })    
+          })
+    } else {
+      console.error('No members found in group!')
     }
   }, [])
 

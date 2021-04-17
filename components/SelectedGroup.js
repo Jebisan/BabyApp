@@ -13,6 +13,8 @@ const SelectedGroup = props => {
       getMembersDetails(props.group.members).then(data => {
         setMembersDetails(data)
       })  
+    } else {
+      console.error('No members found in group!')
     }
   }, [])
 

@@ -50,7 +50,6 @@ const Groups = props => {
 			admin = {item.admin}
 			dueDate = {item.dueDate}
 			members = {item.members}
-			membersDetails = {item.membersDetails}
 			maxSize = {item.maxSize}
 			/>
 		}

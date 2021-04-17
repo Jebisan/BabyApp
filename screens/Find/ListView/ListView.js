@@ -1,5 +1,6 @@
 import { AntDesign, MaterialIcons } from '@expo/vector-icons'
 import React, { useEffect, useReducer } from 'react'
+import { ActivityIndicator } from 'react-native'
 import { FlatList, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import SwitchSelector from 'react-native-switch-selector'
 import City from '../../../components/City'
@@ -17,7 +18,8 @@ const initialState = {
 	inFocus: false,
 	selectedSearchType: 0,
 	showFilter: false,
-	querySearch: false
+	querySearch: false,
+	loading: false
 }
 
 function reducer(state, action) {
@@ -40,6 +42,8 @@ function reducer(state, action) {
 			return { ...state, showFilter: action.showFilter }
 		case 'SET_QUERY_SEARCH':
 			return { ...state, querySearch: action.querySearch }
+		case 'SET_LOADING':
+			return { ...state, loading: action.loading }
 
 		default:
 			throw new Error()
@@ -139,27 +143,50 @@ const ListView = props => {
 
 	}, [state.querySearch])
 
-	startQuerySearch = async () => {
+	startQuerySearch = () => {
+		dispatch({ type: 'SET_LOADING', loading: true })
+
 		if (state.selectedSearchType === 0) {
 			//const groups = allGroups.filter(group => group.name.toLowerCase().includes(state.searchString.toLowerCase()))
-			const groups = await getGroupsByName(state.searchString.toLowerCase())
-			dispatch({ type: 'SET_GROUPS_RESULTS', groupsResults: groups })
+			getGroupsByName(state.searchString.toLowerCase())
+			.then(groups => {
+				dispatch({ type: 'SET_GROUPS_RESULTS', groupsResults: groups })
+			})
+			.finally(() => {
+				dispatch({ type: 'SET_LOADING', loading: false })
+			})
 		} else if (state.selectedSearchType === 1) {
-			const users = await getUsersByName(state.searchString.toLowerCase())
-			dispatch({ type: 'SET_USERS_RESULTS', usersResults: users })
+			getUsersByName(state.searchString.toLowerCase())
+			.then(users => {
+				dispatch({ type: 'SET_USERS_RESULTS', usersResults: users })
+			})
+			.finally(() => {
+				dispatch({ type: 'SET_LOADING', loading: false })
+			})
+
 		}
 	}
 
 	startCitySearch = () => {
+		dispatch({ type: 'SET_LOADING', loading: true })
+
 		if (state.selectedSearchType === 0) {
-			getGroupsByCity(state.selectedCity.navn).then(groups => {
+			getGroupsByCity(state.selectedCity.navn)
+			.then(groups => {
 				dispatch({ type: 'SET_GROUPS_RESULTS', groupsResults: groups })
 			})
-		} else if (state.selectedSearchType === 1) {
-			getUsersByCity(state.selectedCity.navn).then(users => {
-				dispatch({ type: 'SET_USERS_RESULTS', usersResults: users })
-			});
+			.finally(() => {
+				dispatch({ type: 'SET_LOADING', loading: false })
 
+			})
+		} else if (state.selectedSearchType === 1) {
+			getUsersByCity(state.selectedCity.navn)
+			.then(users => {
+				dispatch({ type: 'SET_USERS_RESULTS', usersResults: users })
+			})
+			.finally(() => {
+				dispatch({ type: 'SET_LOADING', loading: false })
+			});
 		}
 	}
 
@@ -167,11 +194,14 @@ const ListView = props => {
 		<View style={styles.parent}>
 			<View style={styles.searchbarContainer} >
 				<TouchableOpacity style={state.inFocus ? { display: 'flex' } : { display: 'none' }} onPress={() => back()} >
-					<AntDesign name="arrowleft" size={30} color={colors.darkGrey} />
+					<AntDesign style={{right: 5}} name="arrowleft" size={30} color={colors.darkGrey} />
 				</TouchableOpacity>
 				<View style={styles.textInputContainer} >
 					<TouchableOpacity >
-						<MaterialIcons style={!state.inFocus ? { display: 'flex' } : { display: 'none' }} name="search" size={24} color={colors.darkGrey} />
+						{
+						!state.inFocus && state.loading ? <ActivityIndicator size='small' /> :
+							<MaterialIcons style={!state.inFocus ? { display: 'flex' } : { display: 'none' }} name="search" size={24} color={colors.darkGrey} />
+						}
 					</TouchableOpacity>
 					<TextInput
 						onChangeText={text => dispatch({ type: 'SET_SEARCH_STRING', searchString: text })}
@@ -182,7 +212,7 @@ const ListView = props => {
 						onFocus={() => dispatch({ type: 'SET_IN_FOCUS', inFocus: true })}
 					/>
 					<View style={{ position: 'absolute', right: 0, paddingRight: 15 }} >
-						<MaterialIcons name="filter-list" style={!state.inFocus ? { display: 'flex' } : { display: 'none' }} size={24} color="black" />
+						<MaterialIcons name="filter-list" style={!state.inFocus ? { display: 'flex' } : { display: 'none' }} size={24} color={colors.darkGrey} />
 						<MaterialIcons onPress={() => clear()} style={
 							state.searchString.length > 0 && state.inFocus ? { display: 'flex' } : { display: 'none' }
 						} name="cancel" size={24} color={colors.darkGrey} />
@@ -208,15 +238,17 @@ const ListView = props => {
 			/>
 
 
+			{
+			}
 
 			{
-				(!state.inFocus && state.selectedSearchType === 0 && state.groupsResults.length === 0) &&
+				(!state.inFocus && !state.loading && (state.selectedCity || state.querySearch) && state.selectedSearchType === 0 && state.groupsResults.length === 0) &&
 				<Text style={styles.noResultsText} >Ingen grupper fundet</Text>
 			}
 
 
 			{
-				(!state.inFocus && state.selectedSearchType === 1 && state.usersResults.length === 0) && 
+				(!state.inFocus && !state.loading && (state.selectedCity || state.querySearch) && state.selectedSearchType === 1 && state.usersResults.length === 0) && 
 				<Text style={styles.noResultsText} >Ingen personer fundet</Text>
 			}
 
@@ -279,7 +311,6 @@ const ListView = props => {
 							admin: item.admin,
 							dueDate: item.dueDate,
 							members: item.members,
-							membersDetails: item.membersDetails,
 							maxSize: item.maxSize
 						})}>
 							<Group
@@ -293,7 +324,6 @@ const ListView = props => {
 								admin={item.admin}
 								dueDate={item.dueDate}
 								members={item.members}
-								membersDetails={item.membersDetails}
 								maxSize={item.maxSize}
 							/>
 						</TouchableOpacity>
@@ -417,12 +447,12 @@ const styles = StyleSheet.create({
 	searchbarContainer: {
 		display: 'flex',
 		flexDirection: 'row',
-		justifyContent: 'center',
+		justifyContent: 'space-between',
 		alignItems: 'center',
 		borderColor: 'yellow',
 		borderWidth: 0,
 		borderStyle: 'solid',
-		position: 'relative'
+		position: 'relative',
 	},
 	textInputContainer: {
 		position: 'relative',
@@ -439,13 +469,13 @@ const styles = StyleSheet.create({
 	},
 	textInput: {
 		fontFamily: 'roboto-regular',
-		width: '95%',
+		width: 280,
 		height: '100%',
 		fontSize: 15,
 		borderColor: 'blue',
 		borderStyle: 'solid',
 		borderWidth: 0,
-		paddingLeft: 2
+		paddingLeft: 7
 	},
 	buttonContainer: {
 		margin: 20,

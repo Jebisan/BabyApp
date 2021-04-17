@@ -53,7 +53,7 @@ export const fetchAllGroupLocations = () => {
 export const fetchSelectedGroup = (id) => {
 	return async (dispatch, getState) => {
  		const data = await Fire.getGroup(id).once('value');
-		const group = convertFirebaseGroup(id, data);
+		const group = convertFirebaseGroup(id, data.val());
 		dispatch({type: 'SET_SELECTED_GROUP', group});
 	}
 }

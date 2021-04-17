@@ -1,5 +1,5 @@
 import Fire from "../../Fire";
-import { convertFirebaseGroupsToArray, convertFirebaseUser, convertFirebaseUsersToArray } from "../../Shared";
+import { convertFirebaseGroupsToArray, convertFirebaseUsersToArray } from "../../Shared";
 
 export const toggleShowMap = () => {
 	return async (dispatch, getState) => {
@@ -14,7 +14,6 @@ export const setShowViewChangerButton = (value) => {
 			dispatch({type: 'SET_SHOW_VIEW_CHANGER_BUTTON', value})
 	}
 }
-
 
 // No Redux functions
 export const getUsersByName = async(name) => {
@@ -36,7 +35,6 @@ export const getGroupsByCity = async(city) => {
 	const data = await Fire.groups.orderByChild('city').equalTo(city).once('value');
 	return convertFirebaseGroupsToArray(data);
 }
-
 
 export const getMembersDetails = async(listOfIds) => {
 	const promises = []
