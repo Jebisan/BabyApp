@@ -19,11 +19,6 @@ const initialState = {
 	querySearch: false,
 	inFocus: false,
 	showFilter: false,
-	filter: {
-		groupType: undefined,
-		experience: undefined,
-		margin: undefined
-	}
 }
 
 function reducer(state, action) {
@@ -48,11 +43,15 @@ function reducer(state, action) {
 	}
 }
 const MapViewComponent = props => {
-	const allGroupLocations = useSelector(state => state.allGroups.allGroupLocations)
+	const filteredGroupLocations = useSelector(state => state.allGroups.filteredGroupLocations)
 	const selectedGroup = useSelector(state => state.allGroups.selectedGroup)
+	const user = useSelector(state => state.auth)
+	const filter = useSelector(state => state.allGroups.filter)
+
 	const [state, dispatch] = useReducer(reducer, initialState)
 
 	const reduxDispatch = useDispatch()
+
 	const map = useRef()
 
 	const clear = () => {
@@ -64,6 +63,9 @@ const MapViewComponent = props => {
 		Keyboard.dismiss()
 	}
 
+	useEffect(() => {
+		reduxDispatch({ type: 'UPDATE_ALLGROUP_LOCATIONS' })
+	}, [filter])
 
 	const initialRegion = {
 		latitude: 55.898147, 
@@ -77,14 +79,45 @@ const MapViewComponent = props => {
 	useEffect(() => {
 		if(getLocationPermission()) {
 			console.log('Got permission!')
+
+			setupFilter()
+
 		} else {
 			console.log('ERROR')
 		}
 	}, [])
 
-	useEffect(() => {
-		console.log('Filter was updated!')
-	}, [state.filter])
+	setupFilter = () => {
+		// GROUP TYPE INITIALIZATION: 
+		//If "my" gender is female(0), then remove male (1) and vise verca. Then set the first index to selected.
+		const typeToRemove = user.gender === 0 ? 1 : 0
+		const filteredGroupTypes = filter.groupTypes.filter(element => element.type !== typeToRemove)
+
+
+		filteredGroupTypes[0].selected = true;
+
+		// EXPERIENCES INITIALIZATION: 
+		// Choose the experience that matches the user's experience
+			const mappedList = filter.experiences.map(experience => {
+			if (experience.type === user.experience) {
+				return {
+					...experience, 
+					selected: true,
+				};
+			} else {
+				return {
+					...experience
+				};
+			}
+		});
+
+		const initialFilter = {
+			experiences: mappedList, 
+			groupTypes: filteredGroupTypes,
+			margin: filter.margin
+		}
+		reduxDispatch({ type: 'FILTER_UPDATED', filter: initialFilter })
+	}
 
 	useEffect(() => {
 		if (state.inFocus) {
@@ -279,7 +312,7 @@ const MapViewComponent = props => {
 					onRegionChange={() => onRegionChange()}
 					userLocationAnnotationTitle = 'Dig'
 				>
-					{allGroupLocations && allGroupLocations.map((group, index) => (
+					{filteredGroupLocations && filteredGroupLocations.map((group, index) => (
 						<Marker key={group.id} coordinate={{latitude: group.latitude, longitude: group.longitude}} onPress={(e) => groupSelectedHandler(e, group.id)}>
 							{group.selected?
 								<View style={{...styles.group, ...styles.selectedGroupIcon}}>

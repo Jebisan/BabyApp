@@ -8,12 +8,6 @@ export const toggleShowMap = () => {
 	}
 }
 
-export const setShowViewChangerButton = (value) => {
-	return async (dispatch, getState) => {
-			dispatch({type: 'SET_SHOW_VIEW_CHANGER_BUTTON', value})
-	}
-}
-
 // No Redux functions
 export const getUsersByName = async(name) => {
 	const data = await Fire.users.orderByChild('nameLower').startAt(name).endAt(name+"\uf8ff").once('value')

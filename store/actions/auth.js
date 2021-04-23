@@ -10,8 +10,7 @@ import * as Facebook from 'expo-facebook';
 import firebase from 'firebase';
 import {fetchUserDms} from './directMessage';
 import {fetchUserGroups} from './myGroups';
-import {fetchAllGroupLocations, fetchAllGroups} from './allGroups';
-import {fetchAllUsers} from './allUsers';
+import {fetchAllGroupLocations} from './allGroups';
 
 let timer;
 
@@ -164,15 +163,6 @@ export const fetchUserData = (userId) => {
           return key
         });
       }
-
-      let childrenArray = []
-
-
-      if(data.children){
-        childrenArray = Object.keys(data.children).map(key => {
-          return {id: key, ...data.children[key]};
-        });
-      }
       
          dispatch({
           type: SET_FIREBASE_DATA, 
@@ -187,8 +177,7 @@ export const fetchUserData = (userId) => {
           photoUrl: data.photoUrl,
           pushToken: data.pushToken,
           requests: requestsArray,
-          firstTimer: data.firstTimer,
-          children: childrenArray
+          numberOfChildren: data.numberOfChildren
         });  
   }
   }
@@ -358,8 +347,6 @@ export const fetchEverything = (userId) => {
       dispatch(fetchUserData(userId)),
       dispatch(fetchUserDms()),
       dispatch(fetchUserGroups()),
-      dispatch(fetchAllGroups()),
-      dispatch(fetchAllUsers()),
       dispatch(fetchAllGroupLocations())
   ]
       ).then(() => {

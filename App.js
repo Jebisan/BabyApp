@@ -7,7 +7,6 @@ import {Provider, useSelector} from 'react-redux';
 import authReducer from './store/reducers/auth';
 import myGroupsReducer from './store/reducers/myGroups';
 import allGroupsReducer from './store/reducers/allGroups';
-import allUsersReducer from './store/reducers/allUsers';
 import findReducer from './store/reducers/find.js';
 import directMessageReducer from './store/reducers/directMessage';
 import ReduxThunk from 'redux-thunk';
@@ -41,7 +40,6 @@ export default function App() {
   const rootReducer = combineReducers({
     auth: authReducer,
     allGroups: allGroupsReducer,
-    allUsers: allUsersReducer,
     myGroups: myGroupsReducer,
     find: findReducer,
     directMessages: directMessageReducer,

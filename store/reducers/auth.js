@@ -19,7 +19,7 @@ const INITIAL_STATE = {
   groups: null,
   pushToken: null,
   requests: [],
-  children: []
+  numberOfChildren: 0
 };
 
 export default authReducer = (state = INITIAL_STATE, action) => {
@@ -44,6 +44,18 @@ export default authReducer = (state = INITIAL_STATE, action) => {
       };
 
     case SET_FIREBASE_DATA:
+      let experience = undefined;
+      switch(action.numberOfChildren) {
+        case 0:
+          experience = 0;
+          break;
+        case 1:
+          experience = 1;
+          break;
+        default: 
+          experience = 2;
+        break
+      }
       return {
         ...state,
         firstname: action.firstname,
@@ -57,8 +69,8 @@ export default authReducer = (state = INITIAL_STATE, action) => {
         photoUrl: action.photoUrl,
         pushToken: action.pushToken,
         requests: action.requests,
-        firstTimer: action.firstTimer,
-        children: action.children
+        numberOfChildren: action.numberOfChildren,
+        experience
       }
       
     case SET_PHOTO_URL:

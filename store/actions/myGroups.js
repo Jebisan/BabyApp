@@ -286,13 +286,6 @@ export const removeRequestFromGroup = (groupId, personId ) => {
               return;
             }
 
-            let childrenArray = []
-
-            if(obj.children){
-              childrenArray = Object.keys(obj.children).map(key => {
-                return {id: key, ...obj.children[key]};
-              });
-            }
 
             const user = {
               id: snapshot.key,
@@ -304,7 +297,6 @@ export const removeRequestFromGroup = (groupId, personId ) => {
               birthday: obj.birthday,
               photoUrl: obj.photoUrl?obj.photoUrl:'http://criticare.isccm.org/assets/images/male_placeholder.png',
               pushToken: obj.pushToken,
-              children: childrenArray
             }       
             
             dispatch({type: ADD_USER_TO_GROUP, groupId, user})

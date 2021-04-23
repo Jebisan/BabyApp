@@ -2,35 +2,6 @@
 import Fire from '../../Fire'
 import { convertFirebaseGroup } from '../../shared/firebase'
 
-export const fetchAllGroups = () => {
-	return async (dispatch, getState) => {
-  
-		Fire.firebase.database().ref('groups').once('value').then((groupObject => {
-
-			let groups = Object.keys(groupObject.val()).map(key => {
-				const membersObject = groupObject.val()[key].members
-				const requestsObject = groupObject.val()[key].requests
-
-				let membersList = [];
-				let requestsMap = new Map();
-
-				if(membersObject) {
-					membersList = Object.keys(membersObject).map(key => {
-						return key
-					})
-				}
-
-				if(requestsObject) {
-					requestsMap = new Map(Object.entries(requestsObject))
-				}
-
-				return {key, ...groupObject.val()[key], members: membersList, requests: requestsMap, membersDetails: []}
-			})
-			dispatch({type: 'FETCH_ALL_GROUPS', groups})
-		}))
-	}
-}
-
 export const fetchAllGroupLocations = () => {
 	return async (dispatch, getState) => {
 		const data = await Fire.groupLocations.orderByChild('location').once('value')
@@ -39,14 +10,19 @@ export const fetchAllGroupLocations = () => {
 		if(locationsObj) {
 			locationsList = Object.keys(locationsObj).map(key => {
 				return {
-					id: key, 
+					id: key,
 					latitude: locationsObj[key].latitude, 
 					longitude: locationsObj[key].longitude,
-					selected: false
+					selected: false,
+					experience: locationsObj[key].experience, 
+					groupType: locationsObj[key].groupType, 
+					margin: locationsObj[key].margin,
+					visible: true
 				}
 			})
 		}
-		dispatch({type: 'FETCH_ALL_GROUP_LOCATIONS', allGroupLocations: locationsList})
+		dispatch({type: 'SET_ALL_GROUP_LOCATIONS', allGroupLocations: locationsList})
+		dispatch({type: 'SET_ALL_GROUP_LOCATIONS_FILTERED', allGroupLocations: locationsList})
 	}
 }
 

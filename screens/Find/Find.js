@@ -1,18 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import { StyleSheet, View, Text, TouchableOpacity} from 'react-native'
+import React from 'react'
+import { StyleSheet, View} from 'react-native'
 import MapView from './MapView/MapView'
 import ListView from './ListView/ListView'
-import Colors from '../../constants/colors'
-import { MaterialIcons, FontAwesome } from '@expo/vector-icons'
-import { useDispatch, useSelector } from 'react-redux'
-import { toggleShowMap } from '../../store/actions/find'
 import colors from '../../constants/colors'
+import { useSelector } from 'react-redux'
 
 const Find = (props) => {
-	const dispatch = useDispatch()
-	const selectedGroup = useSelector(state => state.allGroups.selectedGroup)
 	const showMap = useSelector(state => state.find.showMap)
-	const showViewChangerButton = useSelector(state => state.find.showViewChangerButton)
 
 	return (
 		<View style= {styles.parentContainer} >
@@ -43,15 +37,15 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: Colors.primary,
+		backgroundColor: colors.primary,
 		shadowRadius: 6,
 		shadowOpacity: 0.3,
 		shadowOffset: { width: 6, height: 6 },
-		shadowColor: Colors.normalBlue
+		shadowColor: colors.normalBlue
 	},
 	buttonTitleStyle: {
 		fontSize: 15,
-		color: Colors.lightGrey,
+		color: colors.lightGrey,
 		fontFamily: 'roboto-medium',
 	}
 })

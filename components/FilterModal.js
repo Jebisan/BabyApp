@@ -1,18 +1,17 @@
-import React, { useState, useRef, useEffect } from 'react'
-import {View, StyleSheet, Text, TextInput, TouchableOpacity, Animated, Keyboard } from 'react-native'
+import React, {useRef, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import {View, StyleSheet, Text, TextInput, TouchableOpacity, Animated, FlatList } from 'react-native'
 import { Entypo, MaterialCommunityIcons } from '@expo/vector-icons' 
 import colors from '../constants/colors'
 import {screenHeight} from '../constants/sizes'
-import {ButtonGroup} from 'react-native-elements'
 import Slider from '@react-native-community/slider';
+
 
 const FilterModal = props => {
 	const slideFromBottom = useRef(new Animated.Value(screenHeight)).current
 	const backgroundOpacity= useRef(new Animated.Value(0)).current
-	const [groupTypes, setGroupTypes] = useState([0])
-	const [experiences, setExperiences] = useState([0])
-	const [margin, setMargin] = useState(4)
-
+	const dispatch = useDispatch()
+	const filter = useSelector(state => state.allGroups.filter)
 
 	useEffect(() => {
 		Animated.spring(
@@ -37,6 +36,36 @@ const FilterModal = props => {
 		).start()
 	}, [backgroundOpacity])
 
+	const groupTypesOnChangeHandler = (type) => {
+			const newList = filter.groupTypes.map(groupType => {
+				if (groupType.type === type) {
+					return {
+						...groupType, selected: !groupType.selected,
+					};
+				} else {
+					return {
+						...groupType
+					};
+				}
+			});
+			dispatch({ type: 'FILTER_UPDATED', filter: {...filter, groupTypes: newList} })
+	}
+
+	const experiencesOnChangeHandler = (type) => {
+		const newList = filter.experiences.map(experience => {
+			if (experience.type === type) {
+				return {
+					...experience, selected: !experience.selected,
+				};
+			} else {
+				return {
+					...experience
+				};
+			}
+		});
+		dispatch({ type: 'FILTER_UPDATED', filter: {...filter, experiences: newList} })		
+	}
+
 
 	
 	return (
@@ -47,52 +76,57 @@ const FilterModal = props => {
 					<Entypo name="cross" style={styles.cross} size={24} color="black" onPress={() => props.setShowFilter(false)} />
 					<Text style={styles.title}>Filtre</Text>
 				</View>
-				<View style={styles.contentContainer} >
+				<View style={styles.contentContainer}>
+
+				<View style={styles.filterContainer}>
+				<Text style={styles.filterHeader}>Gruppetype</Text>
+
+					<FlatList
+					horizontal={true}
+					keyExtractor={item => item.name}
+					data={filter.groupTypes}
+					renderItem={({ item }) =>
+							<TouchableOpacity style={item.selected?styles.buttonSelected:styles.button} onPress={() => groupTypesOnChangeHandler(item.type)} >
+								<Text style={item.selected?styles.buttonTextSelected:styles.buttonText}>{item.name}</Text>
+							</TouchableOpacity>
+					}
+					/>
+				</View>
+
+				<View style={styles.filterContainer}>
+				<Text style={styles.filterHeader}>Fødselserfaring</Text>
+
+					<FlatList
+					horizontal={true}
+					keyExtractor={item => item.name}
+					data={filter.experiences}
+					renderItem={({ item }) =>
+							<TouchableOpacity style={item.selected?styles.buttonSelected:styles.button} onPress={() => experiencesOnChangeHandler(item.type)} >
+								<Text style={item.selected?styles.buttonTextSelected:styles.buttonText}>{item.name}</Text>
+							</TouchableOpacity>
+					}
+					/>
+				</View>
+				
 					<View style={styles.filterContainer}>
-						<Text style={styles.filterHeader} >Gruppetype</Text>
-						<ButtonGroup
-						selectedIndexes={groupTypes}
-						onPress={index => setGroupTypes(index)}
-						buttons={[ <Text>Mødregrupper</Text>, <Text>Familiegrupper</Text>]}
-						selectMultiple
-						buttonStyle={{borderRadius:200, borderWidth: 1, borderColor:colors.mediumGrey, marginHorizontal: 5}}
-						selectedButtonStyle={{borderRadius:200, borderWidth: 1, borderColor:colors.mediumGrey, backgroundColor: colors.lightBlue}}
-						innerBorderStyle={{width: 0}}
-						containerStyle={{borderWidth: 0, backgroundColor: colors.lightGrey}}
-						/>
+						<Text style={styles.filterHeader}>Terminsmargin</Text>
+						<View style={{ width: '100%', alignItems: 'center', justifyContent: 'center' }}>
+							
+						<View style={styles.marginValue} >
+						<MaterialCommunityIcons name="plus-minus" size={16} color={colors.darkGrey} />
+						<Text style={{fontSize: 13, fontFamily: 'roboto-bold', color:colors.darkGrey}} >{filter.margin} uger</Text>
+						</View>
+							<Slider
+								value={filter.margin}
+								step={1}
+								onValueChange={value => dispatch({ type: 'FILTER_UPDATED', filter: {...filter, margin: value }})}
+								style={{width: 300, height: 40}}
+								minimumValue={1}
+								maximumValue={8}
+								minimumTrackTintColor={colors.lightBlue}
+								maximumTrackTintColor={colors.mediumGrey}
+							/>
 					</View>
-					<View style={styles.filterContainer}>
-						<Text style={styles.filterHeader} >Fødselserfaring</Text>
-						<ButtonGroup
-						selectedIndexes={experiences}
-						onPress={index => setExperiences(index)}
-						buttons={[ <Text>1. fødsel</Text> , <Text>2. fødsel</Text>,<Text>3+</Text>]}
-						selectMultiple={true}
-						buttonStyle={{borderRadius:200, borderWidth: 1, borderColor:colors.mediumGrey, marginHorizontal: 5}}
-						selectedButtonStyle={{borderRadius:200, borderWidth: 1, borderColor:colors.mediumGrey, backgroundColor: colors.lightBlue}}
-						innerBorderStyle={{width: 0}}
-						containerStyle={{borderWidth: 0, backgroundColor: colors.lightGrey}}
-						/>
-					</View>
-					<View style={styles.filterContainer}>
-					<Text style={styles.filterHeader}>Terminsmargin</Text>
-					<View style={{ width: '100%', alignItems: 'center', justifyContent: 'center' }}>
-						
-					<View style={styles.marginValue} >
-					<MaterialCommunityIcons name="plus-minus" size={16} color={colors.darkGrey} />
-					<Text style={{fontSize: 13, fontFamily: 'roboto-bold', color:colors.darkGrey}} >{margin} uger</Text>
-					</View>
-						<Slider
-							value={margin}
-							step={1}
-							onValueChange={value => setMargin(value)}
-							style={{width: 300, height: 40}}
-							minimumValue={1}
-							maximumValue={8}
-							minimumTrackTintColor={colors.lightBlue}
-							maximumTrackTintColor={colors.mediumGrey}
-						/>
-				  </View>
 				</View>
 				</View>
 			</Animated.View>
@@ -157,9 +191,6 @@ const styles = StyleSheet.create({
 		alignItems: 'flex-start',
 		width: 320,
 		height: 100,
-		borderWidth: 0,
-		borderColor: 'red',
-		borderStyle: 'solid'
 	},
 	filterHeader: {
 		fontFamily: 'roboto-medium',
@@ -172,6 +203,50 @@ const styles = StyleSheet.create({
 		right:0,
 		bottom: 20,
 		padding: 10,
+	},
+	button: {
+		display: 'flex',
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		height: 30,
+		borderRadius: 20,
+		backgroundColor: colors.lightBlue,
+		marginLeft: 10
+	},
+	button: {
+		display: 'flex',
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		height: 30,
+		borderRadius: 20,
+		backgroundColor: colors.white,
+		marginLeft: 10,
+		borderWidth: 0.3,
+		borderColor: colors.darkGrey,
+		borderStyle: 'solid',
+		paddingHorizontal: 15
+	},
+	buttonText: {
+		color: colors.darkGrey,
+		fontFamily: 'roboto-regular'
+	},
+	buttonSelected: {
+		display: 'flex',
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		height: 30,
+		borderRadius: 20,
+		backgroundColor: colors.lightBlue,
+		marginLeft: 10,
+		color: colors.white,
+		paddingHorizontal: 15
+	},
+	buttonTextSelected: {
+		color: colors.white,
+		fontFamily: 'roboto-regular'
 	}
 
 })
