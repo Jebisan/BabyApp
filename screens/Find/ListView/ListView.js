@@ -342,7 +342,8 @@ const ListView = props => {
 							admin: item.admin,
 							dueDate: item.dueDate,
 							members: item.members,
-							maxSize: item.maxSize
+							maxSize: item.maxSize,
+							groupType: item.groupType
 						})}>
 							<Group
 								id={item.id}
@@ -405,7 +406,8 @@ const ListView = props => {
 							dueDate: item.dueDate,
 							members: item.members,
 							membersDetails: item.membersDetails,
-							maxSize: item.maxSize
+							maxSize: item.maxSize,
+							groupType: item.groupType
 						})
 						} >
 							<Group

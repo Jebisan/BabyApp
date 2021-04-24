@@ -33,7 +33,7 @@ export const convertFirebaseUsersToArray = (data) => {
          return convertFirebaseUser(key, usersObject[key]);
       })
    } else {
-      console.error('No usersObject');
+      console.log('No usersObject');
       return [];
    }
    return usersArray;
@@ -49,7 +49,7 @@ export const convertFirebaseGroupsToArray = (data) => {
          return convertFirebaseGroup(key, groupsObject[key]);
       })
    } else {
-      console.error('No groupsObject');
+      console.log('No groupsObject');
       return [];
    }
    return groupsArray;

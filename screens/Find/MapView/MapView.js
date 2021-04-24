@@ -346,7 +346,8 @@ const MapViewComponent = props => {
 					dueDate: selectedGroup.dueDate,
 					members: selectedGroup.members,
 					membersDetails: selectedGroup.membersDetails,
-					maxSize: selectedGroup.maxSize
+					maxSize: selectedGroup.maxSize,
+					groupType: selectedGroup.groupType
 					})}>
 						<SelectedGroup group={selectedGroup}/>
 				</TouchableOpacity> 

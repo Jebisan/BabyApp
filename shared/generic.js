@@ -26,3 +26,15 @@ export const generateRandomId = () => {
    var newDate2 = moment(newDate).format("MMM YYYY");    
    return newDate2.charAt(0).toUpperCase() + newDate2.slice(1);
 }
+
+export const getGroupTypeName = (groupType) => {
+   console.log(groupType)
+   switch(groupType){
+      case 0: 
+         return 'Mødre'
+      case 1: 
+         return 'Fædre'
+      case 2: 
+         return 'Familie'
+   }
+}

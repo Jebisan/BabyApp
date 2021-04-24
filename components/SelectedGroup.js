@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text, Image } from 'react-native';
 import {Entypo, FontAwesome, SimpleLineIcons} from '@expo/vector-icons';
 import colors from '../constants/colors';
-import { convertDate2 } from '../shared/generic';
+import { convertDate2, getGroupTypeName } from '../shared/generic';
 import { getMembersDetails } from '../store/actions/find';
 
 const SelectedGroup = props => {
@@ -29,7 +29,7 @@ const SelectedGroup = props => {
         <Text style={styles.title} >{props.group.name}</Text>
         <View style={styles.factsContainer}>
           <FontAwesome style={{right: 2}} name='group' size={10} color={colors.darkGrey} />
-          <Text style={styles.smallText}>{props.group.groupType === 1 ?'Fædre' : 'Mødre'}</Text>
+          <Text style={styles.smallText}>{getGroupTypeName(props.group.groupType)}</Text>
           <Entypo style={{left: 6, bottom: 1}} name="location-pin" size={12} color={colors.darkGrey} />
           <Text style={{...styles.smallText, left: 5, bottom: 1}}>5,5km</Text>
           <FontAwesome style={{left: 16, bottom: 0}}  name="calendar-o" size={10} color={colors.darkGrey} />

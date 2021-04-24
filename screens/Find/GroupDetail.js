@@ -3,7 +3,7 @@ import {View, StyleSheet, Text, TouchableOpacity, Image, Alert} from 'react-nati
 import { LinearGradient } from 'expo-linear-gradient'
 import colors from '../../constants/colors'
 import {Entypo, FontAwesome, AntDesign, MaterialCommunityIcons, SimpleLineIcons} from '@expo/vector-icons'
-import { convertDate2 } from '../../shared/generic'
+import { convertDate2, getGroupTypeName } from '../../shared/generic'
 import { useSelector } from 'react-redux'
 import MapView, { Marker } from 'react-native-maps'
 import RequestModal from '../../components/RequestModal'
@@ -42,7 +42,7 @@ const GroupDetail = props => {
                         <Image source={{ uri: group.photoUrl }} style={styles.image} resizeMode="cover"></Image>
                     </View>
                     <Text style={styles.title}>{group.name}</Text>
-                    <Text style={styles.subTitle}>{group.groupType === 1 ?'Fædregruppe' : 'Mødregruppe'}</Text>
+                    <Text style={styles.subTitle}>{getGroupTypeName(group.groupType)}</Text>
                     <View style={styles.horizontalContainer} >
                         <Entypo style={{left: -10, bottom: 1}} name="location-pin" size={16} color={colors.darkGrey} />
                         <Text style={{...styles.smallText, left: -9, bottom: 1}}>{group.city}</Text>
