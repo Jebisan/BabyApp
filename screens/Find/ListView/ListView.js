@@ -3,24 +3,27 @@ import React, { useEffect, useReducer } from 'react'
 import { ActivityIndicator } from 'react-native'
 import { FlatList, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import SwitchSelector from 'react-native-switch-selector'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import City from '../../../components/City'
 import Group from '../../../components/Group'
 import User from '../../../components/User'
 import colors from '../../../constants/colors'
 import { getGroupsByCity, getGroupsByName, getUsersByCity, getUsersByName, toggleShowMap } from '../../../store/actions/find'
+import { filterGroups } from '../../../shared/filter'
+import FilterModal from '../../../components/FilterModal'
 
 const initialState = {
 	searchString: '',
 	autocompleteResults: [],
 	usersResults: [],
 	groupsResults: [],
+	groupsResultsFiltered: [],
 	selectedCity: undefined,
 	inFocus: false,
 	selectedSearchType: 0,
-	showFilter: false,
 	querySearch: false,
-	loading: false
+	loading: false,
+	showFilter: false
 }
 
 function reducer(state, action) {
@@ -33,6 +36,8 @@ function reducer(state, action) {
 			return { ...state, usersResults: action.usersResults }
 		case 'SET_GROUPS_RESULTS':
 			return { ...state, groupsResults: action.groupsResults }
+		case 'SET_GROUPS_RESULTS_FILTERED':
+			return { ...state, groupsResultsFiltered: action. groupsResultsFiltered}
 		case 'SET_SELECTED_CITY':
 			return { ...state, selectedCity: action.selectedCity }
 		case 'SET_IN_FOCUS':
@@ -45,7 +50,8 @@ function reducer(state, action) {
 			return { ...state, querySearch: action.querySearch }
 		case 'SET_LOADING':
 			return { ...state, loading: action.loading }
-
+		case 'SET_SHOW_FILTER':
+				return { ...state, showFilter: action.showFilter }
 		default:
 			throw new Error()
 	}
@@ -53,6 +59,8 @@ function reducer(state, action) {
 
 const ListView = props => {
 	const [state, dispatch] = useReducer(reducer, initialState)
+	const filter = useSelector(state => state.allGroups.filter)
+
 
 	const reduxDispatch = useDispatch()
 
@@ -86,6 +94,7 @@ const ListView = props => {
 			dispatch({ type: 'SET_AUTOCOMPLETE_RESULTS', autocompleteResults: [] })
 			dispatch({ type: 'SET_USERS_RESULTS', usersResults: [] })
 			dispatch({ type: 'SET_GROUPS_RESULTS', groupsResults: [] })
+
 			return
 		}
 
@@ -193,8 +202,21 @@ const ListView = props => {
 		}
 	}
 
+	useEffect(() => {
+		const filteredResults = filterGroups(filter, state.groupsResults)
+		dispatch({ type: 'SET_GROUPS_RESULTS_FILTERED', groupsResultsFiltered: filteredResults })
+
+	}, [state.groupsResults, filter])
+
 	return (
 		<View style={styles.parent}>
+		{
+			state.showFilter && 
+			<FilterModal
+				showFilter={state.showFilter}
+			  	setShowFilter={val => dispatch({ type: 'SET_SHOW_FILTER', showFilter: val})}
+			/>
+	  }
 
 		<TouchableOpacity style={styles.findTypeButton} onPress={() => reduxDispatch(toggleShowMap())} >
 			<FontAwesome name="map-o" size={16} color={colors.lightGrey} />
@@ -221,7 +243,7 @@ const ListView = props => {
 						onFocus={() => dispatch({ type: 'SET_IN_FOCUS', inFocus: true })}
 					/>
 					<View style={{ position: 'absolute', right: 0, paddingRight: 15 }} >
-						<MaterialIcons name="filter-list" style={!state.inFocus ? { display: 'flex' } : { display: 'none' }} size={24} color={colors.darkGrey} />
+						<MaterialIcons onPress={() => dispatch({ type: 'SET_SHOW_FILTER', showFilter: true })} name="filter-list" style={!state.inFocus && state.selectedSearchType === 0 ? { display: 'flex' } : { display: 'none' }} size={24} color={colors.darkGrey} />
 						<MaterialIcons onPress={() => clear()} style={
 							state.searchString.length > 0 && state.inFocus ? { display: 'flex' } : { display: 'none' }
 						} name="cancel" size={24} color={colors.darkGrey} />
@@ -263,7 +285,7 @@ const ListView = props => {
 
 
 			{
-				(!state.inFocus && state.selectedSearchType === 0 && state.groupsResults.length !== 0) && 
+				(!state.inFocus && state.selectedSearchType === 0 && state.groupsResultsFiltered.length !== 0) && 
 				<View style={styles.buttonContainerBottomBorder} ></View>
 			}
 
@@ -307,7 +329,7 @@ const ListView = props => {
 					horizontal={false}
 					keyboardShouldPersistTaps='handled'
 					keyExtractor={item => item.id}
-					data={state.groupsResults}
+					data={state.groupsResultsFiltered}
 					renderItem={({ item }) =>
 						<TouchableOpacity onPress={() => props.navigation.navigate('GroupDetail', {
 							id: item.id,
@@ -369,7 +391,7 @@ const ListView = props => {
 					horizontal={false}
 					keyboardShouldPersistTaps='handled'
 					keyExtractor={item => item.id}
-					data={state.groupsResults}
+					data={state.groupsResultsFiltered}
 					renderItem={({ item }) =>
 						<TouchableOpacity onPress={() => props.navigation.navigate('GroupDetail', {
 							id: item.id,
@@ -443,11 +465,10 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		width: '100%',
 		backgroundColor: colors.white,
-		paddingHorizontal: 20,
+		paddingHorizontal: 0,
 		borderWidth: 0,
 		borderStyle: 'solid',
 		borderColor: 'green',
-		paddingVertical: 50,
 		height: '100%'
 	},
 	locationPicker: {
@@ -462,6 +483,7 @@ const styles = StyleSheet.create({
 		borderWidth: 0,
 		borderStyle: 'solid',
 		position: 'relative',
+		top: 50
 	},
 	textInputContainer: {
 		position: 'relative',
@@ -492,13 +514,15 @@ const styles = StyleSheet.create({
 		borderWidth: 0,
 		borderColor: 'red',
 		height: 34,
+		top: 50
 	},
 	autocompleteContainer: {
 		flexDirection: 'column',
 		justifyContent: 'flex-start',
 		borderWidth: 0,
 		borderColor: 'blue',
-		width: 330
+		width: 330,
+
 	},
 	autocompleteResults: {
 		flexDirection: 'column',
@@ -513,6 +537,7 @@ const styles = StyleSheet.create({
 	seeAllResultsContainer: {
 		flexDirection: 'row',
 		justifyContent: 'flex-start',
+		top: 50
 	},
 	seeAllResultsText: {
 		color: colors.lightBlue,
@@ -524,13 +549,15 @@ const styles = StyleSheet.create({
 		borderWidth: 0,
 		borderStyle: 'solid',
 		borderColor: 'pink',
+		top: 50
 	},
 	buttonContainerBottomBorder: {
 		width: "100%",
 		borderColor: colors.mediumGrey,
 		borderStyle: 'solid',
 		borderBottomWidth: 0.5,
-		paddingVertical: 3
+		paddingVertical: 3,
+		top: 50
 	},
 	noResultsText: {
 		fontFamily: 'roboto-regular',

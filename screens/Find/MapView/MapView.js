@@ -64,7 +64,7 @@ const MapViewComponent = props => {
 	}
 
 	useEffect(() => {
-		reduxDispatch({ type: 'UPDATE_ALLGROUP_LOCATIONS' })
+		reduxDispatch({ type: 'UPDATE_ALL_GROUP_LOCATIONS' })
 	}, [filter])
 
 	const initialRegion = {
@@ -227,8 +227,6 @@ const MapViewComponent = props => {
 			  <FilterModal 
 			  	showFilter={state.showFilter}
 				setShowFilter={val => dispatch({ type: 'SET_SHOW_FILTER', showFilter: val})}
-			  	setFilter={f => dispatch({ type: 'SET_FILTER', filter: f})}
-				filter={state.filter}
 			  />
 		}
 

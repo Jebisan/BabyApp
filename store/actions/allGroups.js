@@ -17,7 +17,6 @@ export const fetchAllGroupLocations = () => {
 					experience: locationsObj[key].experience, 
 					groupType: locationsObj[key].groupType, 
 					margin: locationsObj[key].margin,
-					visible: true
 				}
 			})
 		}

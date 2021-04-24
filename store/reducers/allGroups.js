@@ -1,3 +1,5 @@
+import {filterGroups} from '../../shared/filter'
+
 const INITIAL_STATE = {
 	allGroupLocations: [],
 	filteredGroupLocations: [],
@@ -80,39 +82,9 @@ export default allGroupsReducer = (state = INITIAL_STATE, action) => {
 	
 	case 'FILTER_UPDATED': 
 		return { ...state, filter: action.filter }
-	case 'UPDATE_ALLGROUP_LOCATIONS': 
-	const selectedGroupTypes = state.filter.groupTypes.filter(element => element.selected)
-	const selectedExperiences = state.filter.experiences.filter(element => element.selected)
-	const selectedMargin = state.filter.margin
-
-	const selectedGroups = []
-	state.allGroupLocations.forEach(group => {
-		selectedGroupTypes.forEach(selectedGroupType => {
-			if(selectedGroupType.type === group.groupType) {
-				selectedGroups.push(group);
-			}
-		});
-	})
-
-	const selectedGroups2 = []
-
-	selectedGroups.forEach(group => {
-		selectedExperiences.forEach(selectedExperience => {
-			if(selectedExperience.type === group.experience) {
-				selectedGroups2.push(group)
-			}
-		})
-	})
-
-	const selectedGroups3 = []
-
-	selectedGroups2.forEach(group => {
-		if (group.margin <= selectedMargin) {
-			selectedGroups3.push(group)
-		}
-	})
-
-	return {...state, filteredGroupLocations: selectedGroups3 }
+	case 'UPDATE_ALL_GROUP_LOCATIONS': 
+		const result = filterGroups(state.filter, state.allGroupLocations)
+		return {...state, filteredGroupLocations: result }
 
 		//DEPRECATED. NOT USING ALL GROUPS ANYMORE
 	case 'SET_REQUEST': 
