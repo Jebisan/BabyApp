@@ -230,10 +230,14 @@ const MapViewComponent = props => {
 			  />
 		}
 
+		{
+			!state.inFocus &&
 			<TouchableOpacity style={styles.findTypeButton} onPress={() => reduxDispatch(toggleShowMap())} >
 				<MaterialIcons name="list" size={25} color={colors.lightGrey} /> 
 				<Text style={styles.buttonTitleStyle}>Liste</Text>
 			</TouchableOpacity>
+		}
+
 
 			<View style={styles.searchbarContainer} >
 			<TouchableOpacity style={state.inFocus ? { display: 'flex' } : { display: 'none' }} onPress={() => back()} >
@@ -261,6 +265,8 @@ const MapViewComponent = props => {
 			</View>
 		</View>
 
+		{
+			!state.inFocus &&
 		<TouchableOpacity style={styles.getMyPositionButton} onPress={() => getUserLocationHandler()} >
 			<Icon
 			name='my-location'
@@ -269,6 +275,7 @@ const MapViewComponent = props => {
 			color={colors.secondaryShade2}
 			/>
 		</TouchableOpacity>
+	}
 
 		{state.inFocus &&
 		<View style={styles.autocompleteContainer} >

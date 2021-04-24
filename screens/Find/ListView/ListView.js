@@ -218,10 +218,14 @@ const ListView = props => {
 			/>
 	  }
 
+	  {
+
+	  !state.inFocus &&
 		<TouchableOpacity style={styles.findTypeButton} onPress={() => reduxDispatch(toggleShowMap())} >
 			<FontAwesome name="map-o" size={16} color={colors.lightGrey} />
 			<Text style={styles.buttonTitleStyle}> Kort</Text>
 		</TouchableOpacity>
+	}
 
 			<View style={styles.searchbarContainer} >
 				<TouchableOpacity style={state.inFocus ? { display: 'flex' } : { display: 'none' }} onPress={() => back()} >
