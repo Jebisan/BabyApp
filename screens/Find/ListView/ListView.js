@@ -298,12 +298,13 @@ const ListView = props => {
 				<View style={styles.buttonContainerBottomBorder} ></View>
 			}
 
+			{ state.inFocus &&
 			<View style={styles.autocompleteContainer} >
 
 				{state.inFocus &&
 					// AUTOCOMPLETE
 					<FlatList
-						style={styles.resultsContainer}
+						style={styles.autocompleteResults}
 						horizontal={false}
 						keyboardShouldPersistTaps='handled'
 						keyExtractor={item => item.tekst}
@@ -322,6 +323,7 @@ const ListView = props => {
 					</TouchableOpacity>
 				}
 			</View>
+		}
 
 			{	// OUT OF FOCUS STUFF WHEN CITY IS SELECTED: 
 			}
@@ -517,10 +519,8 @@ const styles = StyleSheet.create({
 	buttonContainer: {
 		margin: 20,
 		width: 345,
-		borderWidth: 0,
-		borderColor: 'red',
 		height: 34,
-		top: 50
+		top: 50,
 	},
 	autocompleteContainer: {
 		flexDirection: 'column',
@@ -528,22 +528,15 @@ const styles = StyleSheet.create({
 		borderWidth: 0,
 		borderColor: 'blue',
 		width: 330,
-
+		top: 50
 	},
 	autocompleteResults: {
-		flexDirection: 'column',
-		justifyContent: 'center',
-		alignItems: 'center',
 		position: 'relative',
 		width: 330,
-		borderWidth: 0,
-		borderStyle: 'solid',
-		borderColor: 'black',
 	},
 	seeAllResultsContainer: {
 		flexDirection: 'row',
 		justifyContent: 'flex-start',
-		top: 50
 	},
 	seeAllResultsText: {
 		color: colors.lightBlue,
