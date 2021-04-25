@@ -64,6 +64,7 @@ const MapViewComponent = props => {
 	}
 
 	useEffect(() => {
+		reduxDispatch(clearSelectedGroup())
 		reduxDispatch({ type: 'UPDATE_ALL_GROUP_LOCATIONS' })
 	}, [filter])
 
