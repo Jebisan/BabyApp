@@ -50,8 +50,6 @@ function reducer(state, action) {
 			return { ...state, querySearch: action.querySearch }
 		case 'SET_LOADING':
 			return { ...state, loading: action.loading }
-		case 'SET_SHOW_FILTER':
-				return { ...state, showFilter: action.showFilter }
 		default:
 			throw new Error()
 	}
@@ -245,6 +243,7 @@ const ListView = props => {
 						value={state.searchString}
 						keyboardType={'web-search'}
 						onFocus={() => dispatch({ type: 'SET_IN_FOCUS', inFocus: true })}
+						onSubmitEditing={() => dispatch({ type: 'SET_QUERY_SEARCH', querySearch: true })}
 					/>
 					<View style={{ position: 'absolute', right: 0, paddingRight: 15 }} >
 						<MaterialIcons onPress={() => dispatch({ type: 'SET_SHOW_FILTER', showFilter: true })} name="filter-list" style={!state.inFocus && state.selectedSearchType === 0 ? { display: 'flex' } : { display: 'none' }} size={24} color={colors.darkGrey} />

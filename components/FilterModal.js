@@ -36,6 +36,29 @@ const FilterModal = props => {
 		).start()
 	}, [backgroundOpacity])
 
+	hideFilter = () => {
+		Animated.spring(
+			slideFromBottom,
+			{
+				toValue: screenHeight,
+				tension: 10,
+				useNativeDriver: true
+			}
+		).start()
+
+		Animated.spring(
+			backgroundOpacity,
+			{
+				toValue: 0,
+				tension: 10,
+				useNativeDriver: true
+			}
+		).start()
+		setTimeout(() => {
+			props.setShowFilter(false);
+		}, 500)
+	}
+
 	const groupTypesOnChangeHandler = (type) => {
 			const newList = filter.groupTypes.map(groupType => {
 				if (groupType.type === type) {
@@ -66,14 +89,13 @@ const FilterModal = props => {
 		dispatch({ type: 'FILTER_UPDATED', filter: {...filter, experiences: newList} })		
 	}
 
-
 	
 	return (
 		<View style = {styles.parent}>
 			<Animated.View style={{...styles.background, opacity: backgroundOpacity}}></Animated.View>
 			<Animated.View style={[styles.modalContainer, {transform: [{translateY: slideFromBottom }]}]}>
 				<View style={styles.topContainer}>
-					<Entypo name="cross" style={styles.cross} size={24} color="black" onPress={() => props.setShowFilter(false)} />
+					<Entypo name="cross" style={styles.cross} size={24} color="black" onPress={() => hideFilter()} />
 					<Text style={styles.title}>Filtre</Text>
 				</View>
 				<View style={styles.contentContainer}>
@@ -132,6 +154,7 @@ const FilterModal = props => {
 			</Animated.View>
 		</View>
 	)
+	
 }
 
 const styles = StyleSheet.create({

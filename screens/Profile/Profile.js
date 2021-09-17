@@ -26,7 +26,7 @@ const Profile = props => {
 	const city = useSelector(state => state.auth.city)
 	const postalCode = useSelector(state => state.auth.postalCode)
 	const groups = useSelector(state => state.groups)
-	const children = useSelector(state => state.auth.children)
+	// const children = useSelector(state => state.auth.children)
 
 
 	useEffect(() => {  
@@ -66,10 +66,8 @@ const Profile = props => {
 	}
   
 	useEffect(() => {
-  
 		setDaysToBirth(moment(newDueDate).diff(newToday, 'days'))
 		setWeeksToBirth(moment(newDueDate).diff(newToday, 'weeks'))
-    
 	}, [newDueDate, newToday])
 
 	return (
@@ -143,7 +141,7 @@ const Profile = props => {
 
 				</View>
 
-{ children.length > 0 &&
+{ /*children.length > 0 &&
 
 	<View style={styles.childrenContainer} >
 	<Text style={styles.header} >Børn</Text>
@@ -173,6 +171,7 @@ const Profile = props => {
 	}
 	</ScrollView>
 	</View>
+	*/
 }
 	
 	</ScrollView>
@@ -325,7 +324,6 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		width: 130,
 		left: 20,
-		//borderWidth: 1
 	}, 
 	infoSymbol: {
 		right: 5,

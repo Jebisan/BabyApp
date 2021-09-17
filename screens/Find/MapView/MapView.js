@@ -96,26 +96,21 @@ const MapViewComponent = props => {
 
 
 		filteredGroupTypes[0].selected = true;
+		filteredGroupTypes[1].selected = true;
 
 		// EXPERIENCES INITIALIZATION: 
 		// Choose the experience that matches the user's experience
-			const mappedList = filter.experiences.map(experience => {
-			if (experience.type === user.experience) {
+			const mappedExperience = filter.experiences.map(experience => {
 				return {
 					...experience, 
 					selected: true,
 				};
-			} else {
-				return {
-					...experience
-				};
-			}
 		});
 
 		const initialFilter = {
-			experiences: mappedList, 
+			experiences: mappedExperience, 
 			groupTypes: filteredGroupTypes,
-			margin: filter.margin
+			margin: 5
 		}
 		reduxDispatch({ type: 'FILTER_UPDATED', filter: initialFilter })
 	}

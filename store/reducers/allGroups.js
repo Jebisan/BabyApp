@@ -11,9 +11,9 @@ const INITIAL_STATE = {
 			{ name: 'Familiegruppe', type: 2, selected: false },
 		],
 		experiences: [
-			{ name: '1. fødsel', type: 0, selected: false },
-			{ name: '2. fødsel', type: 1, selected: false },
-			{ name: '3+', type: 2, selected: false },
+			{ name: '1. fødsel', type: 0, selected: true },
+			{ name: '2. fødsel', type: 1, selected: true },
+			{ name: '3+', type: 2, selected: true },
 		],
 		margin: 4
 	}
