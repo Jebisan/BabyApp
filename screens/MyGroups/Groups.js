@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {StyleSheet, FlatList, View, Alert } from 'react-native'
+import {StyleSheet, FlatList, View, Alert, Touchable } from 'react-native'
 import {useSelector} from 'react-redux'
 import Group from '../../components/Group'
 import HeaderButton from '../../components/HeaderButton'
@@ -13,7 +13,6 @@ import CreateGroup from './CreateGroup'
 
 const Groups = props => {
 	const myGroups = useSelector(state => state.myGroups)
-
 	const [showCreateGroup, setShowCreateGroup] = useState(false);
 
 	const toggleShowCreateGroup = () => {
@@ -40,18 +39,33 @@ const Groups = props => {
 			<FlatList
 			data={myGroups}
 			renderItem={({ item }) => 
-			<Group
-			id={item.id}
-			name={item.name}
-			description={item.description}
-			city={item.city}
-			postalCode={item.postalCode}
-			photoUrl={item.photoUrl}
-			admin = {item.admin}
-			dueDate = {item.dueDate}
-			members = {item.members}
-			maxSize = {item.maxSize}
-			/>
+			<TouchableOpacity onPress={() => props.navigation.navigate('GroupScreen', {
+				id: item.id,
+				name: item.name,
+				description: item.description,
+				city: item.city,
+				postalCode: item.postalCode,
+				photoUrl: item.photoUrl,
+				admin: item.admin,
+				dueDate: item.dueDate,
+				memberIds: item.memberIds,
+				members: item.members,
+				maxSize: item.maxSize,
+			})} >
+				<Group
+				id={item.id}
+				name={item.name}
+				description={item.description}
+				city={item.city}
+				postalCode={item.postalCode}
+				photoUrl={item.photoUrl}
+				admin = {item.admin}
+				dueDate = {item.dueDate}
+				members = {item.members}
+				memberIds = {item.memberIds}
+				maxSize = {item.maxSize}
+				/>
+			</TouchableOpacity>
 		}
 		keyExtractor={item => item.id}
 		/>

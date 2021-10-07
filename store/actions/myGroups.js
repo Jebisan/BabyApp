@@ -34,7 +34,7 @@ export const fetchUserGroups = () => {
                   return id
                 });
 
-                const group = {id, ...data.val(), members: membersArray, requests: []}
+                const group = {id, ...data.val(), members: [], memberIds: membersArray, requests: []}
                 dispatch({type: ADD_GROUP, group})
               }))
             }); 
@@ -266,26 +266,15 @@ export const removeRequestFromGroup = (groupId, personId ) => {
     };
   };
 
-  export const getMembers = (groupId) => {
+  export const getMembers = (memberIds, groupId) => {
     return async (dispatch, getState) => {
-
-    Fire.firebase.database().ref("groupMembers/"+groupId).once('value').then(snapshot => {
-      if(snapshot.val()){
-
-        dispatch({type: CLEAR_GROUP_MEMBERS, groupId})
-
-        const membersArray = Object.keys(snapshot.val()).map(key => {
-          return key
-        });
-        
-        membersArray.forEach(member => {
-          Fire.firebase.database().ref("users/"+member).once('value').then((snapshot => {
+      memberIds.forEach(memberId => {
+          Fire.firebase.database().ref("users/"+memberId).once('value').then((snapshot => {
             const obj = snapshot.val()  
 
             if(!obj){
               return;
             }
-
 
             const user = {
               id: snapshot.key,
@@ -297,14 +286,11 @@ export const removeRequestFromGroup = (groupId, personId ) => {
               birthday: obj.birthday,
               photoUrl: obj.photoUrl?obj.photoUrl:'http://criticare.isccm.org/assets/images/male_placeholder.png',
               pushToken: obj.pushToken,
-            }       
-            
+            }
             dispatch({type: ADD_USER_TO_GROUP, groupId, user})
           })
           )
         })
-      }
-      })
     };
   }
 

@@ -4,27 +4,24 @@ import {View, StyleSheet, Text, Image } from 'react-native';
 import {Entypo, FontAwesome, Ionicons} from '@expo/vector-icons';
 import {convertDate2} from '../shared/generic'
 import colors from '../constants/colors';
-import {getMembersDetails} from '../store/actions/find';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { getMembers } from '../store/actions/myGroups';
 
 const Group = props => {
-  const [membersDetails, setMembersDetails] = useState([]);
+  const dispatch = useDispatch()
+  const groupData = useSelector(state => state.myGroups).find(group => group.id === props.id)
 
-  useEffect(() => {
-    if (props.members) {
-          getMembersDetails(props.members).then(data => {
-            setMembersDetails(data)
-          })
+	useEffect(() => {
+    if (props.memberIds) {
+      dispatch(getMembers(props.memberIds, props.id));
     } else {
       console.error('No members found in group!')
     }
-  }, [])
-
+	}, []);
 
   return (
     <View style = {styles.parent}>
       <View style = {styles.container}>
-
       <View style={styles.horizontalContainer}>
       <View style={styles.verticalContainer}>
         <View style={styles.imageContainer}>
@@ -38,17 +35,14 @@ const Group = props => {
       <View style={styles.verticalContainer}>
         <Text style= {styles.titleText}>{props.name}</Text>
         <View style={styles.factsContainer}>
-          {/*<FontAwesome style={{right: 2}} name='group' size={10} color={colors.darkGrey} />
-          <Text style={styles.smallText}>{props.groupType === 1 ?'Fædre' : 'Mødre'}</Text>*/}
           <Entypo style={{right: 6, bottom: 1}} name="location-pin" size={12} color={colors.darkGrey} />
           <Text style={{...styles.smallText, right: 5, bottom: 1}}>{props.city}</Text>
           <FontAwesome style={{left: 10, bottom: 0}}  name="calendar-o" size={10} color={colors.darkGrey} />
           <Text style={{...styles.smallText, left: 15, bottom: 1}}>{convertDate2(props.dueDate)}</Text>
       </View>
       {
-        membersDetails && 
         <View style={styles.membersContainer}>
-        {membersDetails.map((member, index) => (
+        {groupData.members.map((member, index) => (
           <Image key={index} source={{uri: member.photoUrl}} style={styles.memberImage} resizeMode="cover"></Image>
           ))}
       </View>

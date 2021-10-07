@@ -10,8 +10,6 @@ const Find = (props) => {
 
 	return (
 		<View style= {styles.parentContainer} >
-		{
-		}
 			<View style={styles.back} >
 				{showMap ? <MapView navigation= {props.navigation} /> : <ListView navigation= {props.navigation} />} 
 			</View>

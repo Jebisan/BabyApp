@@ -22,6 +22,7 @@ export default myGroupsReducer = (state = INITIAL_STATE, action) => {
 				groupType: action.groupType,
 				photoUrl: action.photoUrl,
 				members: [],
+				memberIds: [],
 				requests: [],
 				dueDate: action.dueDate
 			}

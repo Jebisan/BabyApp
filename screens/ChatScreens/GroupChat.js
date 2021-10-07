@@ -1,11 +1,9 @@
 import React from 'react';
-import { Platform, KeyboardAvoidingView, SafeAreaView, StyleSheet, View, Text, ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native';
 import {GiftedChat, Bubble} from 'react-native-gifted-chat';
 import Fire from '../../Fire';
 import {connect} from 'react-redux';
 import NotificationCenter from '../../NotificationCenter';
-
-
 
 class GroupChat extends React.Component {
   constructor(props) {
