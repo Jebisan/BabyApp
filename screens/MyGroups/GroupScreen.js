@@ -1,7 +1,7 @@
 import React from 'react';
 import {Alert, StyleSheet, Image, View, Text, TouchableOpacity} from 'react-native';
 import {useSelector} from 'react-redux';
-import { AntDesign, Entypo, FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons} from '@expo/vector-icons';
+import { AntDesign, Entypo, FontAwesome, MaterialCommunityIcons, MaterialIcons} from '@expo/vector-icons';
 import colors from '../../constants/colors';
 import { LinearGradient } from 'expo-linear-gradient';
 import {convertDate2, getGroupTypeName} from '../../shared/generic';
@@ -18,6 +18,9 @@ const GroupScreen = props => {
 
 	return (		
 		<View style={styles.parent}>
+		<TouchableOpacity onPress={() => Alert.alert('Coming soon', 'Work in progress')} style={styles.newPostButton}>
+			<MaterialCommunityIcons name="pencil" size={34} color={colors.white} />
+		</TouchableOpacity>
 			<View style={styles.topContainer}>
 				<AntDesign onPress={() => navigation.goBack()} style={styles.backIcon} name="arrowleft" size={24} color="white" />
 				<LinearGradient colors={[colors.secondaryShade1, colors.secondaryShade2]} style={styles.linearGradient}>
@@ -272,6 +275,19 @@ const styles = StyleSheet.create({
 		borderColor: colors.mediumGrey,
 		marginTop: 3,
 		backgroundColor: colors.white,
+	},
+	newPostButton: {
+		position: 'absolute',
+		justifyContent: 'center',
+		alignItems :'center',
+		height: 65,
+		width: 65,
+		backgroundColor: colors.lightBlue,
+		zIndex: 2,
+		bottom: 0,
+		right: 0,
+		margin: 20,
+		borderRadius: 40
 	}
 });
 
