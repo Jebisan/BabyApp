@@ -11,6 +11,7 @@ import colors from '../../../constants/colors'
 import { getGroupsByCity, getGroupsByName, getUsersByCity, getUsersByName, toggleShowMap } from '../../../store/actions/find'
 import { filterGroups } from '../../../shared/filter'
 import FilterModal from '../../../components/FilterModal'
+import { noResultsText } from '../../../shared/styles'
 
 const initialState = {
 	searchString: '',
@@ -277,13 +278,17 @@ const ListView = props => {
 
 			{
 				(!state.inFocus && !state.loading && (state.selectedCity || state.querySearch) && state.selectedSearchType === 0 && state.groupsResults.length === 0) &&
-				<Text style={styles.noResultsText} >Ingen grupper fundet</Text>
+				<View style={{top: 200}} >
+					<Text style={noResultsText} >Ingen grupper fundet</Text>
+				</View>
 			}
 
 
 			{
 				(!state.inFocus && !state.loading && (state.selectedCity || state.querySearch) && state.selectedSearchType === 1 && state.usersResults.length === 0) && 
-				<Text style={styles.noResultsText} >Ingen personer fundet</Text>
+				<View style={{top: 200}} >
+					<Text style={noResultsText} >Ingen personer fundet</Text>
+				</View>
 			}
 
 
@@ -556,12 +561,6 @@ const styles = StyleSheet.create({
 		borderBottomWidth: 0.5,
 		paddingVertical: 3,
 		top: 50
-	},
-	noResultsText: {
-		fontFamily: 'roboto-regular',
-		top: 200,
-		fontSize: 18,
-		color: colors.darkGrey
 	},
 	buttonTitleStyle: {
 		fontSize: 15,

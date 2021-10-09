@@ -5,6 +5,7 @@ import { AntDesign, Entypo, FontAwesome, MaterialCommunityIcons, MaterialIcons} 
 import colors from '../../constants/colors';
 import { LinearGradient } from 'expo-linear-gradient';
 import {convertDate2, getGroupTypeName} from '../../shared/generic';
+import { blueFloatingButton, noResultsText } from '../../shared/styles'
 
 
 const GroupScreen = props => {
@@ -18,8 +19,8 @@ const GroupScreen = props => {
 
 	return (		
 		<View style={styles.parent}>
-		<TouchableOpacity onPress={() => Alert.alert('Coming soon', 'Work in progress')} style={styles.newPostButton}>
-			<MaterialCommunityIcons name="pencil" size={34} color={colors.white} />
+		<TouchableOpacity onPress={() => Alert.alert('Coming soon', 'Work in progress')} style={blueFloatingButton}>
+			<MaterialCommunityIcons name="pencil" size={24} color={colors.white} />
 		</TouchableOpacity>
 			<View style={styles.topContainer}>
 				<AntDesign onPress={() => navigation.goBack()} style={styles.backIcon} name="arrowleft" size={24} color="white" />
@@ -72,7 +73,10 @@ const GroupScreen = props => {
 					</TouchableOpacity>
 				</View>
 			</View>
-			<View style={styles.bottomContainer}>{/*POSTS SHOULD GO HERE*/}</View>
+			<View style={styles.bottomContainer}>
+			{/*POSTS SHOULD GO HERE*/}
+			<Text style={noResultsText} >Ingen opslag</Text>
+			</View>
 		</View>
 	);  
 };
@@ -276,19 +280,6 @@ const styles = StyleSheet.create({
 		marginTop: 3,
 		backgroundColor: colors.white,
 	},
-	newPostButton: {
-		position: 'absolute',
-		justifyContent: 'center',
-		alignItems :'center',
-		height: 65,
-		width: 65,
-		backgroundColor: colors.lightBlue,
-		zIndex: 2,
-		bottom: 0,
-		right: 0,
-		margin: 20,
-		borderRadius: 40
-	}
 });
 
 export default GroupScreen;

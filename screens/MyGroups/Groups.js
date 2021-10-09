@@ -4,12 +4,10 @@ import {useSelector} from 'react-redux'
 import Group from '../../components/Group'
 import HeaderButton from '../../components/HeaderButton'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
-import { Button } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import { Text } from 'react-native'
-import colors from '../../constants/colors'
-import {Ionicons} from '@expo/vector-icons'
+import {AntDesign} from '@expo/vector-icons'
 import CreateGroup from './CreateGroup'
+import {blueFloatingButton} from '../../shared/styles'
 
 const Groups = props => {
 	const myGroups = useSelector(state => state.myGroups)
@@ -32,49 +30,47 @@ const Groups = props => {
 
 	return (
 		<View style={{flex: 1}} >
-		{showCreateGroup?
+		{showCreateGroup && 
 		<CreateGroup toggleShowCreateGroup={() => toggleShowCreateGroup()}  />
-		:
-			<View style={styles.container}>    
-			<FlatList
-			data={myGroups}
-			renderItem={({ item }) => 
-			<TouchableOpacity onPress={() => props.navigation.navigate('GroupScreen', {
-				id: item.id,
-				name: item.name,
-				description: item.description,
-				city: item.city,
-				postalCode: item.postalCode,
-				photoUrl: item.photoUrl,
-				admin: item.admin,
-				dueDate: item.dueDate,
-				memberIds: item.memberIds,
-				members: item.members,
-				maxSize: item.maxSize,
-			})} >
-				<Group
-				id={item.id}
-				name={item.name}
-				description={item.description}
-				city={item.city}
-				postalCode={item.postalCode}
-				photoUrl={item.photoUrl}
-				admin = {item.admin}
-				dueDate = {item.dueDate}
-				members = {item.members}
-				memberIds = {item.memberIds}
-				maxSize = {item.maxSize}
-				/>
-			</TouchableOpacity>
 		}
-		keyExtractor={item => item.id}
-		/>
-		<TouchableOpacity style={styles.newGroupContainer} onPress={() => toggleShowCreateGroup()} >
-		<Ionicons name="md-add-circle-outline" size={40} color={'white'} />
-		</TouchableOpacity>
+			<View style={styles.container}>    
+				<FlatList
+				data={myGroups}
+				renderItem={({ item }) => 
+				<TouchableOpacity onPress={() => props.navigation.navigate('GroupScreen', {
+					id: item.id,
+					name: item.name,
+					description: item.description,
+					city: item.city,
+					postalCode: item.postalCode,
+					photoUrl: item.photoUrl,
+					admin: item.admin,
+					dueDate: item.dueDate,
+					memberIds: item.memberIds,
+					members: item.members,
+					maxSize: item.maxSize,
+					})} >
+					<Group
+					id={item.id}
+					name={item.name}
+					description={item.description}
+					city={item.city}
+					postalCode={item.postalCode}
+					photoUrl={item.photoUrl}
+					admin = {item.admin}
+					dueDate = {item.dueDate}
+					members = {item.members}
+					memberIds = {item.memberIds}
+					maxSize = {item.maxSize}
+					/>
+				</TouchableOpacity>
+			}
+			keyExtractor={item => item.id}
+			/>
+			<TouchableOpacity style={blueFloatingButton} onPress={() => toggleShowCreateGroup()} >
+			<AntDesign name="plus" size={24} color="white" />
+			</TouchableOpacity>
 		</View>
-	}
-
 	</View>
 
 	)
@@ -94,16 +90,5 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		paddingTop: 50
-	},
-	newGroupContainer: {
-		position: 'relative',
-		justifyContent: 'center',
-		alignItems: 'center',
-		backgroundColor: colors.primary,
-		borderRadius: 50,
-		width: 40,
-		height: 40,
-		left: '80%',
-		bottom: '50%'
 	}
 })

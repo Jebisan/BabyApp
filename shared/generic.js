@@ -28,7 +28,6 @@ export const generateRandomId = () => {
 }
 
 export const getGroupTypeName = (groupType) => {
-   console.log(groupType)
    switch(groupType){
       case 0: 
          return 'Mødre'

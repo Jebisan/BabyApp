@@ -1,0 +1,1 @@
+export const fallbackPictureUrl = 'http://criticare.isccm.org/assets/images/male_placeholder.png'

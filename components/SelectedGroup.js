@@ -4,6 +4,7 @@ import {Entypo, FontAwesome, SimpleLineIcons} from '@expo/vector-icons';
 import colors from '../constants/colors';
 import { convertDate2, getGroupTypeName } from '../shared/generic';
 import { getMembersDetails } from '../store/actions/find';
+import { fallbackPictureUrl } from '../constants/other'
 
 const SelectedGroup = props => {
   const [membersDetails, setMembersDetails] = useState([]);
@@ -16,7 +17,7 @@ const SelectedGroup = props => {
     } else {
       console.error('No members found in group!')
     }
-  }, [])
+  }, [props.group.members])
 
   return (
     <View style={styles.parentContainer}>
@@ -39,7 +40,7 @@ const SelectedGroup = props => {
         {membersDetails.length > 0 && 
           <View style={styles.membersContainer}>
           {membersDetails.map((member, index) => (
-            <Image key={index} source={{uri: member.photoUrl}} style={styles.memberImage} resizeMode="cover"></Image>
+            <Image key={index} source={{uri: member.photoUrl? member.photoUrl : fallbackPictureUrl}} style={styles.memberImage} resizeMode="cover"></Image>
             ))}
             <View style={styles.memberImage}>
               <Text style={styles.availableSpotsText}>{props.group.maxSize-props.group.members.length}</Text>
