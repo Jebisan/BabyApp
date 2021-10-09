@@ -1,11 +1,14 @@
-import React from 'react';
-import {Alert, StyleSheet, Image, View, Text, TouchableOpacity} from 'react-native';
-import {useSelector} from 'react-redux';
+import React, { useEffect } from 'react';
+import {Alert, StyleSheet, Image, View, Text, TouchableOpacity, FlatList, ScrollView} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
 import { AntDesign, Entypo, FontAwesome, MaterialCommunityIcons, MaterialIcons} from '@expo/vector-icons';
 import colors from '../../constants/colors';
 import { LinearGradient } from 'expo-linear-gradient';
 import {convertDate2, getGroupTypeName} from '../../shared/generic';
 import { blueFloatingButton, noResultsText } from '../../shared/styles'
+import {fetchUserGroupsPosts} from '../../store/actions/myGroups'
+import Post from '../../components/Post';
+import { screenHeight } from '../../constants/sizes'
 
 
 const GroupScreen = props => {
@@ -15,13 +18,20 @@ const GroupScreen = props => {
 	const userId = useSelector(state => state.auth.userId)
 	const firstName = useSelector(state => state.auth.firstName)
 	const photoUrl = useSelector(state => state.auth.photoUrl)
+	const dispatch = useDispatch()
 
+	// FETCH POSTS
+	useEffect(() => {
+		if(!group.posts) {
+			dispatch(fetchUserGroupsPosts(id))
+		}
+	}, [])
 
 	return (		
 		<View style={styles.parent}>
-		<TouchableOpacity onPress={() => Alert.alert('Coming soon', 'Work in progress')} style={blueFloatingButton}>
-			<MaterialCommunityIcons name="pencil" size={24} color={colors.white} />
-		</TouchableOpacity>
+			<TouchableOpacity onPress={() => Alert.alert('Coming soon', 'Work in progress')} style={blueFloatingButton}>
+				<MaterialCommunityIcons name="pencil" size={24} color={colors.white} />
+			</TouchableOpacity>
 			<View style={styles.topContainer}>
 				<AntDesign onPress={() => navigation.goBack()} style={styles.backIcon} name="arrowleft" size={24} color="white" />
 				<LinearGradient colors={[colors.secondaryShade1, colors.secondaryShade2]} style={styles.linearGradient}>
@@ -74,8 +84,19 @@ const GroupScreen = props => {
 				</View>
 			</View>
 			<View style={styles.bottomContainer}>
-			{/*POSTS SHOULD GO HERE*/}
-			<Text style={noResultsText} >Ingen opslag</Text>
+				<FlatList
+				keyExtractor={item => item.id}
+				data={group.posts}
+				renderItem={({ item }) => 
+				<Post
+				text = {item.text}
+				name = {item.name}
+				photoUrl = {item.photoUrl}
+				createdAt = {item.createdAt}
+				type = {item.type}
+				/>
+				}
+				/>
 			</View>
 		</View>
 	);  
@@ -88,8 +109,6 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		backgroundColor: colors.lightGrey,
 		position: 'relative',
-		height: '100%',
-		width: '100%'
 	},
 	linearGradient: {
 		position: 'absolute',
@@ -249,7 +268,6 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		justifyContent: 'flex-start',
 		alignItems: 'flex-start',
-		minHeight: 100,
 	},
 	
 	bottomContainer: {
@@ -257,9 +275,10 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		width: '100%',
-		minHeight: 100,
-		maxHeight: 265,
-		paddingTop: 40,
+		height: '100%',
+		marginTop: 10,
+		borderWidth: 1,
+		borderColor: colors.mediumGrey
 	},
 	membersContainer: {
 		flexDirection: 'row',

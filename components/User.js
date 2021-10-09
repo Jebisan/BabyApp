@@ -21,7 +21,6 @@ const User = props => {
             <MaterialCommunityIcons style={{left: 7, bottom: 3}} name="baby-face-outline" size={20} color={colors.darkGrey} />
             <Text style={{...styles.descriptionText, left: 10}}>2</Text>
           </View>
-          
         </View>
       </View>
     </View>

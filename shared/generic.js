@@ -12,20 +12,19 @@ export const generateRandomId = () => {
  import moment from 'moment';
 
  //TAKES DD-MM-YYYY AND RETURNS Month e.g Januar
- export const convertDate = (date) => {
-   var newDate = moment(date, "DD-MM-YYYY")
-   
-   var newDate2 = moment(newDate).format("MMMM YYYY");    
-   return newDate2
-}
-
- //TAKES DD-MM-YYYY AND RETURNS Month e.g Januar
  export const convertDate2 = (date) => {
    var newDate = moment(date, "DD-MM-YYYY")
    
    var newDate2 = moment(newDate).format("MMM YYYY");    
    return newDate2.charAt(0).toUpperCase() + newDate2.slice(1);
 }
+
+// RETURNS 1 day ago, 2 hours ago etc
+export const convertTimestamp = (timestamp) => {
+   return moment(timestamp).fromNow();
+}
+
+
 
 export const getGroupTypeName = (groupType) => {
    switch(groupType){

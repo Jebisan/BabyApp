@@ -1,4 +1,4 @@
-import {ADD_GROUP, CREATE_GROUP, ADD_USER_TO_GROUP, ADD_USER_TO_REQUESTS, REMOVE_REQUEST_FROM_GROUP, CLEAR_GROUP_MEMBERS, CLEAR_GROUP_REQUESTS  } from '../actions/myGroups'
+import {ADD_GROUP, CREATE_GROUP, ADD_USER_TO_GROUP, ADD_USER_TO_REQUESTS, REMOVE_REQUEST_FROM_GROUP, CLEAR_GROUP_MEMBERS, CLEAR_GROUP_REQUESTS, ADD_POSTS_TO_GROUP} from '../actions/myGroups'
 
 const INITIAL_STATE = []
 
@@ -80,6 +80,18 @@ export default myGroupsReducer = (state = INITIAL_STATE, action) => {
 				return {
 					...group,
 					members: []
+				}
+			} else {
+				return group
+			}
+		})
+
+	case ADD_POSTS_TO_GROUP:
+		return state.map(group => {
+			if (group.id === action.groupId) {
+				return {
+					...group,
+					posts: action.posts
 				}
 			} else {
 				return group

@@ -5,15 +5,17 @@ import Group from '../../components/Group'
 import HeaderButton from '../../components/HeaderButton'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import {AntDesign} from '@expo/vector-icons'
+import {AntDesign, MaterialCommunityIcons} from '@expo/vector-icons'
 import CreateGroup from './CreateGroup'
 import {blueFloatingButton} from '../../shared/styles'
+import colors from '../../constants/colors'
 
 const Groups = props => {
 	const myGroups = useSelector(state => state.myGroups)
 	const [showCreateGroup, setShowCreateGroup] = useState(false);
 
 	const toggleShowCreateGroup = () => {
+		console.log(showCreateGroup)
 		setShowCreateGroup(!showCreateGroup);
 	}
 
@@ -67,8 +69,8 @@ const Groups = props => {
 			}
 			keyExtractor={item => item.id}
 			/>
-			<TouchableOpacity style={blueFloatingButton} onPress={() => toggleShowCreateGroup()} >
-			<AntDesign name="plus" size={24} color="white" />
+			<TouchableOpacity onPress={() => Alert.alert('Coming soon', 'Work in progress')} style={blueFloatingButton}>
+				<MaterialCommunityIcons name="plus" size={24} color={colors.white} />
 			</TouchableOpacity>
 		</View>
 	</View>
@@ -88,7 +90,8 @@ export const screenOptions = navigationData => {
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
-		paddingTop: 50
+		paddingTop: 50,
+		width: '100%',
+		height: '100%'
 	}
 })

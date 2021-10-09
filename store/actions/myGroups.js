@@ -10,6 +10,8 @@ export const ADD_MEMBER_TO_GROUP = 'ADD_MEMBER_TO_GROUP';
 export const ADD_USER_TO_REQUESTS = 'ADD_USER_TO_REQUESTS';
 export const CLEAR_GROUP_MEMBERS = 'CLEAR_GROUP_MEMBERS';
 export const CLEAR_GROUP_REQUESTS = 'CLEAR_GROUP_REQUESTS';
+export const ADD_POSTS_TO_GROUP = 'ADD_POSTS_TO_GROUP';
+
 
 export const fetchUserGroups = () => {
     return async (dispatch, getState) => {
@@ -44,6 +46,40 @@ export const fetchUserGroups = () => {
     };
 
 
+export const fetchUserGroupsPosts = (groupId) => {
+  return async (dispatch, getState) => {
+      Fire.firebase.database().ref("posts/" + groupId).once('value').then(snapshot => {
+
+        if(snapshot.val()){
+
+          const listOfUserIds = new Set()
+
+          
+          let posts = Object.keys(snapshot.val()).map(id => {
+            listOfUserIds.add(snapshot.val()[id].author)
+            return {id, ...snapshot.val()[id]}
+          });
+
+          listOfUserIds.forEach(id => {
+            Fire.firebase.database().ref("users/"+id).once('value').then((data => {
+              posts = posts.map(post => {
+                if(post.author === id) {
+                  return {
+                    ...post,
+                    name: data.val().name,
+                    photoUrl: data.val().photoUrl
+                  }
+                } else {
+                  return post
+                }
+              })
+            dispatch({type: ADD_POSTS_TO_GROUP, posts, groupId})
+            }))
+          });
+        }
+      })
+    };
+  };
 
 export const addRequestToGroup = (userId, groupId ) => {
   return async (dispatch, getState) => {
