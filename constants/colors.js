@@ -5,6 +5,8 @@ export default {
   lightGrey: '#FBFBFC',
   mediumGrey: '#CACAD8',
   darkGrey: '#A6A6BB',
+  lightestBlue: '#abd4e6',
+  lighterBlue: '#56a8cd',
   lightBlue: '#027db4',
   normalBlue: '#025e87',
   darkBlue: '#013f5a',

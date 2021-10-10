@@ -1,27 +1,29 @@
-import { Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
 import React, { useEffect } from 'react';
 import {View, StyleSheet, Text, Image } from 'react-native';
 import colors from '../constants/colors';
+import { screenWidth } from '../constants/sizes';
 import { convertTimestamp } from '../shared/generic'
 
 const Post = props => {
-
-  useEffect(() => {
-    // console.log(props
-  }, [props])
-
   return (
     <View style = {styles.parent}>
       <View style={styles.horizontalContainer}>
         <View style={styles.imageContainer} >
-          <Image style={styles.image} source={ props.photoUrl?{uri: props.photoUrl }: {uri: 'http://criticare.isccm.org/assets/images/male_placeholder.png' }} />
+          <Image style={styles.image} source={ props.userPhotoUrl?{uri: props.userPhotoUrl }: {uri: 'http://criticare.isccm.org/assets/images/male_placeholder.png' }} />
         </View>
         <View style={styles.subInfoContainer}>
           <Text style={styles.name}>{props.name}</Text>
-          <Text style={styles.timeText}>{convertTimestamp(props.createdAt)}</Text>
+          <Text style={styles.timeText}>For {convertTimestamp(props.createdAt)}</Text>
         </View>
       </View>
-      <Text style={styles.text} >{props.text}</Text>
+      <View>
+        <Text style={styles.text} >{props.text}</Text>
+        { props.photoUrl && 
+          <View style={styles.postImageContainer} > 
+            <Image source={{uri: props.photoUrl}} style={styles.postImage}  resizeMode={'cover'} borderRadius={20} ></Image>
+          </View>
+        }
+      </View>
     </View>
   );
 };
@@ -33,11 +35,12 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     backgroundColor: 'white',
     marginTop: 20,
-    marginHorizontal: 20,
     shadowColor: 'black',
     shadowOpacity: 0.1,
     shadowRadius: 15,
-    minHeight: 200
+    minHeight: 200,
+    borderRadius: 20,
+    width: screenWidth-20,
   },
   image: {
     width: 50,
@@ -70,22 +73,30 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'roboto-regular',
     marginLeft: 14,
-    marginTop: 8
+    marginBottom: 28,
   },
   horizontalContainer: {
-    width: 330,
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    alignItems: 'center',
-    borderWidth: 0,
-    borderColor: 'blue',
-    borderStyle: 'solid',
+    alignItems: 'center'
   },
   subInfoContainer: {
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'flex-start',
     borderStyle: 'solid',
+  },
+  postImageContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: 400,
+  },
+  postImage: {
+    width: '100%',
+    height: '100%',
+    marginBottom: 20,
   }
 });
 

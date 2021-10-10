@@ -1,109 +1,140 @@
-import React, { useEffect } from 'react';
-import {Alert, StyleSheet, Image, View, Text, TouchableOpacity, FlatList, ScrollView} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {Alert, StyleSheet, Image, View, Text, TouchableOpacity, SafeAreaView ,FlatList, ScrollView} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import { AntDesign, Entypo, FontAwesome, MaterialCommunityIcons, MaterialIcons} from '@expo/vector-icons';
 import colors from '../../constants/colors';
 import { LinearGradient } from 'expo-linear-gradient';
 import {convertDate2, getGroupTypeName} from '../../shared/generic';
-import { blueFloatingButton, noResultsText } from '../../shared/styles'
-import {fetchUserGroupsPosts} from '../../store/actions/myGroups'
+import { blueFloatingButton, noResultsText } from '../../shared/styles';
+import {fetchUserGroupsPosts} from '../../store/actions/myGroups';
 import Post from '../../components/Post';
-import { screenHeight } from '../../constants/sizes'
+import Event from '../../components/Event';
 
 
 const GroupScreen = props => {
 	const { navigation } = props;
 	const { id } = props.route.params;
 	const group = useSelector(state => state.myGroups).find(group => group.id === id);
-	const userId = useSelector(state => state.auth.userId)
-	const firstName = useSelector(state => state.auth.firstName)
-	const photoUrl = useSelector(state => state.auth.photoUrl)
-	const dispatch = useDispatch()
+	const userId = useSelector(state => state.auth.userId);
+	const firstName = useSelector(state => state.auth.firstName);
+	const photoUrl = useSelector(state => state.auth.photoUrl);
+	const dispatch = useDispatch();
+
+	const [showCreatePost, setShowCreatePost] = useState(false)
 
 	// FETCH POSTS
 	useEffect(() => {
 		if(!group.posts) {
-			dispatch(fetchUserGroupsPosts(id))
+			dispatch(fetchUserGroupsPosts(id));
 		}
-	}, [])
+	}, []);
 
 	return (		
-		<View style={styles.parent}>
-			<TouchableOpacity onPress={() => Alert.alert('Coming soon', 'Work in progress')} style={blueFloatingButton}>
+		<View style={{backgroundColor: colors.white}} >
+			<TouchableOpacity onPress={() => setShowCreatePost(!showCreatePost)} style={blueFloatingButton}>
 				<MaterialCommunityIcons name="pencil" size={24} color={colors.white} />
 			</TouchableOpacity>
-			<View style={styles.topContainer}>
-				<AntDesign onPress={() => navigation.goBack()} style={styles.backIcon} name="arrowleft" size={24} color="white" />
-				<LinearGradient colors={[colors.secondaryShade1, colors.secondaryShade2]} style={styles.linearGradient}>
-					<View style={styles.header}></View>
-				</LinearGradient>
-				<View style={styles.groupFactsContainer}>
-					<View style={styles.imageContainer} >
-						<Image source={{ uri: group.photoUrl }} style={styles.image} resizeMode="cover"></Image>
+			{
+				showCreatePost && 
+				<CreatePost />
+			}
+			<FlatList
+				contentContainerStyle={styles.bottomContainer}
+				ListHeaderComponent= {
+					<View style={{flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center'}} >
+						<View style={styles.topContainer}>
+							<AntDesign onPress={() => navigation.goBack()} style={styles.backIcon} name="arrowleft" size={24} color="white" />
+							<LinearGradient colors={[colors.secondaryShade1, colors.secondaryShade2]} style={styles.linearGradient}>
+								<View style={styles.header}></View>
+							</LinearGradient>
+							<View style={styles.groupFactsContainer}>
+								<View style={styles.imageContainer} >
+									<Image source={{ uri: group.photoUrl }} style={styles.image} resizeMode="cover"></Image>
+								</View>
+								<Text style={styles.title}>{group.name}</Text>
+								<Text style={styles.subTitle}>{getGroupTypeName(group.groupType)}</Text>
+								<View style={styles.horizontalContainer} >
+									<Entypo style={{left: -10, bottom: 1}} name="location-pin" size={16} color={colors.darkGrey} />
+									<Text style={{...styles.smallText, left: -9, bottom: 1}}>{group.city}</Text>
+									<FontAwesome style={{left: 13, bottom: 1}}  name="calendar-o" size={13} color={colors.darkGrey} />
+									<Text style={{...styles.smallText, left: 16, bottom: 1}}>{convertDate2(group.dueDate)}</Text>
+								</View>
+								<View style={styles.buttonContainer} >
+									<TouchableOpacity style = {styles.directMessageButtonContainer} onPress={() => navigation.navigate('GroupChat', {
+										userId: userId,
+										firstname: firstName,
+										photoUrl: photoUrl,
+										groupData: group
+									
+									})} >
+										<MaterialCommunityIcons name="chat-outline" size={24} color={'black'} />                
+									</TouchableOpacity>
+						
+									<TouchableOpacity disabled={true} style={styles.requestedButton}> 
+										<Text style={{...styles.buttonText, color: colors.darkGrey}}>Medlem</Text>
+									</TouchableOpacity>
+								</View>
+							</View>
+						</View>
+						<View style={styles.middleContainer} >
+							<View style={styles.descriptionContainer}>
+								<Text style={styles.smallTitle}>Om gruppen</Text>
+								<Text style={styles.descriptionText}>{group.description}</Text>
+							</View>
+							<Text style={styles.smallTitle} >Medlemmer</Text>
+							<View style={styles.membersContainer}>
+								{group.members.map((member) =>
+									<TouchableOpacity key={member.id}> 
+										<Image source={{ uri: member.photoUrl }} style={{...styles.memberImage, marginHorizontal: -2}}></Image>  
+									</TouchableOpacity>
+								)}
+								<TouchableOpacity style={{...styles.memberImage, marginHorizontal: 10}} onPress={ () => Alert.alert('Not supported at the moment')} >
+									<MaterialIcons name="person-add" size={23} color={colors.lightBlue} />
+								</TouchableOpacity>
+							</View>
+						</View>
 					</View>
-					<Text style={styles.title}>{group.name}</Text>
-					<Text style={styles.subTitle}>{getGroupTypeName(group.groupType)}</Text>
-					<View style={styles.horizontalContainer} >
-						<Entypo style={{left: -10, bottom: 1}} name="location-pin" size={16} color={colors.darkGrey} />
-						<Text style={{...styles.smallText, left: -9, bottom: 1}}>{group.city}</Text>
-						<FontAwesome style={{left: 13, bottom: 1}}  name="calendar-o" size={13} color={colors.darkGrey} />
-						<Text style={{...styles.smallText, left: 16, bottom: 1}}>{convertDate2(group.dueDate)}</Text>
-					</View>
-					<View style={styles.buttonContainer} >
-						<TouchableOpacity style = {styles.directMessageButtonContainer} onPress={() => navigation.navigate('GroupChat', {
-							userId: userId,
-							firstname: firstName,
-							photoUrl: photoUrl,
-							groupData: group
-							
-						  })} >
-							<MaterialCommunityIcons name="chat-outline" size={24} color={'black'} />                
-						</TouchableOpacity>
-				
-						<TouchableOpacity disabled={true} style={styles.requestedButton}> 
-							<Text style={{...styles.buttonText, color: colors.darkGrey}}>Medlem</Text>
-						</TouchableOpacity>
-					</View>
-				</View>
-			</View>
-			<View style={styles.middleContainer} >
-				<View style={styles.descriptionContainer}>
-					<Text style={styles.smallTitle}>Om gruppen</Text>
-					<Text style={styles.descriptionText}>{group.description}</Text>
-				</View>
-				<Text style={styles.smallTitle} >Medlemmer</Text>
-				<View style={styles.membersContainer}>
-					{group.members.map((member) =>
-						<TouchableOpacity key={member.id}> 
-							<Image source={{ uri: member.photoUrl }} style={{...styles.memberImage, marginHorizontal: -2}}></Image>  
-						</TouchableOpacity>
-					)}
-					<TouchableOpacity style={{...styles.memberImage, marginHorizontal: 10}} onPress={ () => Alert.alert('Not supported at the moment')} >
-						<MaterialIcons name="person-add" size={23} color={colors.lightBlue} />
-					</TouchableOpacity>
-				</View>
-			</View>
-			<View style={styles.bottomContainer}>
-				<FlatList
+				}
 				keyExtractor={item => item.id}
 				data={group.posts}
 				renderItem={({ item }) => 
-				<Post
-				text = {item.text}
-				name = {item.name}
-				photoUrl = {item.photoUrl}
-				createdAt = {item.createdAt}
-				type = {item.type}
-				/>
+					<View> 
+					{
+					item.type === 'post' && <Post
+					text = {item.text}
+					name = {item.name}
+					userPhotoUrl = {item.userPhotoUrl}
+					photoUrl = {item.photoUrl}
+					createdAt = {item.createdAt}
+					/>
+					}
+					{
+						item.type === 'event' && <Event
+						text = {item.text}
+						name = {item.name}
+						userPhotoUrl = {item.userPhotoUrl}
+						createdAt = {item.createdAt}
+						startTime = {item.event.startTime}
+						title = {item.event.title}
+						endTime = {item.event.endTime}
+						address = {item.event.location.address}
+						postalCode = {item.event.location.postalCode}
+						city = {item.event.location.city}
+						latitude = {item.event.location.latitude}
+						longitude = {item.event.location.longitude}
+						/>
+						}
+					</View>
+				
 				}
-				/>
-			</View>
+			/>
 		</View>
 	);  
 };
 
 const styles = StyleSheet.create({
 	parent: {
+		flex: 1,
 		flexDirection: 'column',
 		justifyContent: 'flex-start',
 		alignItems: 'center',
@@ -115,7 +146,6 @@ const styles = StyleSheet.create({
 		borderRadius: 25,
 		overflow: 'hidden',
 		transform: [{rotateZ: '270deg' }],
-		left: 70,
 		bottom: 70
 	},
 	header: {
@@ -136,7 +166,7 @@ const styles = StyleSheet.create({
 			height: 2, 
 			width: 0
 		},
-		top: 80
+		top: 80,
 	},
 	imageContainer: {
 		flexDirection: 'row',
@@ -245,6 +275,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		justifyContent: 'flex-start',
 		alignItems: 'flex-start',
+		marginVertical: 10
 	},
 	descriptionText: {
 		fontFamily: 'roboto-regular',
@@ -268,25 +299,24 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		justifyContent: 'flex-start',
 		alignItems: 'flex-start',
+		marginBottom: 10
 	},
 	
 	bottomContainer: {
 		flexDirection: 'column',
 		justifyContent: 'center',
 		alignItems: 'center',
-		width: '100%',
-		height: '100%',
-		marginTop: 10,
-		borderWidth: 1,
-		borderColor: colors.mediumGrey
 	},
 	membersContainer: {
 		flexDirection: 'row',
 		justifyContent: 'flex-start',
 		shadowOpacity: 0.15,
 		shadowRadius: 4,
-		shadowOffset: {width: 0, height: 2},
-		marginHorizontal: 10
+		shadowOffset: {
+			width: 0, 
+			height: 2
+		},
+		marginHorizontal: 10,
 	},
 	memberImage: {
 		justifyContent: 'center',

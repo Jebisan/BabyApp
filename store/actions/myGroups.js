@@ -67,7 +67,7 @@ export const fetchUserGroupsPosts = (groupId) => {
                   return {
                     ...post,
                     name: data.val().name,
-                    photoUrl: data.val().photoUrl
+                    userPhotoUrl: data.val().photoUrl,
                   }
                 } else {
                   return post

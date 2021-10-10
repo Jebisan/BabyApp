@@ -11,6 +11,32 @@ export const generateRandomId = () => {
 
  import moment from 'moment';
 
+
+ //TIMESTAMP TO YEAR
+ export const timestampToMonth = (timestamp) => { 
+   return moment(timestamp).format("MMMM");   
+}
+
+ //TIMESTAMP TO MONTH
+ export const timestampToYear = (timestamp) => { 
+   return moment(timestamp).format("YYYY");   
+}
+
+ //TIMESTAMP TO SHORT MONTH
+ export const timestampToShortMonth = (timestamp) => { 
+   return timestampToMonth(timestamp).slice(0, 3).toUpperCase()
+}
+
+ //TIMESTAMP TO DATE NUMBER
+ export const timestampToDateNumber = (timestamp) => { 
+   return moment(timestamp).format("DD");   
+}
+
+ //TIMESTAMP TO TIME. RETURNS e.g '14:50'
+ export const timestampToTime = (timestamp) => { 
+   return moment(timestamp).format("h:mm");   
+}
+
  //TAKES DD-MM-YYYY AND RETURNS Month e.g Januar
  export const convertDate2 = (date) => {
    var newDate = moment(date, "DD-MM-YYYY")
@@ -19,11 +45,10 @@ export const generateRandomId = () => {
    return newDate2.charAt(0).toUpperCase() + newDate2.slice(1);
 }
 
-// RETURNS 1 day ago, 2 hours ago etc
+// RETURNS '1 hour ago', '2 days ago' etc
 export const convertTimestamp = (timestamp) => {
    return moment(timestamp).fromNow();
 }
-
 
 
 export const getGroupTypeName = (groupType) => {
