@@ -11,7 +11,6 @@ import * as ImageManipulator from 'expo-image-manipulator';
 
 const ImgPicker = props => {
 
-
 const [pickedImage, setPickedImage] = useState("http://criticare.isccm.org/assets/images/male_placeholder.png");
 const userId = useSelector(state => state.auth.userId);
 const photoUrl = useSelector(state => state.auth.photoUrl);
@@ -75,9 +74,9 @@ const uploadImage = async(uri) => {
 
     return (
         <View style={styles.imageContainer}> 
-                      <TouchableOpacity style={styles.imagePicker} onPress={chooseImageHandler}>
-                          <Image source={{ uri: pickedImage }} style={styles.image} resizeMode="cover"></Image>
-                      </TouchableOpacity>
+            <TouchableOpacity style={styles.imagePicker} onPress={chooseImageHandler}>
+                <Image source={{ uri: pickedImage }} style={styles.image} resizeMode="cover"></Image>
+             </TouchableOpacity>
         </View>
     )
 }
@@ -100,8 +99,6 @@ const styles = StyleSheet.create({
       borderRadius: 100,
       overflow: "hidden",
   },
-
-
   });
 
 export default ImgPicker;

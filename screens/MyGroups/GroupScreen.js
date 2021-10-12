@@ -9,6 +9,7 @@ import { blueFloatingButton, noResultsText } from '../../shared/styles';
 import {fetchUserGroupsPosts} from '../../store/actions/myGroups';
 import Post from '../../components/Post';
 import Event from '../../components/Event';
+import CreatePost from './CreatePost'
 
 
 const GroupScreen = props => {
@@ -24,9 +25,9 @@ const GroupScreen = props => {
 
 	// FETCH POSTS
 	useEffect(() => {
-		if(!group.posts) {
-			dispatch(fetchUserGroupsPosts(id));
-		}
+			if(!group.posts) {
+				dispatch(fetchUserGroupsPosts(id));
+			}
 	}, []);
 
 	return (		
@@ -36,7 +37,7 @@ const GroupScreen = props => {
 			</TouchableOpacity>
 			{
 				showCreatePost && 
-				<CreatePost />
+				<CreatePost hideModal={() => setShowCreatePost(false)} />
 			}
 			<FlatList
 				contentContainerStyle={styles.bottomContainer}

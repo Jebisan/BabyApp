@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from 'react'
-import {StyleSheet, FlatList, View, Alert, Touchable } from 'react-native'
+import {StyleSheet, FlatList, View, Alert, TouchableOpacity } from 'react-native'
 import {useSelector} from 'react-redux'
 import Group from '../../components/Group'
 import HeaderButton from '../../components/HeaderButton'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
-import { TouchableOpacity } from 'react-native-gesture-handler'
 import {AntDesign, MaterialCommunityIcons} from '@expo/vector-icons'
 import CreateGroup from './CreateGroup'
 import {blueFloatingButton} from '../../shared/styles'
@@ -15,7 +14,6 @@ const Groups = props => {
 	const [showCreateGroup, setShowCreateGroup] = useState(false);
 
 	const toggleShowCreateGroup = () => {
-		console.log(showCreateGroup)
 		setShowCreateGroup(!showCreateGroup);
 	}
 
@@ -32,6 +30,9 @@ const Groups = props => {
 
 	return (
 		<View style={{flex: 1}} >
+		<TouchableOpacity onPress={() => setShowCreateGroup(true)} style={blueFloatingButton}>
+			<MaterialCommunityIcons name="plus" size={24} color={colors.white} />
+		</TouchableOpacity>
 		{showCreateGroup && 
 		<CreateGroup toggleShowCreateGroup={() => toggleShowCreateGroup()}  />
 		}
@@ -69,9 +70,6 @@ const Groups = props => {
 			}
 			keyExtractor={item => item.id}
 			/>
-			<TouchableOpacity onPress={() => Alert.alert('Coming soon', 'Work in progress')} style={blueFloatingButton}>
-				<MaterialCommunityIcons name="plus" size={24} color={colors.white} />
-			</TouchableOpacity>
 		</View>
 	</View>
 

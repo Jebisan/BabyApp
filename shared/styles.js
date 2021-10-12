@@ -13,7 +13,7 @@ export const blueFloatingButton = {
 		shadowRadius: 8,
 		shadowOpacity: 0.20,
 		shadowColor: 'black',
-		zIndex: 2,
+		zIndex: 1,
 		top: screenHeight-180,
 		left: screenWidth-100
 	}

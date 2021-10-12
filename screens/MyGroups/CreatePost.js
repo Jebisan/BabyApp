@@ -1,22 +1,61 @@
-import React, { useState, useRef, useEffect } from 'react'
-import {View, StyleSheet, Text, TextInput, TouchableOpacity, Animated, Keyboard } from 'react-native'
-import { Entypo } from '@expo/vector-icons' 
-import colors from '../../constants/colors'
-import {screenHeight} from '../../constants/sizes'
-import { useDispatch } from 'react-redux'
-import { Alert } from 'react-native'
+import React, { useRef, useEffect, useState } from 'react';
+import {View, StyleSheet, Text, Animated, TextInput, Button } from 'react-native';
+import {screenHeight} from '../../constants/sizes';
+import { Entypo, FontAwesome, Feather} from '@expo/vector-icons'; 
+import colors from '../../constants/colors';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import * as ImageManipulator from 'expo-image-manipulator';
+import * as ImagePicker from 'expo-image-picker';
+import * as Permissions from 'expo-permissions';
 
+// CHECK THIS https://www.npmjs.com/package/expo-image-picker-multiple
 
 const CreatePost = props => {
-	const dispatch = useDispatch()
-	const [keyboardActive, setKeyboardActive] = useState(false)
-	const [text, setText] = useState('')
-	const slideFromBottom = useRef(new Animated.Value(screenHeight)).current
-	const backgroundOpacity= useRef(new Animated.Value(0)).current
+	const slideFromBottom = useRef(new Animated.Value(screenHeight)).current;
+	const backgroundOpacity= useRef(new Animated.Value(0)).current;
 
-	let keyboardDidShowListener = undefined;
-	let keyboardDidHideListener = undefined;
+	const [text, setText] = useState('');
 
+
+const verifyPermissions = async(permissions) => {
+	const result = await Permissions.askAsync(permissions);
+	if(result.status !== 'granted'){
+		Alert.alert('Insufficient permissions!', 
+		'You need to grant camera permissions to use this app.', 
+		[{text: 'Okay'}]
+		);
+		return false;
+	};
+	return true;
+}
+
+const openCameraHandler = async () => {
+	const hasPermissions = await verifyPermissions(Permissions.CAMERA_ROLL);
+	if(!hasPermissions){
+		return;
+	} else {
+		const image = await ImagePicker.launchCameraAsync({
+			allowsEditing: true,
+			aspect: [1,1],
+			quality: 1,
+		});
+		console.log(image)
+	}
+}
+
+const openLibraryHandler = async () => {
+	const hasPermissions = await verifyPermissions(Permissions.CAMERA_ROLL);
+	if(!hasPermissions){
+		return;
+	} else {
+		const image = await ImagePicker.launchImageLibraryAsync({
+			allowsEditing: true,
+			aspect: [1,1],
+			quality: 1,
+		});
+		console.log(image)
+	}
+}
 
 	useEffect(() => {
 		Animated.spring(
@@ -26,8 +65,8 @@ const CreatePost = props => {
 				tension: 10,
 				useNativeDriver: true
 			}
-		).start()
-	}, [slideFromBottom])
+		).start();
+	}, [slideFromBottom]);
 
 
 	useEffect(() => {
@@ -38,59 +77,82 @@ const CreatePost = props => {
 				tension: 10,
 				useNativeDriver: true
 			}
-		).start()
-	}, [backgroundOpacity])
+		).start();
+	}, [backgroundOpacity]);
 
-	useEffect(() => {
-		keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => setKeyboardActive(true));
-		keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => setKeyboardActive(false));
+	const hideFilter = () => {
+		Animated.spring(
+			slideFromBottom,
+			{
+				toValue: screenHeight,
+				tension: 10,
+				useNativeDriver: true
+			}
+		).start();
 
-		return () => {
-			keyboardDidShowListener.remove();
-			keyboardDidHideListener.remove();
-		}
-	}, [])
-  
+		Animated.spring(
+			backgroundOpacity,
+			{
+				toValue: 0,
+				tension: 10,
+				useNativeDriver: true
+			}
+		).start();
+		setTimeout(() => {
+			props.hideModal();
+		}, 500);
+	};
+	
 	return (
 		<View style = {styles.parent}>
 			<Animated.View style={{...styles.background, opacity: backgroundOpacity}}></Animated.View>
 			<Animated.View style={[styles.modalContainer, {transform: [{translateY: slideFromBottom }]}]}>
 				<View style={styles.topContainer}>
-					<Entypo name="cross" style={styles.cross} size={24} color="black" onPress={props.toggleShowCreateGroup} />
-					<Text style={styles.title}>Opret gruppe</Text>
+					<Entypo name="cross" style={styles.cross} size={24} color="black" onPress={() => hideFilter()} />
+					<Text style={styles.title}>Nyt opslag</Text>
 				</View>
-				<View style={styles.contentContainer} >
-					<View>
-						<Text style={styles.subTitle}>Gruppenavn</Text>
-						<View style={styles.textAreaContainer} >
-							<TextInput 
-							placeholder='Giv din gruppe et passende navn'
+				<View style={styles.contentContainer}>
+					<View style={styles.textAreaContainer} >
+						<TextInput
+							placeholder='Skriv hvad du gerne vil dele...'
 							placeholderTextColor = {colors.mediumGrey}
 							style={styles.textArea} 
-							value={text} 
+							value={text}
 							onChangeText={text => setText(text)}
 							multiline
 							numberOfLines={10}
 						/>
-						</View>
 					</View>
-						<View behavior='padding' style={ keyboardActive ? styles.buttonContainerWithKeyboard : styles.buttonContainer} >
-						<TouchableOpacity style={styles.modalRequestButton} onPress={() => Alert.alert('Not supported at the moment')} > 
-						<Text style={styles.buttonText}>Fortsæt</Text>
+					<View style={styles.buttonsContainer}> 
+						<TouchableOpacity onPress={() => openLibraryHandler()} style={styles.iconWrapper} >
+							<FontAwesome name="photo" size={40} color={colors.darkGrey} />
+							<Text style={styles.iconText}>Billede</Text>
 						</TouchableOpacity>
-						</View>
+						<TouchableOpacity onPress={() => openCameraHandler()} style={styles.iconWrapper} >
+							<Feather name="camera" size={40} color={colors.darkGrey} />
+							<Text style={styles.iconText}>Kamera</Text>
+						</TouchableOpacity>
+						<TouchableOpacity onPress={() => console.log('Event')} style={styles.iconWrapper} >
+							<Entypo name="calendar" size={40} color={colors.darkGrey} />
+							<Text style={styles.iconText}>Begivenhed</Text>
+						</TouchableOpacity>
+					</View>
+					<TouchableOpacity style={styles.shareButton}>
+						<Text style={styles.shareButtonText} >Del</Text>
+					</TouchableOpacity>
 				</View>
 			</Animated.View>
 		</View>
-	)
-}
+	);
+
+};
 
 const styles = StyleSheet.create({
 	parent: {
 		width: '100%',
 		height: '100%',
 		position: 'absolute',
-		zIndex: 2,
+		zIndex: 5,
 		bottom: 0,
 	},
 	background: {
@@ -110,94 +172,90 @@ const styles = StyleSheet.create({
 		borderTopStartRadius: 20,
 		borderTopEndRadius: 20,
 		width: '100%',
-		height: '100%',
+		height: '90%',
 		zIndex: 3,
-		bottom: 0
+		bottom: 0,
 	},
 	title: {
 		fontFamily: 'roboto-bold',
-		fontSize: 19,
+		fontSize: 16,
 	},
 	topContainer: {
 		flexDirection: 'row',
 		justifyContent: 'center',
 		alignItems: 'center',
 		width: '100%',
-		paddingTop: 60
+		paddingTop: 30
 	},
 	cross: {
 		position: 'absolute',
 		left: 20,
-		top: 60
+		top: 30
 	},
-	subTitle: {
-		fontFamily: 'roboto-medium',
-		marginTop: 40
+	contentContainer: {
+		flexDirection: 'column',
+		justifyContent: 'flex-start',
+		alignItems: 'center',
+		height: '86%',
+		width: '100%',
+		top: 40,
 	},
 	textAreaContainer: {
-		width: 330,
-		height: 50,
-		borderWidth: 1,
-		borderRadius: 10,
-		borderColor: colors.mediumGrey,
-		top: 10,
+		height: '70%',
+		width: '100%',
 		shadowRadius: 10,
 		shadowOpacity: 0.12,
 		shadowOffset: {
 			height: 2, 
 			width: 0
 		},
-		backgroundColor: 'white'
+		backgroundColor: colors.white
 	},
 	textArea: {
-		padding: 15,
-		paddingTop: 15
+		padding: 30,
+		paddingTop: 30,
+		height: '100%'
 	},
-	modalRequestButton: {
+	buttonsContainer: {
 		flexDirection: 'row',
-		justifyContent: 'center',
+		justifyContent: 'space-around',
 		alignItems: 'center',
-		color: 'white',
-		backgroundColor: 'white',
-		width: 340,
-		height: 40,
-		backgroundColor: colors.primary,
-		borderRadius: 6,
-		shadowRadius: 8,
-		shadowColor: 'black',
-		shadowOpacity: 0.16,
+		backgroundColor: colors.white,
+		width: '100%',
+		height: 100,
+		shadowRadius: 3,
+		shadowOpacity: 0.1,
 		shadowOffset: {
-			height: 8, 
+			height: 1, 
 			width: 0
 		},
 	},
-	buttonText: {
-		color: 'white',
-		fontFamily: 'roboto-medium'
-	},
-	buttonContainer: {
+	shareButton: {
 		flexDirection: 'row',
-		justifyContent: 'space-evenly',
+		justifyContent: 'center',
 		alignItems: 'center',
 		width: 300,
 		height: 50,
-		position: 'absolute',
-		bottom: 100
+		backgroundColor: colors.lighterBlue,
+		borderRadius: 15,
+		marginVertical: 10
 	},
-	buttonContainerWithKeyboard: {
-		flexDirection: 'row',
-		justifyContent: 'space-evenly',
-		alignItems: 'center',
-		width: 300,
-		height: 50,
-		top: 40
+	shareButtonText: {
+		color: colors.white,
+		fontFamily: 'roboto-medium',
+		fontSize: 16,
 	},
-	contentContainer: {
+	iconWrapper: {
 		flexDirection: 'column',
-		alignItems: 'center',
-		height: '100%'
+		justifyContent: 'center',
+		alignItems: 'center'
+	},
+	iconText: {
+		color: colors.darkGrey,
+		fontFamily: 'roboto-bold',
+		fontSize: 12,
+		top: 3
 	}
+});
 
-})
-
-export default CreatePost
+export default CreatePost;
