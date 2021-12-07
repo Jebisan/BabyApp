@@ -37,7 +37,10 @@ const GroupScreen = props => {
 			</TouchableOpacity>
 			{
 				showCreatePost && 
-				<CreatePost hideModal={() => setShowCreatePost(false)} />
+				<CreatePost
+					hideModal={() => setShowCreatePost(false)}
+					groupId={id}
+				 />
 			}
 			<FlatList
 				contentContainerStyle={styles.bottomContainer}
@@ -97,7 +100,7 @@ const GroupScreen = props => {
 					</View>
 				}
 				keyExtractor={item => item.id}
-				data={group.posts}
+				data={group.posts && group.posts.sort((a,b) => a.createdAt < b.createdAt)}
 				renderItem={({ item }) => 
 					<View> 
 					{

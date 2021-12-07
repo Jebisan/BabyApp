@@ -11,6 +11,7 @@ export const ADD_USER_TO_REQUESTS = 'ADD_USER_TO_REQUESTS';
 export const CLEAR_GROUP_MEMBERS = 'CLEAR_GROUP_MEMBERS';
 export const CLEAR_GROUP_REQUESTS = 'CLEAR_GROUP_REQUESTS';
 export const ADD_POSTS_TO_GROUP = 'ADD_POSTS_TO_GROUP';
+export const CREATE_POST = 'CREATE_POST';
 
 
 export const fetchUserGroups = () => {
@@ -369,4 +370,69 @@ export const removeRequestFromGroup = (groupId, personId ) => {
       }
       })
     }
+  }
+
+  export const createPost = (groupId, post, uri) => {
+    return async (dispatch, getState) => {
+  
+      const token = getState().auth.token;    
+      const auth = getState().auth;
+  
+        const response = await fetch(
+          `https://babyapp-ed94d.firebaseio.com/posts/${groupId}.json?auth=${token}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(post)
+          }
+        );
+  
+        if (!response.ok) {
+          let message = 'Adding post to Firebase failed!';
+          throw new Error(message);
+        }
+
+        const resData = await response.json();
+
+        // Now upload image to Firebase Storage
+        const postId = resData.name
+        const url = await uploadImage(groupId, postId, uri)
+        
+        // Upload ImageUrl to Firebase DB
+
+          const urlResponse = await fetch(
+            `https://babyapp-ed94d.firebaseio.com/posts/${groupId}/${postId}/photoUrl.json?auth=${token}`,
+            {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(url)
+            }
+          );
+
+          if (!urlResponse.ok) {
+            let message = `Adding post's photoUrl to Firebase failed!`;
+            throw new Error(message);
+          }
+
+          dispatch({type: CREATE_POST, groupId, post: {
+            id: resData.name,
+            ...post, 
+            name: auth.name, 
+            userPhotoUrl: auth.photoUrl,
+            photoUrl: url
+          }
+      })
+    };
+  };
+
+  const uploadImage = async(groupId, postId, uri) => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    var ref = Fire.firebase.storage().ref().child('images/profilePictures/'+'POST'+'.jpg');
+    var uploadTask = ref.put(blob)
+    return uploadTask.snapshot.ref.getDownloadURL()
   }

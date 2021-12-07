@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     shadowColor: 'black',
     shadowOpacity: 0.1,
     shadowRadius: 15,
-    minHeight: 200,
+    minHeight: 120,
     borderRadius: 20,
     width: screenWidth-20,
   },

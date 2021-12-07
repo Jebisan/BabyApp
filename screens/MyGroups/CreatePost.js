@@ -7,14 +7,20 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
+import { useDispatch, useSelector } from 'react-redux';
+import { createPost } from '../../store/actions/myGroups'
 
 // CHECK THIS https://www.npmjs.com/package/expo-image-picker-multiple
 
 const CreatePost = props => {
 	const slideFromBottom = useRef(new Animated.Value(screenHeight)).current;
 	const backgroundOpacity= useRef(new Animated.Value(0)).current;
+	const dispatch = useDispatch()
+    const auth = useSelector(state => state.auth)
 
 	const [text, setText] = useState('');
+	const [type, setType] = useState('post');
+	const [photoUri, setPhotoUri] = useState('');
 
 
 const verifyPermissions = async(permissions) => {
@@ -39,7 +45,6 @@ const openCameraHandler = async () => {
 			aspect: [1,1],
 			quality: 1,
 		});
-		console.log(image)
 	}
 }
 
@@ -53,7 +58,14 @@ const openLibraryHandler = async () => {
 			aspect: [1,1],
 			quality: 1,
 		});
-		console.log(image)
+				      
+        if(image.uri!==undefined){
+			const compressedImage = await ImageManipulator.manipulateAsync(
+			  image.uri,[{ resize: {'height': 200} }],
+			  { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
+			);
+			  setPhotoUri(compressedImage.uri);
+		  }
 	}
 }
 
@@ -102,6 +114,16 @@ const openLibraryHandler = async () => {
 			props.hideModal();
 		}, 500);
 	};
+
+	const createPostHandler = () => {
+		dispatch(createPost(props.groupId, {
+			author: auth.userId,
+			createdAt: Date.now(),
+			text: text,
+			type: type
+		}, photoUri
+		))
+	}
 	
 	return (
 		<View style = {styles.parent}>
@@ -137,14 +159,13 @@ const openLibraryHandler = async () => {
 							<Text style={styles.iconText}>Begivenhed</Text>
 						</TouchableOpacity>
 					</View>
-					<TouchableOpacity style={styles.shareButton}>
+					<TouchableOpacity onPress={() => createPostHandler()} style={styles.shareButton}>
 						<Text style={styles.shareButtonText} >Del</Text>
 					</TouchableOpacity>
 				</View>
 			</Animated.View>
 		</View>
 	);
-
 };
 
 const styles = StyleSheet.create({
