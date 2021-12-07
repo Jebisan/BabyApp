@@ -11,7 +11,7 @@ import findReducer from './store/reducers/find.js';
 import directMessageReducer from './store/reducers/directMessage';
 import ReduxThunk from 'redux-thunk';
 import * as Font from 'expo-font'
-import { AppLoading } from 'expo'
+import AppLoading from 'expo-app-loading'
 import { composeWithDevTools } from 'redux-devtools-extension';
 
 
