@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState, useReducer } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, Keyboard, FlatList } from 'react-native'
-import MapView, {Marker}  from 'react-native-maps'
+import {Marker}  from 'react-native-maps'
+import MapView from "react-native-map-clustering";
 import { FontAwesome, MaterialIcons, AntDesign, FontAwesome5 } from '@expo/vector-icons'
 import colors from '../../../constants/colors'
 import SelectedGroup from '../../../components/SelectedGroup'
@@ -304,6 +305,7 @@ const MapViewComponent = props => {
 
 				<MapView 
 					ref = {map}
+					clusterColor={colors.lightBlue}
 					onPress={(e) =>{ e.stopPropagation(); reduxDispatch(clearSelectedGroup())}} 
 					style={styles.map} 
 					mapType={'mutedStandard'}
