@@ -8,15 +8,9 @@ import ProgressCircle from 'react-native-progress-circle'
 import moment from 'moment'
 import HeaderButton from '../../components/HeaderButton'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
+import {convertNumberToGender} from '../../shared/generic'
 
 const Profile = props => {
-
-	const [newBirthday, setNewBirthday] = useState([])
-	const [newDueDate, setNewDueDate] = useState([])
-	const [newToday, setNewToday] = useState([])
-	const [weeksToBirth, setWeeksToBirth] = useState(0)
-	const [daysToBirth, setDaysToBirth] = useState(0)
-
 	const birthday = useSelector(state => state.auth.birthday)
 	const name = useSelector(state => state.auth.name)
 	const firstTimer = useSelector(state => state.auth.firstTimer)
@@ -26,60 +20,15 @@ const Profile = props => {
 	const city = useSelector(state => state.auth.city)
 	const postalCode = useSelector(state => state.auth.postalCode)
 	const groups = useSelector(state => state.groups)
-	// const children = useSelector(state => state.auth.children)
-
-
-	useEffect(() => {  
-		if(dueDate){
-			setDueDate()
-			setToday()
-			setAge()
-		}
-	}, [])
-
-
-	const setDueDate = () => {
-		var splittedDueDate = dueDate.split('-')
-  
-		var _newDueDate = []
-		_newDueDate.push(parseInt(splittedDueDate[2]),parseInt(splittedDueDate[1]),parseInt(splittedDueDate[0]))
-		setNewDueDate(_newDueDate)
-	}
-  
-	const setToday = () => {
-		var today = moment().format('YYYY-MM-DD')
-		var splittedToday = today.split('-')
-    
-		var _newToday = []
-		_newToday.push(parseInt(splittedToday[0]), parseInt(splittedToday[1]), parseInt(splittedToday[2]))
-    
-		setNewToday(_newToday)
-	}
-  
-	const setAge = () => {
-		var splittedBirthday = birthday.split('-')
-  
-		var _newBirthday = []
-		_newBirthday.push(parseInt(splittedBirthday[2]),parseInt(splittedBirthday[1]),parseInt(splittedBirthday[0]))
-    
-		setNewBirthday(_newBirthday)
-	}
-  
-	useEffect(() => {
-		setDaysToBirth(moment(newDueDate).diff(newToday, 'days'))
-		setWeeksToBirth(moment(newDueDate).diff(newToday, 'weeks'))
-	}, [newDueDate, newToday])
 
 	return (
 		<SafeAreaView style={styles.container}>
 			<ScrollView showsVerticalScrollIndicator={false}>
-
 				<View style={styles.profilePictureContainer}>
 					<View style={styles.profileImage}>
 						<ImagePicker/>
 					</View>
 				</View>
-
 				<View style={styles.infoContainer}>
 					<Text style={[styles.text, { fontWeight: '200', fontSize: 20, fontWeight: '400',}]}>{name}</Text>
 					<Text style={[styles.text, { color: '#AEB5BC', fontSize: 11, fontWeight: '700', top: 6 }]}>"Lorem ipsum dolor sit amet."</Text>
@@ -91,12 +40,12 @@ const Profile = props => {
 
 						<View style={styles.infoRow} >
 
-							{gender==='Kvinde'?
+							{gender===0?
 								<Ionicons style={styles.infoSymbol} name="md-female" size={24} color="#52575D"></Ionicons>
 								:
 								<Ionicons style={styles.infoSymbol} name="md-male" size={24} color="#52575D"></Ionicons>
 							}
-							<Text style={styles.infoText}>  {gender}, {moment(newBirthday).fromNow(true)}</Text>
+							<Text style={styles.infoText}>{convertNumberToGender(gender)}</Text>
 						</View>
 
 						<View style={styles.infoRow}>
@@ -119,16 +68,16 @@ const Profile = props => {
 						dueDate?
 							<View style={[styles.statsBox, { borderColor: '#DFD8C8', borderLeftWidth: 1, borderRightWidth: 1 }]}>
 								<ProgressCircle
-									percent={((40-weeksToBirth)/40)*100}
+									percent={(30/36)*100}
 									radius={55}
 									borderWidth={8}
 									color="#c6ffd7"
 									shadowColor="lightgrey"
 									bgColor="#fff"
 								>
-									<Text style={styles.weekNumber}>{40-weeksToBirth}</Text>
+									<Text style={styles.weekNumber}>{30}</Text>
 									<Text style={styles.weekText}>uger i dag</Text>
-									<Text style={styles.weekSubtext}>{daysToBirth} dage tilbage</Text>
+									<Text style={styles.weekSubtext}>28 dage tilbage</Text>
 								</ProgressCircle>
 							</View>
 							:null
@@ -139,41 +88,7 @@ const Profile = props => {
 						<Text style={styles.interestsContent}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum tellus neque.</Text>
 					</View>
 
-				</View>
-
-{ /*children.length > 0 &&
-
-	<View style={styles.childrenContainer} >
-	<Text style={styles.header} >Børn</Text>
-	
-	<ScrollView contentContainerStyle={styles.childrenList} horizontal={true} >
-	
-	{
-		children.map((item) =>
-		<View key={item.id} style={styles.child} >
-		<TouchableOpacity onPress={() => props.navigation.navigate('Child', {
-			id: item.id,
-			firstname: item.firstname,
-			lastname: item.lastname,
-			birthday: item.birthday,
-			gender: item.gender
-		})}
-		>
-		<Child
-		firstname = {item.firstname}
-		lastname = {item.lastname}
-		birthday = {item.birthday}
-		gender = {item.gender}
-		/>
-		</TouchableOpacity>
-		</View>
-		)
-	}
-	</ScrollView>
-	</View>
-	*/
-}
-	
+				</View>	
 	</ScrollView>
 	</SafeAreaView>
 	)

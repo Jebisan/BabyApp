@@ -16,7 +16,6 @@ init = () => {
             messagingSenderId: "879638066108",
             appId: "1:879638066108:web:4b4c8b49e3b0ba8cd6f1b9",
             measurementId: "G-M8PB20MGR9"
-        
         });   
     }
 }

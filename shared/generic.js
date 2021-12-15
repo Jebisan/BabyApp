@@ -51,6 +51,19 @@ export const convertTimestamp = (timestamp) => {
 }
 
 
+// RETURNS '1 hour ago', '2 days ago' etc
+export const convertNumberToGender = (gender) => {
+   switch(gender){
+      case 0: 
+         return 'Kvinde'
+      case 1: 
+         return 'Mand'
+      case 2: 
+         return 'Andet'
+   }
+}
+
+
 export const getGroupTypeName = (groupType) => {
    switch(groupType){
       case 0: 
