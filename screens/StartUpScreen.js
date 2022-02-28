@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import {View, ActivityIndicator, StyleSheet, AsyncStorage, Alert} from 'react-native';
+import {View, ActivityIndicator, StyleSheet, Alert} from 'react-native';
 import {authenticate, fetchEverything, setDidTryAutoLogin} from '../store/actions/auth';
 import {useDispatch} from 'react-redux';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const StartUpScreen = props => {
     const dispatch = useDispatch();
