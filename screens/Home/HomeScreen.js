@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, View, Text } from "react-native";
 import Constants from 'expo-constants';
-import * as Permissions from 'expo-permissions';
 import colors from '../../constants/colors';
 import * as Notifications from 'expo-notifications';
 import ListView from '../Find/ListView/ListView';
@@ -18,14 +17,10 @@ useEffect(() => {
 
   const registerForPushNotificationsAsync = async () => {
     if (Constants.isDevice) {
-      const { status: existingStatus } = await Permissions.getAsync(
-        Permissions.NOTIFICATIONS
-      );
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
       let finalStatus = existingStatus;
       if (existingStatus !== 'granted') {
-        const { status } = await Permissions.askAsync(
-          Permissions.NOTIFICATIONS
-        );
+        const { status } = await Notifications.requestPermissionsAsync();
         finalStatus = status;
       }
       if (finalStatus !== 'granted') {

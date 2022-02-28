@@ -7,11 +7,12 @@ import { FontAwesome, MaterialIcons, AntDesign, FontAwesome5 } from '@expo/vecto
 import colors from '../../../constants/colors'
 import SelectedGroup from '../../../components/SelectedGroup'
 import City from '../../../components/City'
-import * as Permissions from 'expo-permissions'
+import * as Location from 'expo-location';
 import {clearSelectedGroup, fetchSelectedGroup, setSelectedGroupIcon} from '../../../store/actions/allGroups'
 import { Icon } from 'react-native-elements'
 import FilterModal from '../../../components/FilterModal'
 import { toggleShowMap } from '../../../store/actions/find'
+
 
 const initialState = {
 	searchString: '',
@@ -193,7 +194,7 @@ const MapViewComponent = props => {
 	}
 
 	const verifyPermissions = async () => {
-		const result = await Permissions.askAsync(Permissions.LOCATION)
+		const result = await Location.requestForegroundPermissionsAsync();
 		if (result.status !== 'granted') {
 			Alert.alert(
 				'Insufficient permissions!',

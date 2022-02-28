@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {View, Button, Text, StyleSheet, Image, Alert} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import * as Permissions from 'expo-permissions';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Fire from '../Fire';
 import {useSelector, useDispatch} from 'react-redux';
@@ -25,7 +24,7 @@ useEffect(() => {
 
 
 const verifyPermissions = async() => {
-        const result = await Permissions.askAsync(Permissions.CAMERA, Permissions.CAMERA_ROLL);
+        const result = await ImagePicker.requestCameraPermissionsAsync();
         if(result.status !== 'granted'){
             Alert.alert('Insufficient permissions!', 
             'You need to grant camera permissions to use this app.', 

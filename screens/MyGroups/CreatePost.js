@@ -6,7 +6,6 @@ import colors from '../../constants/colors';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
-import * as Permissions from 'expo-permissions';
 import { useDispatch, useSelector } from 'react-redux';
 import { createPost } from '../../store/actions/myGroups'
 
@@ -23,8 +22,8 @@ const CreatePost = props => {
 	const [photoUri, setPhotoUri] = useState('');
 
 
-const verifyPermissions = async(permissions) => {
-	const result = await Permissions.askAsync(permissions);
+const verifyPermissions = async() => {
+	const result = await ImagePicker.requestCameraPermissionsAsync();
 	if(result.status !== 'granted'){
 		Alert.alert('Insufficient permissions!', 
 		'You need to grant camera permissions to use this app.', 
@@ -36,7 +35,7 @@ const verifyPermissions = async(permissions) => {
 }
 
 const openCameraHandler = async () => {
-	const hasPermissions = await verifyPermissions(Permissions.CAMERA_ROLL);
+	const hasPermissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
 	if(!hasPermissions){
 		return;
 	} else {
