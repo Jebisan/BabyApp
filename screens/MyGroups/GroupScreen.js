@@ -106,17 +106,16 @@ const GroupScreen = props => {
 					{
 					item.type === 'post' && <Post
 					text = {item.text}
-					name = {item.name}
-					userPhotoUrl = {item.userPhotoUrl}
 					photoUrl = {item.photoUrl}
 					createdAt = {item.createdAt}
+					author = {item.author}
 					/>
 					}
 					{
 						item.type === 'event' && <Event
 						text = {item.text}
-						name = {item.name}
-						userPhotoUrl = {item.userPhotoUrl}
+						author = {item.author}
+						photoUrl = {item.photoUrl}
 						createdAt = {item.createdAt}
 						startTime = {item.event.startTime}
 						title = {item.event.title}
@@ -124,8 +123,7 @@ const GroupScreen = props => {
 						address = {item.event.location.address}
 						postalCode = {item.event.location.postalCode}
 						city = {item.event.location.city}
-						latitude = {item.event.location.latitude}
-						longitude = {item.event.location.longitude}
+						location = {item.event.location}
 						/>
 						}
 					</View>

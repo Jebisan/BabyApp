@@ -1,15 +1,19 @@
 import React, {useEffect, useState} from 'react';
-
 import {View, StyleSheet, Text, Image } from 'react-native';
 import {Entypo, FontAwesome, Ionicons} from '@expo/vector-icons';
 import {convertDate2} from '../shared/generic'
 import colors from '../constants/colors';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMembers } from '../store/actions/myGroups';
+import { GroupType, UserType } from '../types';
 
-const Group = props => {
+type Props = GroupType & {
+  memberIds: Array <string>
+}
+
+const Group: React.FC<Props> = props => {
   const dispatch = useDispatch()
-  const groupData = useSelector(state => state.myGroups).find(group => group.id === props.id)
+  const groupData = useSelector((state: any) => state.myGroups).find((group: GroupType) => group.id === props.id)
 
 	useEffect(() => {
     if (props.memberIds) {
@@ -42,7 +46,7 @@ const Group = props => {
       </View>
       {
         <View style={styles.membersContainer}>
-        {groupData.members.map((member, index) => (
+        {groupData.members.map((member: UserType, index: number) => (
           <Image key={index} source={{uri: member.photoUrl}} style={styles.memberImage} resizeMode="cover"></Image>
           ))}
       </View>
@@ -127,8 +131,6 @@ const styles = StyleSheet.create({
   },
   memberImage: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
     width: 27,
     height: 26,
     justifyContent: 'center',

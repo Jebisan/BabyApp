@@ -3,8 +3,15 @@ import React from 'react';
 import {View, StyleSheet, Text, Image } from 'react-native';
 import colors from '../constants/colors';
 
+type Props = {
+  timestamp: Date;
+  lastMessage: string;
+  photoUrl: string;
+  name: string;
+  read: boolean
+}
 
-const City = props => {
+const City: React.FC<Props> = props => {
 
 
   return (

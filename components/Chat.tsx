@@ -4,19 +4,26 @@ import moment from 'moment';
 import {Entypo} from '@expo/vector-icons'
 import { useEffect, useState } from 'react';
 
+type Props = {
+  timestamp: Date;
+  lastMessage: string;
+  photoUrl: string;
+  name: string;
+  read: boolean
+}
 
-const Chat = props => {
+const Chat: React.FC<Props> = ({timestamp, lastMessage, photoUrl, name, read}) => {
   
-  const time = moment(props.timestamp).fromNow();  
-  const [message, setMessage] = useState(props.lastMessage)
+  const time = moment(timestamp).fromNow();  
+  const [message, setMessage] = useState(lastMessage)
 
 useEffect(() => {
-  if(props.lastMessage.length>10){
-    setMessage(props.lastMessage.slice(0,12) + ' (...)')
+  if(lastMessage.length>10){
+    setMessage(lastMessage.slice(0,12) + ' (...)')
  } else {
-   setMessage(props.lastMessage);
+   setMessage(lastMessage);
  }
-}, [props.lastMessage])
+}, [lastMessage])
   
   return (
     <View style = {styles.parent}>
@@ -25,25 +32,25 @@ useEffect(() => {
       <View style={styles.horizontalContainer}>
       <View style={styles.verticalContainer}>
         <View style={styles.imageContainer}>
-          <Image style={{width: 50, height: 50, borderRadius: 400/ 2}} source={ props.photoUrl?{uri: props.photoUrl }: {uri: 'http://criticare.isccm.org/assets/images/male_placeholder.png' }} />
+          <Image style={{width: 50, height: 50, borderRadius: 400/ 2}} source={ photoUrl?{uri: photoUrl }: {uri: 'http://criticare.isccm.org/assets/images/male_placeholder.png' }} />
       </View>
 
       </View>
 
       <View style={styles.verticalContainer}>
       
-      {props.read?
-        <Text style= {styles.name}>{props.name}</Text>
+      {read?
+        <Text style= {styles.name}>{name}</Text>
 
       :
-      <Text style= {styles.name2}>{props.name}</Text>
+      <Text style= {styles.name2}>{name}</Text>
     }
       
         <View style={styles.message}>
 
 
 
-        {props.read?
+        {read?
           <Text  style={styles.oldMessage}>{message}</Text>
 
         :
@@ -53,7 +60,7 @@ useEffect(() => {
         </View>
       </View>
         {
-          props.read? null :<View style={styles.unreadSymbol}>
+          read? null :<View style={styles.unreadSymbol}>
           <Entypo name='dot-single' color={'darkred'} size={40} />
        </View>
         }

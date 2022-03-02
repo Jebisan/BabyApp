@@ -2,11 +2,10 @@ import { Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
 import React from 'react';
 import {View, StyleSheet, Text, Image } from 'react-native';
 import colors from '../constants/colors';
+import { UserType } from '../types';
 
-const User = props => {
+const User:React.FC<UserType> = props => {
 
-
-  
   return (
     <View style = {styles.parent}>
       <View style={styles.horizontalContainer}>

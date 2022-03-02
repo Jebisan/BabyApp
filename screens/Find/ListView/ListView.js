@@ -154,7 +154,7 @@ const ListView = props => {
 
 	}, [state.querySearch])
 
-	startQuerySearch = () => {
+	const startQuerySearch = () => {
 		dispatch({ type: 'SET_LOADING', loading: true })
 
 		if (state.selectedSearchType === 0) {
@@ -178,7 +178,7 @@ const ListView = props => {
 		}
 	}
 
-	startCitySearch = () => {
+	const startCitySearch = () => {
 		dispatch({ type: 'SET_LOADING', loading: true })
 
 		if (state.selectedSearchType === 0) {

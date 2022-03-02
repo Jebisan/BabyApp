@@ -3,16 +3,22 @@ import {View, StyleSheet, Text, Image } from 'react-native';
 import colors from '../constants/colors';
 import { screenWidth } from '../constants/sizes';
 import { convertTimestamp } from '../shared/generic'
+import { PostType } from '../types';
 
-const Post = props => {
+const Post: React.FC<PostType> = props => {
+
+  useEffect(() => {
+    console.log(props)
+  }, [props])
+
   return (
     <View style = {styles.parent}>
       <View style={styles.horizontalContainer}>
         <View style={styles.imageContainer} >
-          <Image style={styles.image} source={ props.userPhotoUrl?{uri: props.userPhotoUrl }: {uri: 'http://criticare.isccm.org/assets/images/male_placeholder.png' }} />
+          <Image style={styles.image} source={ props.author.photoUrl?{uri: props.author.photoUrl }: {uri: 'http://criticare.isccm.org/assets/images/male_placeholder.png' }} />
         </View>
         <View style={styles.subInfoContainer}>
-          <Text style={styles.name}>{props.name}</Text>
+          <Text style={styles.name}>{props.author.name}</Text>
           <Text style={styles.timeText}>For {convertTimestamp(props.createdAt)}</Text>
         </View>
       </View>

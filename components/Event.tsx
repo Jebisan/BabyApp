@@ -5,12 +5,19 @@ import { screenWidth } from '../constants/sizes';
 import { convertTimestamp, timestampToTime, timestampToMonth, timestampToShortMonth, timestampToDateNumber } from '../shared/generic'
 import {Ionicons, Entypo, FontAwesome} from '@expo/vector-icons';
 import MapView, { Marker } from 'react-native-maps'
+import { EventType } from '../types';
 
-const Event = props => {
+type Props = EventType & {
+  address: string;
+  postalCode: string;
+  city: string;
+}
+
+const Event: React.FC<Props> = props => {
 
   const location = {
-    latitude: props.latitude,
-    longitude: props.longitude,
+    latitude: props.location.latitude,
+    longitude: props.location.longitude,
     latitudeDelta: 0.0122, 
     longitudeDelta: 0.0121
   }
@@ -18,10 +25,10 @@ const Event = props => {
     <View style = {styles.parent}>
       <View style={styles.horizontalContainer}>
         <View style={styles.imageContainer} >
-          <Image style={styles.image} source={ props.userPhotoUrl?{uri: props.userPhotoUrl }: {uri: 'http://criticare.isccm.org/assets/images/male_placeholder.png' }} />
+          <Image style={styles.image} source={ props.photoUrl?{uri: props.photoUrl }: {uri: 'http://criticare.isccm.org/assets/images/male_placeholder.png' }} />
         </View>
-        <View style={styles.subInfoContainer}>
-          <Text style={styles.name}>{props.name}</Text>
+        <View>
+          <Text style={styles.name}>{props.author.name}</Text>
           <Text style={styles.createdAtText}>For {convertTimestamp(props.createdAt)}</Text>
         </View>
       </View>

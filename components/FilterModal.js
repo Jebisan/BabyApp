@@ -36,7 +36,7 @@ const FilterModal = props => {
 		).start()
 	}, [backgroundOpacity])
 
-	hideFilter = () => {
+	const hideFilter = () => {
 		Animated.spring(
 			slideFromBottom,
 			{

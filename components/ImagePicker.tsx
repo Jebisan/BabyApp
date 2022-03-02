@@ -7,6 +7,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {setPhotoUrl} from '../store/actions/auth';
 import * as ImageManipulator from 'expo-image-manipulator';
 
+// Broken. Does not work when uploading new profile picture.
 
 const ImgPicker = props => {
 
@@ -20,8 +21,6 @@ useEffect(() => {
     setPickedImage(photoUrl);
   }
 }, [photoUrl])
-
-
 
 const verifyPermissions = async() => {
         const result = await ImagePicker.requestCameraPermissionsAsync();
@@ -44,8 +43,8 @@ const chooseImageHandler = async () => {
             allowsEditing: true,
             aspect: [1,1],
             quality: 1,
-            
         });
+        console.log(image)
         
         if(image.uri!==undefined){
           const compressedImage = await ImageManipulator.manipulateAsync(

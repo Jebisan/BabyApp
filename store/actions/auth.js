@@ -1,5 +1,6 @@
 import Fire from '../../Fire';
-import { AsyncStorage, Alert } from 'react-native';
+import { Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 export const AUTHENTICATE = 'AUTHENTICATE';
 export const LOGOUT = 'LOGOUT';
 export const SET_FIREBASE_DATA = 'SET_FIREBASE_DATA';

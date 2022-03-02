@@ -67,8 +67,10 @@ export const fetchUserGroupsPosts = (groupId) => {
                 if(post.author === id) {
                   return {
                     ...post,
-                    name: data.val().name,
-                    userPhotoUrl: data.val().photoUrl,
+                    author: {
+                      name: data.val().name,
+                      photoUrl: data.val().photoUrl && data.val().photoUrl
+                    },
                   }
                 } else {
                   return post
@@ -421,7 +423,7 @@ export const removeRequestFromGroup = (groupId, personId ) => {
           dispatch({type: CREATE_POST, groupId, post: {
             id: resData.name,
             ...post, 
-            name: auth.name, 
+            author: {name: auth.name}, 
             userPhotoUrl: auth.photoUrl,
             photoUrl: url
           }

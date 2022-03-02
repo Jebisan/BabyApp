@@ -5,13 +5,19 @@ import colors from '../constants/colors';
 import { convertDate2, getGroupTypeName } from '../shared/generic';
 import { getMembersDetails } from '../store/actions/find';
 import { fallbackPictureUrl } from '../constants/other'
+import { GroupType, UserType } from '../types';
 
-const SelectedGroup = props => {
-  const [membersDetails, setMembersDetails] = useState([]);
+type Props = {
+  group: GroupType;
+
+}
+
+const SelectedGroup:React.FC<Props> = props => {
+  const [membersDetails, setMembersDetails] = useState <Array<UserType>>([]);
 
   useEffect(() => {
     if (props.group.members) {
-      getMembersDetails(props.group.members).then(data => {
+      getMembersDetails(props.group.members).then((data: Array<UserType>) => {
         setMembersDetails(data)
       })  
     } else {
@@ -39,7 +45,7 @@ const SelectedGroup = props => {
 
         {membersDetails.length > 0 && 
           <View style={styles.membersContainer}>
-          {membersDetails.map((member, index) => (
+          {membersDetails.map((member: UserType, index) => (
             <Image key={index} source={{uri: member.photoUrl? member.photoUrl : fallbackPictureUrl}} style={styles.memberImage} resizeMode="cover"></Image>
             ))}
             <View style={styles.memberImage}>
@@ -134,8 +140,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 20,
     height: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
     borderRadius: 50,
     borderWidth: 1,
     borderColor: colors.mediumGrey,
